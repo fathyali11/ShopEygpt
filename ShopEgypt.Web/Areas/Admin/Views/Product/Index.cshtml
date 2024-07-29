@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["Head"] = "Product Management";
+    ViewData["PageTitle"] = "Products";
+}
+<p>
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Image
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @item.Name
+            </td>
+            <td>
+                    @item.Description
+            </td>
+            <td>
+                    @item.Price.ToString("c")
+            </td>
+            <td>
+                   @item.Category.Name
+            </td>
+            <td>
+                  <img src="@($"/Images/Products/{item.ImageName}")" alt="@item.Name" style="max-width: 150px" />
+            </td>
+            <td>
+                    <a class="btn btn-success" asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-danger" asp-area="Admin" asp-controller="Product" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ShopEgypt.Web.Models;
+﻿
 
-namespace ShopEgypt.Web.Data
+namespace Web.DataAccess.Data
 {
 	public class ApplicationDbContext:DbContext
 	{
@@ -10,6 +9,7 @@ namespace ShopEgypt.Web.Data
             
         }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 
 }

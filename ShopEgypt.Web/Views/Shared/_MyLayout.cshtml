@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Blank Page</title>
+  <title>Stor | @ViewBag.Title</title>
+    
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -11,8 +12,12 @@
   <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="/css/adminlte.min.css">
+    @*  for toastr *@
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/2.1.2/css/dataTables.dataTables.min.css" />
 </head>
 <body class="hold-transition sidebar-mini">
+    <partial name="_Notefications" />
 <!-- Site wrapper -->
 <div class="wrapper">
   <!-- Navbar -->
@@ -186,35 +191,35 @@
       </div>
 
       <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Admin</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Category</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Product</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Order</p>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+      <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                      <i class="nav-icon fas fa-tachometer-alt"></i>
+                      <p>Admin</p>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a asp-area="Admin" asp-action="Index" asp-controller="Category" class="nav-link">
+                      <i class="nav-icon fas fa-tachometer-alt"></i>
+                      <p>Category</p>
+                  </a>
+              </li>
+              <li class="nav-item">
+                            <a asp-area="Admin" asp-action="Index" asp-controller="Product" class="nav-link">
+                      <i class="nav-icon fas fa-tachometer-alt"></i>
+                      <p>Product</p>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                      <i class="nav-icon fas fa-tachometer-alt"></i>
+                      <p>Order</p>
+                  </a>
+              </li>
+          </ul>
+       </nav>
 
       <!-- /.sidebar-menu -->
     </div>
@@ -228,7 +233,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Blank Page</h1>
+              <h1>@ViewData["Head"]</h1>
           </div>
           
         </div>
@@ -241,7 +246,7 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Title</h3>
+           <h3 class="card-title">@ViewData["PageTitle"]</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -271,15 +276,16 @@
   </aside>
   <!-- /.control-sidebar -->
 </div>
-<!-- ./wrapper -->
 
 <!-- jQuery -->
-<script src="/plugins/jquery/jquery.min.js"></script>
+
+<script src="/lib/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="/js/demo.js"></script>
+    <script src="//cdn.datatables.net/2.1.2/js/dataTables.min.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
