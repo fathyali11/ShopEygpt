@@ -10,8 +10,8 @@ namespace Web.Entites.IRepositories
 {
     public interface IProductRepository:IGenericRepository<Product>
     {
-        void Update(ProductVM model);
-        void AddProductVM(ProductVM Model);
+        void Update(ProductVMEdit model);
+        void AddProductVM(ProductVMCreate Model);
         void DeleteWithImage(Product product);
     }
 }

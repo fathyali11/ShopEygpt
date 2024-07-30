@@ -9,6 +9,7 @@ namespace Web.Entites.Models
         public string Description { get; set; }
         public decimal Price { get; set; }
         [Required]
+        [Display(Name ="Category")]
         public int CategoryId {  get; set; }
         [ValidateNever]
         [ForeignKey(nameof(CategoryId))]

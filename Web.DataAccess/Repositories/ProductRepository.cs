@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Web.DataAccess.Repositories
 {
@@ -15,7 +10,7 @@ namespace Web.DataAccess.Repositories
             _context = context;
         }
 
-        public void AddProductVM(ProductVM Model)
+        public void AddProductVM(ProductVMCreate Model)
         {
             Product product = Model.Product;
             product.ImageName=SaveImage(Model.ImageFile);
@@ -31,7 +26,7 @@ namespace Web.DataAccess.Repositories
             Remove(product);
         }
 
-        public void Update(ProductVM model)
+        public void Update(ProductVMEdit model)
         {
             var productDB=GetBy(x=>x.Id==model.Product.Id);
             var imageFile=model.ImageFile;
