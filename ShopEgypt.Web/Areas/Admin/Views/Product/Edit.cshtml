@@ -5,9 +5,10 @@
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Edit";
 }
+
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
+        <form asp-action="Edit" enctype="multipart/form-data" id="productForm">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <input asp-for="Product.Id" hidden />
@@ -29,14 +30,14 @@
                 <label asp-for="Product.CategoryId" class="control-label"></label>
                 <br />
                 <select asp-for="Product.CategoryId" asp-items="Model.CategoryList">
-                    <option disabled>Select Category</option>
+                    <option value="">Select Category</option>
                 </select>
-                <span asp-validation-for="Product.Description" class="text-danger"></span>
+                <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ImageFile" class="control-label">Image</label>
-                <input asp-for="ImageFile" type="file" class=" form-control" />
-                <span asp-validation-for="ImageFile" class=" text-danger"></span>
+                <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Edit" class="btn btn-primary" />
@@ -44,16 +45,16 @@
         </form>
     </div>
     <div class="col-md-4">
-        <img src="@($"/Images/Products/{Model.Product.ImageName}")" alt="@Model.Product.Name" style="max-width: 400px" />
-        
+        <img id="previewImage" src="@($"/Images/Products/{Model.Product.ImageName}")" alt="@Model.Product.Name" style="max-width: 400px" />
     </div>
 </div>
 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/product/imagedisplay.js"></script>
+    <script src="~/js/product/imagevalidation.js"></script>
 }
-
-
