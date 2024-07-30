@@ -13,8 +13,12 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
-            return View(categories);
+            return View();
+        }
+        public IActionResult GetData()
+        {
+            var categories=_unitOfWork.CategoryRepository.GetAll().ToList();
+            return Json(new {data=categories});
         }
         [HttpGet]
         public IActionResult Create()
@@ -54,7 +58,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             TempData["Error"] = "Data Not Updated";
             return View(category);
         }
-        [HttpGet]
+        [HttpDelete]
         public IActionResult Delete(int id)
         {
             if (id == 0)
@@ -63,9 +67,17 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             }
             var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
             _unitOfWork.CategoryRepository.Remove(category);
-            _unitOfWork.Save();
-            TempData["Success"] = "Data Remove Successfly";
-            return RedirectToAction("Index");
+            var res= _unitOfWork.Save();
+            if (res != 0)
+            {
+                TempData["Success"] = "Data removed successfully";
+                return Json(new { success = true, message = "Data deleted successfully" });
+            }
+            else
+            {
+                TempData["Error"] = "Data not removed";
+                return Json(new { success = false, message = "Data deletion failed" });
+            }
         }
     }
 }

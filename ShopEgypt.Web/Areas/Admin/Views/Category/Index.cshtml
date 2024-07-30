@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Category>
+﻿
 @{
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Category Management";
@@ -8,7 +8,7 @@
 <div>
     <a class="btn btn-primary" asp-action="Create" asp-controller="Category">Create</a>
 </div>
-<table class="table">
+<table id="MyTable" class="table">
     <thead>
         <tr>
             <th>
@@ -22,21 +22,8 @@
             </th>
         </tr>
     </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @item.Name
-                </td>
-                <td>
-                    @item.CreatedDate
-                </td>
-                <td>
-                    <a class="btn btn-success" asp-action="Edit" asp-controller="Category" asp-route-id="@item.Id">Edit</a>
-                    <a class="btn btn-danger" asp-action="Delete" asp-controller="Category" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
+    
 </table>
+@section Scripts{
+    <script src="~/js/category.js"></script>
+}
