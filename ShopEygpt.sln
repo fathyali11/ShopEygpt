@@ -5,9 +5,9 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopEgypt.Web", "ShopEgypt.Web\ShopEgypt.Web.csproj", "{0282B8CB-E22F-418D-AB68-FFB9CDA5A83C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.DataAccess", "Web.DataAccess\Web.DataAccess.csproj", "{E0E5B55C-A587-4633-92B5-8B0099A0EB58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.DataAccess", "Web.DataAccess\Web.DataAccess.csproj", "{E0E5B55C-A587-4633-92B5-8B0099A0EB58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Entites", "Web.Entites\Web.Entites.csproj", "{64094FC8-2285-4FB3-A9C5-3246B6654BB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Entites", "Web.Entites\Web.Entites.csproj", "{64094FC8-2285-4FB3-A9C5-3246B6654BB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

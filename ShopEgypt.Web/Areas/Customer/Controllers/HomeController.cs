@@ -1,29 +1,27 @@
+using Microsoft.AspNetCore.Authorization;
+
 namespace ShopEgypt.Web.Areas.Customer.Controllers
 {
-    [Area("Customer")]
+    [Area(SD.CustomerRole)]
+    
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            this._unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var products=_unitOfWork.ProductRepository.GetAll(includeObj:"Category").ToList();
+            return View(products);
         }
-
-        public IActionResult Privacy()
+        public IActionResult Details(int id)
         {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var product=_unitOfWork.ProductRepository.GetBy(x=>x.Id == id,includeObj:"Category");
+            return View(product);
         }
     }
 }

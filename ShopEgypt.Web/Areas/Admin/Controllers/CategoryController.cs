@@ -2,7 +2,7 @@
 
 namespace ShopEgypt.Web.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(SD.AdminRole)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

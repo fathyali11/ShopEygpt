@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    ViewData["Head"] = "Users Management";
+    ViewData["PageTitle"] = "Users";
+}
+<div>
+    <a href="/Identity/Account/Register" class="btn btn-success">Create</a>
+</div>
+<table id="MyTable" class="table">
+    <thead>
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                Role
+            </td>
+            <td>
+                Status
+            </td>
+        </tr>
+    </thead>
+    
+</table>
+@section Scripts{
+    <script src="~/js/users/usersdatatable.js"></script>
+}

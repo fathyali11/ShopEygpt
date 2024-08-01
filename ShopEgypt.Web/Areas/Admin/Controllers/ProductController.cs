@@ -5,7 +5,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ShopEgypt.Web.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area(SD.AdminRole)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
