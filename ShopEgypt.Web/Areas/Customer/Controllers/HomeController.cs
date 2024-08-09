@@ -16,7 +16,12 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            var products=_unitOfWork.ProductRepository.GetAll(includeObj:"Category").ToList();
+            var categores=_unitOfWork.CategoryRepository.GetAll().ToList();
+            return View(categores);
+        }
+        public IActionResult DiplayProducts(int categoryId)
+        {
+            var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToList();
             return View(products);
         }
         [Authorize]
