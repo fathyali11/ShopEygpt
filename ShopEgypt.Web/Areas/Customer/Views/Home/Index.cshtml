@@ -1,25 +1,29 @@
 ﻿@model IEnumerable<Product>
-
-<div class="col-lg-9">
-    <div class="row g-4 justify-content-center">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-6 col-lg-6 col-xl-4">
-                <div class="rounded position-relative fruite-item">
-                    <div class="fruite-img">
-                        <img src="/Images/Products/@item.ImageName" class="img-fluid w-100 rounded-top" alt="">
-                    </div>
-                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">@item.Category.Name</div>
-                    <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                        <h4>@item.Name</h4>
-                        <p>@item.Description</p>
-                        <div class="d-flex justify-content-between flex-lg-wrap">
-                            <p class="text-dark fs-5 fw-bold mb-0">$ @item.Price</p>
-                            <a class="btn-success" asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">Details</a>
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            @foreach(var item in Model)
+            {
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="/Images/Products/@item.ImageName" alt="@item.Name" />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">@item.Name</h5>
+                                <!-- Product price-->
+                                $@item.Price
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" asp-action="Details" asp-area="Customer" asp-controller="Home" asp-route-id="@item.Id">View Details</a></div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
-</div>
+</section>

@@ -52,6 +52,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.CategoryRepository.Update(category);
+                _unitOfWork.Save();
                 TempData["Success"] = "Data Updated Successfly";
                 return RedirectToAction("Index");
             }

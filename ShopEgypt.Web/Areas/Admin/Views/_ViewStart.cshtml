@@ -1,3 +1,11 @@
 ﻿@{
-    Layout = "_MyLayout";
+    if(User.IsInRole(SD.AdminRole))
+    {
+        Layout = "~/Views/Shared/_MyLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_HomeLayout.cshtml";
+    }
+
 }

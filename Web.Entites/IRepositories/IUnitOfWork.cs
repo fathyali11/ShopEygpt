@@ -10,6 +10,10 @@ namespace Web.Entites.IRepositories
     {
         ICategoryRepository CategoryRepository { get; }
         IProductRepository ProductRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
+        IOrderHeaderReposittory OrderHeaderReposittory { get; }
+        IOrderDetailReposittory OrderDetailReposittory { get; }
+        IApplicaionUserRepository ApplicaionUserRepository { get; }
         int Save();
     }
 }

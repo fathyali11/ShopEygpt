@@ -12,7 +12,12 @@ function loadData() {
         },
         "columns": [
             { "data": "name" },
-            { "data": "description" },
+            {
+                "data": "description",
+                "render": function (data) {
+                    return '<div class="description-cell">' + data + '</div>';
+                }
+            },
             { "data": "price" },
             { "data": "category.name" },
             {
@@ -24,9 +29,12 @@ function loadData() {
             {
                 "data": "id",
                 "render": function (data) {
-                    return '<a href="/Admin/Product/Edit/' + data + '" class="btn btn-success">Edit</a> ' +
-                        '<a href="javascript:void(0);" onclick="DeleteItem(\'/Admin/Product/Delete/' + data + '\')" class="btn btn-danger">Delete</a>';
+                    return '<div class="btn-group">' +
+                        '<a href="/Admin/Product/Edit/' + data + '" class="btn btn-success">Edit</a> ' +
+                        '<a href="javascript:void(0);" onclick="DeleteItem(\'/Admin/Product/Delete/' + data + '\')" class="btn btn-danger">Delete</a>' +
+                        '</div>';
                 }
+
             }
         ]
     });

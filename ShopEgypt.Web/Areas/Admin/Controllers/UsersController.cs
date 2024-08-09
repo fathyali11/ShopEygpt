@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace ShopEgypt.Web.Areas.Admin.Controllers
@@ -25,12 +24,12 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             return Json(new {data=users});
         }
         [HttpGet]
-        public IActionResult LockOrOpen(string userId)
+        public IActionResult LockOrOpen(string id)
         {
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(id))
                 return NotFound();
 
-            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == userId);
+            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == id);
             if (user == null)
                 return NotFound();
 
@@ -45,7 +44,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), "Users", new {area=SD.AdminRole});
         }
 
     }

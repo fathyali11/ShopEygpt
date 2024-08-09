@@ -26,7 +26,6 @@ namespace Web.DataAccess.Repositories
             if (category != null)
             {
                 category.Name = model.Name;
-                category.CreatedDate = DateTime.Now;
             }
         }
     }

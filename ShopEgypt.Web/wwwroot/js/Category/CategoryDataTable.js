@@ -10,7 +10,13 @@ function loadData() {
         },
         "columns": [
             { "data": "name" },
-            { "data": "createdDate" },
+            {
+                "data": "createdDate",
+                "render": function (data) {
+                    var date = new Date(data);
+                    return date.toLocaleDateString('en-US');// Example: Aug 9, 2024 3:45 PM
+                }
+            },
             {
                 "data": "id",
                 "render": function (data) {

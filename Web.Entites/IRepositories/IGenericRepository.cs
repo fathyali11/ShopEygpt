@@ -9,5 +9,6 @@ namespace Web.Entites.IRepositories
         T GetBy(Expression<Func<T, bool>>? filter = null, string? includeObj = null);
         void Add(T entity);
         void Remove(T entity);
+        void RemoveRange(IEnumerable<T> entities);
     }
 }
