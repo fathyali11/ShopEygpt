@@ -21,6 +21,8 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         }
         public IActionResult DiplayProducts(int categoryId)
         {
+            int pageNumber=1, pageSize=8;
+
             var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToList();
             return View(products);
         }

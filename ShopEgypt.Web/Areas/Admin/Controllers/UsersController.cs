@@ -14,7 +14,10 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var claims = (ClaimsIdentity)User.Identity;
+            var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var users = _context.ApplicationUsers.Where(x => x.Id != userId);
+            return View(users);
         }
         public IActionResult GetData()
         {
@@ -24,12 +27,12 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             return Json(new {data=users});
         }
         [HttpGet]
-        public IActionResult LockOrOpen(string id)
+        public IActionResult LockOrOpen(string userId)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(userId))
                 return NotFound();
 
-            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == id);
+            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == userId);
             if (user == null)
                 return NotFound();
 

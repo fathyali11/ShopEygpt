@@ -18,12 +18,6 @@
                                 <p class="mb-1 fs-5">Shopping Cart</p>
                                 <p class="mb-0 text-muted">You have <strong>@Model.ShoppingCarts.Count()</strong> items in your cart</p>
                             </div>
-                            <div>
-                                <p class="mb-0">
-                                    <span class="text-muted">Sort by:</span>
-                                    <a href="#!" class="text-body text-decoration-none">Price <i class="fas fa-angle-down mt-1"></i></a>
-                                </p>
-                            </div>
                         </div>
 
                         @foreach (var item in Model.ShoppingCarts)
@@ -34,11 +28,14 @@
                                         <div class="d-flex flex-row align-items-center">
                                             <div class="me-3">
                                                 <img src="/Images/Products/@item.Product.ImageName" alt="@item.Product.Name"
-                                                     class="img-fluid rounded-3" style="width: 65px; height: auto;">
+                                                     class="img-fluid rounded-3" style="width: 1000px; height: auto;">
                                             </div>
                                             <div class="ms-3">
                                                 <h5 class="mb-1">@item.Product.Name</h5>
-                                                <p class="small mb-0 text-muted">@item.Product.Description</p>
+                                                <p class="small mb-0 text-muted">@Html.Raw(item.Product.Description)</p>
+                                                <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.ShoppingCartId" class="text-danger ms-3">
+                                                <i class="fas fa-trash-alt"></i>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="d-flex flex-row align-items-center">
@@ -46,20 +43,18 @@
                                                 <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Minus" asp-route-id="@item.ShoppingCartId" class="text-dark me-2">
                                                     <i class="bi bi-dash-circle"></i>
                                                 </a>
-                                                <input asp-for="@item.Count" class="form-control " style="width: 50px;" />
+                                                <div class="text-center" style="width: 50px;">
+                                                    <h5 class="fw-normal mb-0">@item.Count</h5>
+                                                </div>
                                                 <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Plus" asp-route-id="@item.ShoppingCartId" class="text-dark ms-2">
                                                     <i class="bi bi-plus-circle"></i>
                                                 </a>
-                                                <div>
-                                                    <a asp-action="Delete" asp-controller="Home" asp-area="Customer" asp-route-id="@item.ShoppingCartId" class="text-danger ms-3">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
-                                                </div>
+                                                
                                             </div>
                                             <div style="width: 100px;" class="text-end">
                                                 <h5 class="mb-0">@String.Format("{0:C}", item.Product.Price)</h5>
                                             </div>
-                                            <a href="#!" class="text-danger ms-3"><i class="fas fa-trash-alt"></i></a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -71,10 +66,13 @@
                                 <h5>Total Price: $@String.Format("{0:C}", Model.OrderHeader.TotalPrice)</h5>
                             </div>
                         </div>
-
-                        <div class="text-end">
-                            <a class="btn btn-success" asp-area="Customer" asp-action="Summary">Proceed to Summary</a>
-                        </div>
+                        @if(Model.ShoppingCarts.Count()!=0)
+                        {
+                            <div class="text-end">
+                                <a class="btn btn-success" asp-area="Customer" asp-action="Summary">Proceed to Summary</a>
+                            </div>
+                        }
+                       
                     </div>
                 </div>
             </div>

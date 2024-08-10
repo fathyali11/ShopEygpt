@@ -79,6 +79,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ShoppingCart item)
         {
+            item.Product=_unitOfWork.ProductRepository.GetBy(x=>x.Id==item.ProductId);
             var claims = (ClaimsIdentity)User.Identity;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
             var cartFromDb=_unitOfWork.ShoppingCartRepository.GetBy(x=>x.ProductId==item.ProductId&&x.UserId==userID);
