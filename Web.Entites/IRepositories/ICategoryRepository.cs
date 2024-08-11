@@ -8,7 +8,9 @@ using Web.Entites.Models;
 
 namespace Web.Entites.IRepositories
 {
-    public interface IApplicaionUserRepository : IGenericRepository<ApplicationUser>
+    public interface ICategoryRepository:IGenericRepository<Category>
     {
+        void Update(Category model);
+        IEnumerable<SelectListItem> CategorySelectList();
     }
 }

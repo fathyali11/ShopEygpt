@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+
 using System.Security.Claims;
+using Web.Entites.Models;
+using X.PagedList;
+using X.PagedList.Extensions;
+
 
 namespace ShopEgypt.Web.Areas.Customer.Controllers
 {
@@ -16,14 +21,15 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            var categores=_unitOfWork.CategoryRepository.GetAll().ToList();
-            return View(categores);
+            var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
+            return View(products);
         }
-        public IActionResult DiplayProducts(int categoryId)
+        public IActionResult DiplayProducts(int categoryId,int ?page)
         {
-            int pageNumber=1, pageSize=8;
+            int pageSize = 8;
+            int pageNumber = page ?? 1;
 
-            var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToList();
+            var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToPagedList(pageNumber,pageSize);
             return View(products);
         }
         [Authorize]

@@ -11,5 +11,6 @@ namespace Web.DataAccess.Utilities
         public const string AdminRole = "Admin";
         public const string CustomerRole = "Customer";
         public const string ImagePath = "Images/Products";
+        public const string SessionKey = "ShoppingCartNumber";
     }
 }

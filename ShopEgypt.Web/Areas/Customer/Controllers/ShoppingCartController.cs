@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Stripe;
@@ -86,12 +87,14 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             if(cartFromDb==null)
             {
                 _unitOfWork.ShoppingCartRepository.Add(item);
+                HttpContext.Session.SetInt32(SD.SessionKey, 1); 
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index), "Home", new { area = SD.CustomerRole });
             }
             else
             {
                 cartFromDb.Count=item.Count;
+
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index), "Home", new { area = SD.CustomerRole });
             }
