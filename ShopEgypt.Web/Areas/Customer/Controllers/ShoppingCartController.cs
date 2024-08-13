@@ -36,7 +36,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         public IActionResult Plus(int id)
         {
             var claims = (ClaimsIdentity)User.Identity;
-            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var cartFromDB=_unitOfWork.ShoppingCartRepository.GetBy(x=>x.ShoppingCartId == id);
             if(cartFromDB != null)
             {
@@ -50,7 +50,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         public IActionResult Minus(int id)
         {
             var claims = (ClaimsIdentity)User.Identity;
-            var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var cartFromDB = _unitOfWork.ShoppingCartRepository.GetBy(x => x.ShoppingCartId == id);
             
             if (cartFromDB != null)
@@ -80,6 +80,8 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ShoppingCart item)
         {
+            if(item.Count==0)
+                return RedirectToAction(nameof(Index), "Home", new { area = SD.CustomerRole });
             item.Product=_unitOfWork.ProductRepository.GetBy(x=>x.Id==item.ProductId);
             var claims = (ClaimsIdentity)User.Identity;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;

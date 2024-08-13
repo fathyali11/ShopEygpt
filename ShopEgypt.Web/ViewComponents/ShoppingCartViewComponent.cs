@@ -14,7 +14,7 @@ namespace ShopEgypt.Web.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var claims=(ClaimsIdentity)User.Identity;
-            var userId=claims.FindFirst(ClaimTypes.NameIdentifier).Value;
+            string? userId=claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if(userId is not null)
             {
                 HttpContext.Session.SetInt32(SD.SessionKey, _unitOfWork.ShoppingCartRepository.GetAll(x => x.UserId == userId).Count());

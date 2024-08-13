@@ -1,133 +1,77 @@
 ﻿@model ShoppingCartVM
 @using Microsoft.Extensions.Options
 @inject IOptions<Web.DataAccess.Utilities.StripeData> Stripe
-<section class="h-100 h-custom" style="background-color: #eee;">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body p-4">
-                        <form method="post">
-                            <div class="row">
 
-                                <div class="col-lg-7">
-                                    <h5 class="mb-3">
-                                        <a asp-action="Index" asp-controller="Home" asp-area="Customer" class="text-body text-decoration-none">
-                                            <i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping
-                                        </a>
-                                    </h5>
-                                    <hr>
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div>
-                                            <p class="mb-1 h6">Shopping cart</p>
-                                            <p class="mb-0 text-muted">You have @Model.ShoppingCarts.Count() items in your cart</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-20">
-                                        @foreach (var item in Model.ShoppingCarts)
-                                        {
-                                            <div class="card mb-3 shadow-sm">
-                                                <div class="card-body">
-                                                    <div class="d-flex justify-content-between">
-                                                        <div class="d-flex flex-row align-items-center">
-                                                            <div>
-                                                                <img src="/Images/Products/@item.Product.ImageName"
-                                                                     class="img-fluid rounded-3" alt="Shopping item" style="width: 2000px;">
-                                                            </div>
-                                                            <div class="ms-3">
-                                                                <h5 class="mb-1">@item.Product.Name</h5>
-                                                                <p class="small text-muted mb-0">@Html.Raw(item.Product.Description)</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-flex flex-row align-items-center">
-                                                            <div class="text-center" style="width: 50px;">
-                                                                <h5 class="fw-normal mb-0">@item.Count</h5>
-                                                            </div>
-                                                            <div class="text-end" style="width: 100px;">
-                                                                <h5 class="mb-0">@String.Format("{0:C}", item.Product.Price)</h5>
-                                                            </div>
-                                                        </div>
+ <form method="post">
+<div class="section">
+	<!-- container -->
+	<div class="container">
+		<!-- row -->
+		<div class="row">
 
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
+			<div class="col-md-7">
+				<!-- Billing Details -->
+				<div class="billing-details">
+					<div class="section-title">
+						<h3 class="title">Billing address</h3>
+					</div>
+					<div class="form-group">
+						<input asp-for="OrderHeader.Name" class="input"  placeholder="First Name">
+					</div>
+					<div class="form-group">
+						<input asp-for="OrderHeader.Email" class="input"  placeholder="Email">
+					</div>
+					
+					<div class="form-group">
+						<input asp-for="OrderHeader.City" class="input" placeholder="City">
+					</div>
+					
+					<div class="form-group">
+						<input asp-for="OrderHeader.PhoneNumber" class="input"  placeholder="Telephone">
+					</div>
+				
+				</div>
+				
+				
+			</div>
 
-                                <div class="col-lg-5">
+			<!-- Order Details -->
+			<div class="col-md-5 order-details">
+				<div class="section-title text-center">
+					<h3 class="title">Your Order</h3>
+				</div>
+				<div class="order-summary">
+					<div class="order-col">
+						<div><strong>PRODUCT</strong></div>
+						<div><strong>TOTAL</strong></div>
+					</div>
 
-                                <div class="card bg-primary text-white rounded-3">
-                                        <div class="card-body">
-
-                                            <p class="small mb-2">Card type</p>
-                                            <a href="#!" type="submit" class="text-white">
-                                                <i class="fab fa-cc-mastercard fa-2x me-2"></i>
-                                            </a>
-                                            <a href="#!" type="submit" class="text-white">
-                                                <i class="fab fa-cc-visa fa-2x me-2"></i>
-                                            </a>
-                                            <a href="#!" type="submit" class="text-white">
-                                                <i class="fab fa-cc-amex fa-2x me-2"></i>
-                                            </a>
-                                            <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-paypal fa-2x"></i></a>
-
-                                            <div data-mdb-input-init class="form-outline form-white mb-4">
-                                                <input asp-for="OrderHeader.Name" class="form-control form-control-lg" siez="17"
-                                                       placeholder="Cardholder's Name" />
-                                                <label class="form-label" for="typeName">Name</label>
-                                            </div>
-
-                                            <div data-mdb-input-init class="form-outline form-white mb-4">
-                                                <input asp-for="OrderHeader.PhoneNumber" class="form-control form-control-lg" siez="17"
-                                                       minlength="11" maxlength="11" />
-                                                <label class="form-label" for="typeText">Phone Number</label>
-                                            </div>
-
-                                            <div class="row mb-4">
-                                                <div class="col-md-6">
-                                                    <div data-mdb-input-init class="form-outline form-white">
-                                                        <input asp-for="OrderHeader.Email" class="form-control form-control-lg"
-                                                               placeholder="..@@gmail.com" p" minlength="7" />
-                                                        <label class="form-label" for="typeExp">Email</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div data-mdb-input-init class="form-outline form-white">
-                                                        <input asp-for="OrderHeader.City" class="form-control form-control-lg"
-                                                               placeholder="City" />
-                                                        <label class="form-label" for="typeText">City</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr class="my-4">
-
-                                            <div class="d-flex justify-content-between mb-4">
-                                                <p class="mb-2">Total(s)</p>
-                                                <p class="mb-2">@(@String.Format("{0:C}", Model.OrderHeader.TotalPrice))</p>
-                                            </div>
-
-                                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-block btn-lg">
-                                                <div class="d-flex justify-content-between">
-                                                    <span@(@String.Format("{0:C}", Model.OrderHeader.TotalPrice))</span>
-                                                <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                                </div>
-                                            </button>
-
-                                        </div>
-                                    </div>
-                                </div>
-
+					@foreach(var item in Model.ShoppingCarts)
+                    {
+                        <div class="order-products">
+                            <div class="order-col">
+                                <div>@item.Count x @item.Product.Name</div>
+                                <div>$@item.Product.Price</div>
                             </div>
-                        </form>
-                        
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-@section Scripts{
-    <link href="~/css/shoppingcart/getsummary.css" rel="stylesheet" />
-}
+                        </div>
+                    }
+                    <div class="order-col">
+						<div>Shiping</div>
+						<div><strong>FREE</strong></div>
+					</div>
+					<div class="order-col">
+						<div><strong>TOTAL</strong></div>
+						<div><strong class="order-total">$@Model.OrderHeader.TotalPrice</strong></div>
+					</div>
+				</div>
+				
+				
+				<button type="submit" class="primary-btn order-submit">Place order</button>
+			</div>
+			<!-- /Order Details -->
+		</div>
+		<!-- /row -->
+	</div>
+	<!-- /container -->
+</div>
+</form> 

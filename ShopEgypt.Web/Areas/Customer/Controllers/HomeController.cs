@@ -32,6 +32,11 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToPagedList(pageNumber,pageSize);
             return View(products);
         }
+        public IActionResult DisplayCategoies()
+        {
+            var categories = _unitOfWork.CategoryRepository.GetAll();
+            return View(categories);
+        }
         [Authorize]
         public IActionResult Details(int id)
         {

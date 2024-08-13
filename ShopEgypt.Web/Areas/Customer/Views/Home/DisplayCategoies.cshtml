@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Category>
+
+<div class="container mt-5">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img class="card-img-top" src="/Home/img/product01.png" alt="@item.Name">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@item.Name</h5>
+                        <a asp-area="Customer" asp-controller="Home" asp-action="DiplayProducts" asp-route-categoryId="@item.Id" class="btn btn-primary">View Products</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+        <div class="text-center">
+            <a class="btn btn-outline-success mt-auto" asp-action="Index" asp-area="Customer" asp-controller="Home">Back To Home</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <link href="~/css/categoies.css" rel="stylesheet" />
+}
