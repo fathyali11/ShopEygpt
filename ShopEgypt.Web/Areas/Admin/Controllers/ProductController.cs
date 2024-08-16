@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Web.Entites.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -6,6 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace ShopEgypt.Web.Areas.Admin.Controllers
 {
     [Area(SD.AdminRole)]
+    [Authorize(Roles = SD.AdminRole)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
