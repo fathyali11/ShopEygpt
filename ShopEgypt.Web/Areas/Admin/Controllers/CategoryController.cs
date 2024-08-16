@@ -13,7 +13,8 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
+            return View(categories);
         }
         public IActionResult GetData()
         {
@@ -27,11 +28,12 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public IActionResult Create(Category category,IFormFile imageCover)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.CategoryRepository.Add(category);
+                category.ImageCover = imageCover;
+                _unitOfWork.CategoryRepository.AddWithImage(category);
                 _unitOfWork.Save();
                 TempData["Success"] = "Data Created Successfly";
                 return RedirectToAction("Index");
@@ -47,10 +49,12 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category)
+        public IActionResult Edit(Category category,IFormFile ?imageCover)
         {
             if (ModelState.IsValid)
             {
+                if(imageCover is not null) 
+                    category.ImageCover=imageCover;
                 _unitOfWork.CategoryRepository.Update(category);
                 _unitOfWork.Save();
                 TempData["Success"] = "Data Updated Successfly";
@@ -67,7 +71,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
                 return NotFound();
             }
             var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
-            _unitOfWork.CategoryRepository.Remove(category);
+            _unitOfWork.CategoryRepository.DeleteWithImage(category);
             var res= _unitOfWork.Save();
             if (res != 0)
             {

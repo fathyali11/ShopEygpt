@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<Category>
+@{
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Category Management";
     ViewData["PageTitle"] = "Categories";
@@ -17,10 +18,29 @@
                 Created Date
             </th>
             <th>
+                Images
+            </th>
+            <th>
                 Actions
             </th>
         </tr>
     </thead>
+    @* <tbody>
+        @foreach(var category in Model)
+        {
+            <tr>
+                <th>@category.Name</th>
+                <th>@category.CreatedDate</th>
+                <th>
+                    <img src="/img/avatar3.png" alt="@category.Name" />
+                </th>
+                <th>
+                    <a class="btn btn-outline-success" asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                    <a class="btn btn-outline-danger" asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
+                </th>
+            </tr>
+        }
+    </tbody> *@
 
 </table>
 @section Scripts {

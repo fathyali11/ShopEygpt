@@ -10,6 +10,8 @@ namespace Web.Entites.IRepositories
 {
     public interface ICategoryRepository:IGenericRepository<Category>
     {
+        void AddWithImage(Category category);
+        void DeleteWithImage(Category category);
         void Update(Category model);
         IEnumerable<SelectListItem> CategorySelectList();
     }

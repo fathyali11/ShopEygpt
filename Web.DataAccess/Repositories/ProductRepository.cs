@@ -20,7 +20,7 @@ namespace Web.DataAccess.Repositories
         public void DeleteWithImage(Product product)
         {
 
-            var imagePath = Path.Combine("wwwroot", SD.ImagePath, product.ImageName);
+            var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, product.ImageName);
             if(System.IO.File.Exists(imagePath))
                 System.IO.File.Delete(imagePath);
             Remove(product);
@@ -35,7 +35,7 @@ namespace Web.DataAccess.Repositories
             if (HasNewImage)
             {
                 productDB.ImageName=SaveImage(imageFile);
-                var imagePath=Path.Combine("wwwroot",SD.ImagePath,imageOldName);
+                var imagePath=Path.Combine("wwwroot",SD.ImagePathProducts,imageOldName);
                 if(System.IO.File.Exists(imagePath))
                 {
                     System.IO.File.Delete(imagePath);
@@ -49,7 +49,7 @@ namespace Web.DataAccess.Repositories
         private string SaveImage(IFormFile cover)
         {
                 var coverName = $"{Guid.NewGuid()}{Path.GetExtension(cover.FileName)}";
-                var imagesPath = Path.Combine("wwwroot", SD.ImagePath);
+                var imagesPath = Path.Combine("wwwroot", SD.ImagePathProducts);
                 var path = Path.Combine(imagesPath, coverName);
 
                 if (!Directory.Exists(imagesPath))

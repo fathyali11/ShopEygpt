@@ -53,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\Images\Categories\" />
     <Folder Include="wwwroot\Images\Products\" />
   </ItemGroup>
 

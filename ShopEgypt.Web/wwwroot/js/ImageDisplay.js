@@ -1,6 +1,6 @@
 ﻿// imagePreview.js
 $(document).ready(function () {
-    $('#imageFile').change(function () {
+    $('#imageFile').Onchange(function () {
         var file = this.files[0];
         var reader = new FileReader();
 

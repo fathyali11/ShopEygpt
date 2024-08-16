@@ -11,12 +11,15 @@ function loadData() {
         "columns": [
             { "data": "name" },
             {
-                "data": "createdDate",
+                "data": "createdDate"
+            },
+            {
+                "data": "imageName",
                 "render": function (data) {
-                    var date = new Date(data);
-                    return date.toLocaleDateString('en-US');// Example: Aug 9, 2024 3:45 PM
+                    return '<img src="/Images/Categories/' + data + '" alt="Category Image" style="max-width:150px;" />';
                 }
             },
+
             {
                 "data": "id",
                 "render": function (data) {
