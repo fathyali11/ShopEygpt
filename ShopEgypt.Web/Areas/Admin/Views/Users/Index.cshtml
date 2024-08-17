@@ -19,6 +19,9 @@
             <td>
                 Status
             </td>
+            <td>
+                Details
+            </td>
         </tr>
     </thead>
     <tbody>
@@ -40,6 +43,9 @@
                     {
                         <a class="btn btn-danger" asp-area="Admin" asp-controller="Users" asp-action="LockOrOpen" asp-route-userId="@item.Id"><i class="bi bi-lock-fill"></i></a>
                     }
+                </td>
+                <td>
+                    <a class="btn btn-success" asp-area="Admin" asp-controller="Users" asp-action="Details" asp-route-userId="@item.Id">more details</a>
                 </td>
             </tr>
         }
