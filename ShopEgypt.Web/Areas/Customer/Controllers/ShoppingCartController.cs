@@ -82,6 +82,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         {
             if(item.Count==0)
                 return RedirectToAction(nameof(Index), "Home", new { area = SD.CustomerRole });
+
             item.Product=_unitOfWork.ProductRepository.GetBy(x=>x.Id==item.ProductId);
             var claims = (ClaimsIdentity)User.Identity;
             var userID = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -89,7 +90,6 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             if(cartFromDb==null)
             {
                 _unitOfWork.ShoppingCartRepository.Add(item);
-                HttpContext.Session.SetInt32(SD.SessionKey, 1); 
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index), "Home", new { area = SD.CustomerRole });
             }
