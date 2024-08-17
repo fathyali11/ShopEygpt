@@ -1,34 +1,44 @@
 ﻿@model IEnumerable<Product>
-<div class="row">
-    <div id="store" class="col">
-        <div class="row d-flex flex-wrap">
-            @foreach (var item in Model)
-            {
-                <div class="col-md-4 col-xs-6 mb-4">
-                    <div class="product h-100 d-flex flex-column">
-                        <div class="product-img d-flex align-items-center justify-content-center" style="height: 200px; overflow: hidden;">
-                            <img src="/Images/Products/@item.ImageName" alt="@item.Name" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                            <div class="product-label">
-                                <span class="sale">-30%</span>
-                                <span class="new">NEW</span>
-                            </div>
-                        </div>
-                        <div class="product-body flex-grow-1">
-                            <p class="product-category">@item.Category.Name</p>
-                            <h3 class="product-name"><a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h3>
-                            <h4 class="product-price">$@item.Price <del class="product-old-price">$@(item.Price - (item.Price * (decimal).3))</del></h4>
-                        </div>
-                        <div class="add-to-cart mt-auto">
-                            <a class="text-danger" asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        </div>
-                    </div>
-                </div>
-            }
+
+<div class="container">
+    <!-- Centered Search Bar -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <div class="header-search text-center">
+                <form asp-action="Index" asp-controller="Home" asp-area="Customer" method="get" class="form-inline">
+                    <input type="text" name="searchItem" class="input" placeholder="Search here" value="@ViewBag.CurrentFilter">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
         </div>
     </div>
+
+    <!-- Products -->
+    <div class="row d-flex flex-wrap">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-xs-6 mb-4">
+                <div class="product h-100 d-flex flex-column">
+                    <div class="product-img d-flex align-items-center justify-content-center" style="height: 200px; overflow: hidden;">
+                        <img src="/Images/Products/@item.ImageName" alt="@item.Name" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                        <div class="product-label">
+                            <span class="sale">-30%</span>
+                            <span class="new">NEW</span>
+                        </div>
+                    </div>
+                    <div class="product-body flex-grow-1">
+                        <p class="product-category">@item.Category.Name</p>
+                        <h3 class="product-name"><a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h3>
+                        <h4 class="product-price">$@item.Price <del class="product-old-price">$@(item.Price - (item.Price * (decimal).3))</del></h4>
+                    </div>
+                    <div class="add-to-cart mt-auto">
+                        <a class="text-danger" asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
-
-
-
-
-
+@section Scripts{
+    <link href="~/css/home/index.css" rel="stylesheet" />
+}
