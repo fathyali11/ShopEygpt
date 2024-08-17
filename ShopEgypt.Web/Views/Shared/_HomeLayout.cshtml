@@ -39,6 +39,7 @@
 	  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+
 </head>
 <body>
 	<!-- HEADER -->
@@ -72,13 +73,16 @@
 					<div class="col-md-3 clearfix pull-right">
 						<div class="header-ctn">
 							<!-- Cart -->
-							<div class="dropdown">
-								<a asp-action="Index" asp-area="Customer" asp-controller="ShoppingCart" >
-									<i class="fa fa-shopping-cart"></i>
-									<span>Your Cart</span>
-									<div class="qty">@await Component.InvokeAsync("ShoppingCart")</div>
+							<div class="dropdown position-relative">
+								<a asp-action="Index" asp-area="Customer" asp-controller="ShoppingCart" class="d-flex align-items-center text-decoration-none">
+									<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+										@await Component.InvokeAsync("ShoppingCart")
+										
+									</span>
+									<i class="fa fa-shopping-cart fs-3"></i>
+									<span class="ms-2">Your Cart</span>
+									
 								</a>
-								
 							</div>
 							
 						</div>
