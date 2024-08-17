@@ -31,21 +31,13 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
 			var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
 			if (!string.IsNullOrEmpty(searchItem))
 			{
-				products = _unitOfWork.ProductRepository.GetAll(x => x.Name == searchItem || x.Category.Name == searchItem, includeObj: "Category");
+				products = _unitOfWork.ProductRepository.GetAll(x => x.Name.ToLower() == searchItem.ToLower() || x.Category.Name == searchItem, includeObj: "Category");
 				ViewBag.CurrentFilter = searchItem;
 			}
 			
 
 			return View(products);
 		}
-		public IActionResult DiplayProducts(int categoryId,int ?page)
-        {
-            int pageSize = 8;
-            int pageNumber = page ?? 1;
-
-            var products = _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId==categoryId,includeObj: "Category").ToPagedList(pageNumber,pageSize);
-            return View(products);
-        }
         public IActionResult DisplayCategoies()
         {
             var categories = _unitOfWork.CategoryRepository.GetAll();
