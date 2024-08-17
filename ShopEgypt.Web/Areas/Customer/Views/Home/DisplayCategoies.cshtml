@@ -3,6 +3,16 @@
 
 
 <div class="container">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+            <div class="header-search text-center">
+                <form asp-action="DisplayCategoies" asp-controller="Home" asp-area="Customer" method="get" class="form-inline">
+                    <input type="text" name="searchItem" class="input" placeholder="Search here" value="@ViewBag.CurrentFilter">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="row d-flex flex-wrap">
         @foreach (var item in Model)
         {
@@ -28,3 +38,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <link href="~/css/home/index.css" rel="stylesheet" />
+}

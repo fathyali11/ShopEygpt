@@ -18,13 +18,6 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
         {
             this._unitOfWork = unitOfWork;
         }
-
-        //public IActionResult Index()
-        //{
-
-        //    var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
-        //    return View(products);
-        //}
 		public IActionResult Index(string searchItem)
 		{
 
@@ -38,9 +31,24 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
 
 			return View(products);
 		}
-        public IActionResult DisplayCategoies()
+        public IActionResult DiplayProducts(int categoryId)
+        {
+            var products= _unitOfWork.ProductRepository.GetAll(x=>x.CategoryId == categoryId,includeObj:"Category");
+            return View(nameof(Index),products);
+        }
+        public IActionResult NewProducts()
+        {
+            var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category").Take(5);
+            return View(nameof(Index),products);
+        }
+        public IActionResult DisplayCategoies(string searchItem)
         {
             var categories = _unitOfWork.CategoryRepository.GetAll();
+            if(!string.IsNullOrEmpty(searchItem))
+            {
+                categories = _unitOfWork.CategoryRepository.GetAll(x => x.Name.ToLower() == searchItem.ToLower());
+                ViewBag.CurrentFilter = searchItem;
+            }
             return View(categories);
         }
         [Authorize]
