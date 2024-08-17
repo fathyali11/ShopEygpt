@@ -7,23 +7,23 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
     [Authorize(Roles = SD.AdminRole)]
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public UsersController(ApplicationDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
             var claims = (ClaimsIdentity)User.Identity;
             var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var users = _context.ApplicationUsers.Where(x => x.Id != userId);
+            var users = _unitOfWork.ApplicaionUserRepository.GetAll(x => x.Id != userId);
             return View(users);
         }
         public IActionResult GetData()
         {
             var claims = (ClaimsIdentity)User.Identity;
             var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var users = _context.ApplicationUsers.Where(x => x.Id != userId);
+            var users = _unitOfWork.ApplicaionUserRepository.GetAll(x => x.Id != userId);
             return Json(new {data=users});
         }
         [HttpGet]
@@ -32,7 +32,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
             if (string.IsNullOrEmpty(userId))
                 return NotFound();
 
-            var user = _context.ApplicationUsers.FirstOrDefault(x => x.Id == userId);
+            var user = _unitOfWork.ApplicaionUserRepository.GetBy(x => x.Id == userId);
             if (user == null)
                 return NotFound();
 
@@ -45,9 +45,26 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
                 user.LockoutEnd = null;
             }
 
-            _context.SaveChanges();
+            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index), "Users", new {area=SD.AdminRole});
+        }
+        public IActionResult Details(string userId)
+        {
+            var user=_unitOfWork.ApplicaionUserRepository.GetBy(x=>x.Id == userId);
+            if(user == null)
+                return NotFound();
+            return View(user);
+        }
+        public IActionResult Edit(ApplicationUser user)
+        {
+            if(ModelState.IsValid)
+            {
+                _unitOfWork.ApplicaionUserRepository.Update(user);
+                _unitOfWork.Save();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
         }
 
     }
