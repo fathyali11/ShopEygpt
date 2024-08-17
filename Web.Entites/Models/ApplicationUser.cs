@@ -11,7 +11,7 @@ namespace Web.Entites.Models
         public string Name {  get; set; }
         [Required]
         [DataType(DataType.PhoneNumber)]
-        public string PhoneNumber {  get; set; }
+        public string Phone {  get; set; }
         [Required]
         public string City {  get; set; }
         public string Role { get; set; }=string.Empty;
