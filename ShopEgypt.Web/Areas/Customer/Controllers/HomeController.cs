@@ -19,12 +19,26 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             this._unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
-        {
-            var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
-            return View(products);
-        }
-        public IActionResult DiplayProducts(int categoryId,int ?page)
+        //public IActionResult Index()
+        //{
+
+        //    var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
+        //    return View(products);
+        //}
+		public IActionResult Index(string searchItem)
+		{
+
+			var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
+			if (!string.IsNullOrEmpty(searchItem))
+			{
+				products = _unitOfWork.ProductRepository.GetAll(x => x.Name == searchItem || x.Category.Name == searchItem, includeObj: "Category");
+				ViewBag.CurrentFilter = searchItem;
+			}
+			
+
+			return View(products);
+		}
+		public IActionResult DiplayProducts(int categoryId,int ?page)
         {
             int pageSize = 8;
             int pageNumber = page ?? 1;
