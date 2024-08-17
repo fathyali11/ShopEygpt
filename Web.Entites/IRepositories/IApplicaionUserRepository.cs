@@ -10,5 +10,6 @@ namespace Web.Entites.IRepositories
 {
     public interface IApplicaionUserRepository : IGenericRepository<ApplicationUser>
     {
+        void Update(ApplicationUser user);
     }
 }
