@@ -17,12 +17,11 @@
                                 <div class="row d-flex align-items-center">
                                     <div class="col-md-3 col-lg-2">
                                         <img src="/Images/Products/@item.Product.ImageName"
-                                             class="img-fluid rounded-3" alt="Cotton T-shirt" style="max-width: 100%; height: auto;">
+                                             class="img-fluid rounded-3" alt="Product Image" style="max-width: 100%; height: auto;">
                                     </div>
 
                                     <div class="col-md-5 col-lg-4">
                                         <p class="lead fw-normal mb-2">@item.Product.Name</p>
-                                        @* <p class="text-muted mb-2">Size: M | Color: Grey</p> *@
                                     </div>
                                     <div class="col-md-4 col-lg-3 d-flex align-items-center">
                                         <a class="btn btn-light btn-sm px-3 me-2" asp-action="Minus" asp-controller="ShoppingCart" asp-area="Customer" asp-route-id="@item.ShoppingCartId">
@@ -37,21 +36,21 @@
                                             <i class="fas fa-plus"></i>
                                         </a>
                                     </div>
-                                    <div class="col-md-3 col-lg-2  text-end">
-                                        <h5 class="mb-0">$@item.Product.Price</h5>
+                                    <div class="col-md-3 col-lg-2 text-end">
+                                        <h5 class="mb-0 align-middle" style="margin-top: 40px;">$@item.Product.Price</h5>
                                     </div>
-                                    <div class="col-md-1 text-end">
-                                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.ShoppingCartId" class="text-danger">
+                                    <div class="col-md-1 text-end" style="margin-top: 30px;">
+                                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.ShoppingCartId" class="text-danger align-middle">
                                             <i class="fas fa-trash fa-lg"></i>
                                         </a>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                         <br />
                         <br />
                     }
-
 
                     <div class="d-flex justify-content-center align-items-center vh-100">
                         <div class="text-center">
@@ -65,7 +64,6 @@
                             </div>
                         </div>
                     </div>
-
                 }
                 else
                 {
@@ -73,7 +71,6 @@
                         <h1>Shopping Cart is empty</h1>
                     </div>
                 }
-
             </div>
         </div>
     </div>
