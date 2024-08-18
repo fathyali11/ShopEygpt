@@ -40,7 +40,7 @@
 						<div class="row my-1">
 							<div class="col-3">Email</div>
 							<div class="col-9">
-								<input asp-for="OrderHeader.ApplicationUser.Email" readonly type="text" class="form-control" />
+								<input asp-for="OrderHeader.Email" readonly type="text" class="form-control" />
 							</div>
 						</div>
 						<div class="row my-1">
@@ -152,6 +152,10 @@
 						@if (Model.OrderHeader.OrderStatus != MyStatus.StatusCancelled || Model.OrderHeader.OrderStatus != MyStatus.StatusRefunded)
 						{
 							<input type="submit" class="btn btn-danger" asp-action="CancelOrder" value="Cancel Order" />
+						}
+						@if(Model.OrderHeader.OrderStatus==MyStatus.StatusCancelled)
+						{
+							<input type="submit" class="btn btn-success" asp-action="Index" value="Back To Orders" />
 						}
 					</div>
 				</div>

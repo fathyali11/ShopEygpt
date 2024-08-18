@@ -117,7 +117,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             Carts.OrderHeader.TotalPrice=_unitOfWork.ShoppingCartRepository.GetTotalPrice(Carts.ShoppingCarts);
             Carts.OrderHeader.Name=CurrentUser.Name;
             Carts.OrderHeader.Email=CurrentUser.Email;
-            Carts.OrderHeader.PhoneNumber=CurrentUser.PhoneNumber;
+            Carts.OrderHeader.PhoneNumber=CurrentUser.Phone;
             Carts.OrderHeader.City=CurrentUser.City;
 
             return View(Carts);
