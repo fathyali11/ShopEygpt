@@ -16,7 +16,8 @@ function loadData() {
             { "data": "phoneNumber" },
             {
                 "data": "id",
-                "render": function (data) {
+                "render": function (data)
+                {
                     return '<a href="/Admin/Order/Details?OrderId=' + data + '" class="btn btn-success">Details</a>';
                 }
             }

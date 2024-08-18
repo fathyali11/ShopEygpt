@@ -165,7 +165,8 @@ namespace ShopEgypt.Web.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.Name = Input.Name;
                 user.Email = Input.Email;
-                user.PhoneNumber = Input.PhoneNumber;
+                user.Phone = Input.PhoneNumber;
+                user.City = Input.City;
                 user.Role = Input.Role;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
