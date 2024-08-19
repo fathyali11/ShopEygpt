@@ -10,7 +10,8 @@ namespace Web.Entites.Models
         [MinLength(2)]
         public string Name {  get; set; }
         [Required]
-        [DataType(DataType.PhoneNumber)]
+        [Phone]
+        [MaxLength(11),MinLength(11)]
         public string Phone {  get; set; }
         [Required]
         public string City {  get; set; }
