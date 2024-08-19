@@ -5,8 +5,6 @@
     Layout = "~/Views/Shared/_RegisterView.cshtml";
 }
 
-
-
 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
     <div class="input-box">
         <input asp-for="Input.Name" type="text" placeholder="Enter your name" required>
@@ -14,7 +12,7 @@
     </div>
     <div class="input-box">
         <input asp-for="Input.Email" type="text" placeholder="Enter your email" required>
-        <span asp-validation-for="Input.Name"></span>
+        <span asp-validation-for="Input.Email"></span>
     </div>
     <div class="input-box">
         <input asp-for="Input.PhoneNumber" type="text" placeholder="Enter your PhoneNumber" required>
@@ -26,18 +24,18 @@
     </div>
     <div class="input-box">
         <input asp-for="Input.Password" type="password" placeholder="Create password" required>
-        <span asp-validation-for="Input.Name"></span>
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
     <div class="input-box">
         <input asp-for="Input.ConfirmPassword" type="password" placeholder="Confirm password" required>
-        <span asp-validation-for="Input.Name"></span>
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
     </div>
     @if (User.IsInRole(SD.AdminRole))
     {
+        <br />
+        <br />
         <div class="input-box">
-            <label asp-for="Input.Role">Role</label>
-            <br />
-            <select asp-for="Input.Role" class="form-control" asp-items="@Model.Input.RolesSelectList">
+            <select asp-for="Input.Role" asp-items="@Model.Input.RolesSelectList" required>
                 <option value="">Select Role</option>
             </select>
             <span asp-validation-for="Input.Role" class="text-danger"></span>
@@ -54,3 +52,19 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    .input-box {
+        margin-bottom: 20px; /* Adjust spacing as needed */
+    }
+
+    .input-box span {
+        display: block; 
+        margin-top: 5px; /* To create space between input and validation message */
+        color: #ff0000; /* Error message color */
+    }
+
+    .input-box.button {
+        margin-top: 30px; /* Ensure there's space before the button */
+    }
+</style>

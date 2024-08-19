@@ -91,7 +91,7 @@ namespace ShopEgypt.Web.Areas.Identity.Pages.Account
             public string PhoneNumber { get; set; }
             [Required]
             public string City { get; set; }
-            public string Role { get; set; } = SD.CustomerRole;
+            public string Role { get; set; }
             public IEnumerable<SelectListItem> RolesSelectList {  get; set; }
             [Required]
             [EmailAddress]
