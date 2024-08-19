@@ -88,14 +88,15 @@ namespace ShopEgypt.Web.Areas.Identity.Pages.Account
             public string Name { get; set; }
             [Required]
             [DataType(DataType.PhoneNumber)]
+            [Display(Name = "Phone")]
+            [Length(11,11,ErrorMessage ="Phone must be 11 number")]
             public string PhoneNumber { get; set; }
             [Required]
             public string City { get; set; }
             public string Role { get; set; }
             public IEnumerable<SelectListItem> RolesSelectList {  get; set; }
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Email is required")]
+            [EmailAddress(ErrorMessage = "It must contain @")]
             public string Email { get; set; }
 
             /// <summary>
