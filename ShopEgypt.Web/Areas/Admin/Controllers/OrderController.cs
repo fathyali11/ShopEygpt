@@ -103,5 +103,47 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
 			_unitOfWork.Save();
 			return RedirectToAction(nameof(Details), new { OrderId = OrderFromDB.Id });
 		}
-	}
+        [HttpGet]
+        public IActionResult GetProcessedOrder()
+        {
+            var ProcessedOrders=_unitOfWork
+                .OrderHeaderReposittory
+                .GetAll(x=>x.OrderStatus==MyStatus.StatusInProcess);
+            return Json(new {data=ProcessedOrders});
+        }
+        [HttpGet]
+        public IActionResult ProcessedOrder()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetShippededOrder()
+        {
+            var ShippededOrders = _unitOfWork
+                .OrderHeaderReposittory
+                .GetAll(x => x.OrderStatus == MyStatus.StatusShipped);
+            return Json(new { data = ShippededOrders });
+        }
+        [HttpGet]
+        public IActionResult ShippededOrder()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetCancelledOrders()
+        {
+            var ProcessedOrders = _unitOfWork
+                .OrderHeaderReposittory
+                .GetAll(x => x.OrderStatus == MyStatus.StatusCancelled);
+            return Json(new { data = ProcessedOrders });
+        }
+        [HttpGet]
+        public IActionResult CancelledOrders()
+        {
+            return View();
+        }
+
+    }
 }
