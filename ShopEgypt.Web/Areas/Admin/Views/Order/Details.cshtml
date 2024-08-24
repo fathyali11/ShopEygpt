@@ -153,10 +153,8 @@
 						{
 							<input type="submit" class="btn btn-danger" asp-action="CancelOrder" value="Cancel Order" />
 						}
-						@if(Model.OrderHeader.OrderStatus==MyStatus.StatusCancelled)
-						{
-							<input type="submit" class="btn btn-success" asp-action="Index" value="Back To Orders" />
-						}
+					    <input type="submit" class="btn btn-success" asp-action="Index" value="Back To Orders" />
+						
 					</div>
 				</div>
 			</div>
