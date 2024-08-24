@@ -21,8 +21,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
 
 
-
-
 </head>
 <body class="hold-transition sidebar-mini">
     <partial name="_Notefications" />
@@ -48,6 +46,77 @@
                 </ul>
             </div>
         </nav>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-2 col-4">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                @await Component.InvokeAsync("Users")
+                                <p>All Users</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-4">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                @await Component.InvokeAsync("Order")
+                                <p>All Orders</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                            </div>
+                            <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-4">
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                @await Component.InvokeAsync("ProcessedOrder")
+                                <p>Processed Order</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-stats-bars"></i>
+                            </div>
+                            <a asp-area="Admin" asp-controller="Order" asp-action="ProcessedOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-4">
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                @await Component.InvokeAsync("ShippedOrder")
+                                <p>Shipped Orders</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person-add"></i>
+                            </div>
+                            <a asp-area="Admin" asp-controller="Order" asp-action="ShippededOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-4">
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                @await Component.InvokeAsync("CancellededOrder")
+                                <p>Cancelled Orders</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-pie-graph"></i>
+                            </div>
+                            <a asp-area="Admin" asp-controller="Order" asp-action="CancelledOrders" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br />
 
         <!-- /.navbar -->
         <!-- Main Sidebar Container -->
