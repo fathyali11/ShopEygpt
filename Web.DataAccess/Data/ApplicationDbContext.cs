@@ -10,7 +10,7 @@
         {
             base.OnModelCreating(builder);
         }
-        public DbSet<Category> Categories { get; set; }
+        public DbSet<Category> Categories { get; set; } = default!;
         public DbSet<Product> Products { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
