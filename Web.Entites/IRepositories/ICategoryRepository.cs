@@ -1,18 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Web.Entites.Models;
 
 namespace Web.Entites.IRepositories
 {
-    public interface ICategoryRepository:IGenericRepository<Category>
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
-        void AddWithImage(Category category);
-        void DeleteWithImage(Category category);
-        void Update(Category model);
-        IEnumerable<SelectListItem> CategorySelectList();
+        Task AddWithImageAsync(Category category);
+        Task DeleteWithImageAsync(Category category);
+        Task UpdateAsync(Category model);
+        Task<IEnumerable<SelectListItem>> CategorySelectListAsync();
     }
 }
