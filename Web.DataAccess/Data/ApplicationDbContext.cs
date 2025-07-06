@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Web.DataAccess.Data
+﻿namespace Web.DataAccess.Data
 {
 	public class ApplicationDbContext:IdentityDbContext
 	{
