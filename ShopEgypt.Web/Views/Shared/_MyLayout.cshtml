@@ -34,7 +34,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a asp-area="Customer" asp-action="Index" asp-controller="Home" class="nav-link">Home</a>
+                    <a  asp-action="Index" asp-controller="Home" class="nav-link">Home</a>
                 </li>
             </ul>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
                             <div class="icon">
                                 <i class="ion ion-bag"></i>
                             </div>
-                            <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a  asp-controller="Users" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -71,7 +71,7 @@
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a  asp-controller="Order" asp-action="Index" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -84,7 +84,7 @@
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a asp-area="Admin" asp-controller="Order" asp-action="ProcessedOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a  asp-controller="Order" asp-action="ProcessedOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -97,7 +97,7 @@
                             <div class="icon">
                                 <i class="ion ion-person-add"></i>
                             </div>
-                            <a asp-area="Admin" asp-controller="Order" asp-action="ShippededOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a asp-controller="Order" asp-action="ShippededOrder" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
 
@@ -110,7 +110,7 @@
                             <div class="icon">
                                 <i class="ion ion-pie-graph"></i>
                             </div>
-                            <a asp-area="Admin" asp-controller="Order" asp-action="CancelledOrders" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <a asp-controller="Order" asp-action="CancelledOrders" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -154,25 +154,25 @@
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                             <li class="nav-item">
-                                <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="nav-link">
+                                <a  asp-controller="Users" asp-action="Index" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>Users</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-area="Admin" asp-action="Index" asp-controller="Category" class="nav-link">
+                                <a  asp-action="Index" asp-controller="Category" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>Category</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-area="Admin" asp-action="Index" asp-controller="Product" class="nav-link">
+                                <a asp-action="Index" asp-controller="Product" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>Product</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-area="Admin" asp-action="Index" asp-controller="Order" class="nav-link">
+                                <a asp-action="Index" asp-controller="Order" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>Orders</p>
                                 </a>
