@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace ShopEgypt.Web.Areas.Admin.Controllers
+namespace ShopEgypt.Web.Controllers
 {
     [Area(SD.AdminRole)]
     [Authorize(Roles = SD.AdminRole)]
@@ -37,13 +37,9 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
                 return NotFound();
 
             if (user.LockoutEnd == null || user.LockoutEnd < DateTime.Now)
-            {
                 user.LockoutEnd = DateTime.Now + TimeSpan.FromDays(4);
-            }
             else
-            {
                 user.LockoutEnd = null;
-            }
 
             _unitOfWork.Save();
 

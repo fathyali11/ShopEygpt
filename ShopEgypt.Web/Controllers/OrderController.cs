@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Web.Entites.ViewModels;
 
-namespace ShopEgypt.Web.Areas.Admin.Controllers
+namespace ShopEgypt.Web.Controllers
 {
     [Area(SD.AdminRole)]
     [Authorize(Roles = SD.AdminRole)]
@@ -95,10 +95,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
 
 			}
             else
-            {
 				_unitOfWork.OrderHeaderReposittory.UpdateStatus(OrderFromDB.Id, MyStatus.StatusCancelled, MyStatus.StatusCancelled);
-
-			}
 			_unitOfWork.OrderHeaderReposittory.Update(OrderFromDB);
 			_unitOfWork.Save();
 			return RedirectToAction(nameof(Details), new { OrderId = OrderFromDB.Id });

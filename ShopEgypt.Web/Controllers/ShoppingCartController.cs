@@ -9,7 +9,7 @@ using System.Security.Claims;
 using Web.Entites.Models;
 using Web.Entites.ViewModels;
 
-namespace ShopEgypt.Web.Areas.Customer.Controllers
+namespace ShopEgypt.Web.Controllers
 {
     [Area(SD.CustomerRole)]
     [Authorize]
@@ -57,9 +57,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
             {
                 cartFromDB.Count -= 1;
                 if (cartFromDB.Count < 1)
-                {
                     _unitOfWork.ShoppingCartRepository.Remove(cartFromDB);
-                }
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }

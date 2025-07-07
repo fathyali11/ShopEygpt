@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <Content Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
     <Content Remove="Views\Shared\_LoginView.cshtml" />
     <Content Remove="Views\Shared\_RegisterView.cshtml" />
     <Content Remove="Views\_ShoppingCartDetails.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <None Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
     <None Include="Views\Shared\_RegisterView.cshtml" />
     <None Include="Views\Shared\_LoginView.cshtml" />
     <None Include="wwwroot\Home\fonts\fontawesome-webfont.svg" />
@@ -58,11 +58,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <UpToDateCheckInput Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Areas\Customer\Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Shared\_LoginView.cshtml" />
   </ItemGroup>
 

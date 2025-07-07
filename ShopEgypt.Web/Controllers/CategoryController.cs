@@ -1,6 +1,4 @@
-﻿
-
-namespace ShopEgypt.Web.Areas.Admin.Controllers
+﻿namespace ShopEgypt.Web.Controllers
 {
     [Area(SD.AdminRole)]
     public class CategoryController : Controller
@@ -67,9 +65,7 @@ namespace ShopEgypt.Web.Areas.Admin.Controllers
         public IActionResult Delete(int id)
         {
             if (id == 0)
-            {
                 return NotFound();
-            }
             var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
             _unitOfWork.CategoryRepository.DeleteWithImage(category);
             var res= _unitOfWork.Save();

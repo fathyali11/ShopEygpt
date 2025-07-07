@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
-
 using System.Security.Claims;
 using Web.Entites.Models;
 using X.PagedList;
 using X.PagedList.Extensions;
 
 
-namespace ShopEgypt.Web.Areas.Customer.Controllers
+namespace ShopEgypt.Web.Controllers
 {
     [Area(SD.CustomerRole)]
     
@@ -16,7 +15,7 @@ namespace ShopEgypt.Web.Areas.Customer.Controllers
 
         public HomeController(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 		public IActionResult Index(string searchItem)
 		{
