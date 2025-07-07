@@ -51,7 +51,6 @@ namespace Web.DataAccess.Repositories
         public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
-            await _context.SaveChangesAsync();
         }
     }
 }
