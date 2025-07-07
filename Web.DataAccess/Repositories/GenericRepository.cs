@@ -29,7 +29,7 @@ namespace Web.DataAccess.Repositories
         public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
-            await Task.CompletedTask;
+            await context.SaveChangesAsync();
         }
     }
 }
