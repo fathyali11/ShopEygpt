@@ -6,8 +6,7 @@ public class CategoryMapping
 {
     public static void RegisterMappings()
     {
-        TypeAdapterConfig<CreateCategoryVM, Category>.NewConfig()
-            .Map(dest => dest.ImageName, src => src.Image.FileName);
+        TypeAdapterConfig<CreateCategoryVM, Category>.NewConfig();
 
         TypeAdapterConfig<Category, CategoryResponse>.NewConfig();
     }
