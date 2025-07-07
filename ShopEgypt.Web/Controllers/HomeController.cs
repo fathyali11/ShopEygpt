@@ -45,7 +45,6 @@ namespace ShopEgypt.Web.Controllers
             }
             return View(categories);
         }
-        [Authorize]
         public IActionResult Details(int id)
         {
             var claims = (ClaimsIdentity)User.Identity;
