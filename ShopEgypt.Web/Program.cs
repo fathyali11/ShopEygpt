@@ -1,11 +1,15 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
 using Web.Entites.Mappings;
+using Web.Entites.ModelsValidation;
+using Web.Entites.ViewModels.CategoryVMs;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 CategoryMapping.RegisterMappings();
+builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
