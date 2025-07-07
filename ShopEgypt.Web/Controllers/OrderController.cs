@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Stripe;
+﻿using Stripe;
 using Web.Entites.ViewModels;
 
 namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.AdminRole)]
-    [Authorize(Roles = SD.AdminRole)]
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

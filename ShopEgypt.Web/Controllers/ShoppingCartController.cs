@@ -1,18 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
-using Stripe;
-using Stripe.Checkout;
-using System.Net.WebSockets;
+﻿using Stripe.Checkout;
 using System.Security.Claims;
-using Web.Entites.Models;
 using Web.Entites.ViewModels;
 
 namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.CustomerRole)]
-    [Authorize]
     public class ShoppingCartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

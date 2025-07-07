@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
-using Web.Entites.ViewModels;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Web.Entites.ViewModels;
 
 namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.AdminRole)]
-    [Authorize(Roles = SD.AdminRole)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

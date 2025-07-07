@@ -3,8 +3,6 @@ using System.Security.Claims;
 
 namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.AdminRole)]
-    [Authorize(Roles = SD.AdminRole)]
     public class UsersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

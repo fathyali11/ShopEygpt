@@ -1,14 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Web.Entites.Models;
-using X.PagedList;
-using X.PagedList.Extensions;
 
 
 namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.CustomerRole)]
-    
     public class HomeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

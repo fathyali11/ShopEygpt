@@ -1,6 +1,5 @@
 ﻿namespace ShopEgypt.Web.Controllers
 {
-    [Area(SD.AdminRole)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
