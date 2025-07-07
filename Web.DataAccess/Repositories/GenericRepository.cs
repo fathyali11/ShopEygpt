@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Web.DataAccess.Data;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Web.Entites.IRepositories;
 
 namespace Web.DataAccess.Repositories
@@ -12,35 +7,14 @@ namespace Web.DataAccess.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
-        private DbSet<T> _dbSet;
+        private readonly DbSet<T> _dbSet;
         public GenericRepository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
         }
-        public void Add(T entity)
-        {
-            _dbSet.Add(entity);
-        }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
-        {
-            IQueryable<T> query = _dbSet.AsQueryable();
-            if(filter != null)
-            {
-                query = query.Where(filter);
-            }
-            if(includeObj != null)
-            {
-                foreach(var item in includeObj.Split(','))
-                {
-                    query=query.Include(item);
-                }
-            }
-            return query;
-        }
-
-        public T GetBy(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
         {
             IQueryable<T> query = _dbSet.AsQueryable();
             if (filter != null)
@@ -49,22 +23,35 @@ namespace Web.DataAccess.Repositories
             }
             if (includeObj != null)
             {
-                foreach (var item in includeObj.Split(','))
+                foreach (var item in includeObj.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(item);
+                    query = query.Include(item.Trim());
                 }
             }
-            return query.FirstOrDefault();
+            return await query.ToListAsync();
         }
 
-        public void Remove(T entity)
+        public async Task<T?> GetByAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
         {
-            _dbSet.Remove(entity);
+            IQueryable<T> query = _dbSet.AsQueryable();
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeObj != null)
+            {
+                foreach (var item in includeObj.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(item.Trim());
+                }
+            }
+            return await query.FirstOrDefaultAsync();
         }
 
-        public void RemoveRange(IEnumerable<T> entities)
+        public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
+            await _context.SaveChangesAsync();
         }
     }
 }
