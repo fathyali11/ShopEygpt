@@ -35,8 +35,8 @@
                     <img src="/img/avatar3.png" alt="@category.Name" />
                 </th>
                 <th>
-                    <a class="btn btn-outline-success" asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
-                    <a class="btn btn-outline-danger" asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
+                    <a class="btn btn-outline-success" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                    <a class="btn btn-outline-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
                 </th>
             </tr>
         }

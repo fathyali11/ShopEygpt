@@ -1,5 +1,5 @@
 ﻿@model ShoppingCart
-<form method="post" asp-action="Create" asp-area="Customer" asp-controller="ShoppingCart">
+<form method="post" asp-action="Create"  asp-controller="ShoppingCart">
 
 <div class="row">
     <!-- Product Image -->
@@ -32,8 +32,8 @@
                     Qty
                     <div class="input-number">
                         <input asp-for="Count" type="number"  class="form-control" style="width: 70px;">
-                            @* <a asp-action="Plus" asp-area="Customer" asp-controller="ShoppingCart" asp-route-id="@Model.ShoppingCartId" class="qty-up" style="cursor: pointer;">+</a>
-                            <a asp-action="Minus" asp-area="Customer" asp-controller="ShoppingCart" asp-route-id="@Model.ShoppingCartId" class="qty-down" style="cursor: pointer;">-</a> *@
+                            @* <a asp-action="Plus"  asp-controller="ShoppingCart" asp-route-id="@Model.ShoppingCartId" class="qty-up" style="cursor: pointer;">+</a>
+                              <a asp-action="Minus"  asp-controller="ShoppingCart" asp-route-id="@Model.ShoppingCartId" class="qty-down" style="cursor: pointer;">-</a> *@
                     </div>
                 </div>
                 <button type="submit" class="add-to-cart-btn btn btn-primary">
@@ -52,6 +52,6 @@
 </form>
 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
     <div class="text-center">
-        <a class="btn btn-success mt-auto" asp-action="Index" asp-area="Customer" asp-controller="Home">Back To Home</a>
+        <a class="btn btn-success mt-auto" asp-action="Index"  asp-controller="Home">Back To Home</a>
     </div>
 </div>

@@ -6,7 +6,7 @@
     <div class="row justify-content-center mb-4">
         <div class="col-md-6">
             <div class="header-search text-center">
-                <form asp-action="DisplayCategoies" asp-controller="Home" asp-area="Customer" method="get" class="form-inline">
+                <form asp-action="DisplayCategoies" asp-controller="Home"  method="get" class="form-inline">
                     <input type="text" name="searchItem" class="input" placeholder="Search here" value="@ViewBag.CurrentFilter">
                     <button type="submit" class="search-btn">Search</button>
                 </form>
@@ -26,7 +26,7 @@
                         <p class="product-category">@item.Name</p>
                     </div>
                     <div class="add-to-cart mt-auto">
-                        <a asp-area="Customer" asp-controller="Home" asp-action="DiplayProducts" asp-route-categoryId="@item.Id" class="btn btn-primary">View Products</a>
+                        <a  asp-controller="Home" asp-action="DiplayProducts" asp-route-categoryId="@item.Id" class="btn btn-primary">View Products</a>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
     </div>
     <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
         <div class="text-center">
-            <a class="btn btn-outline-success mt-auto" asp-action="Index" asp-area="Customer" asp-controller="Home">Back To Home</a>
+            <a class="btn btn-outline-success mt-auto" asp-action="Index"  asp-controller="Home">Back To Home</a>
         </div>
     </div>
 </div>

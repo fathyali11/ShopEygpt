@@ -43,7 +43,7 @@ namespace ShopEgypt.Web.Controllers
 
             _unitOfWork.Save();
 
-            return RedirectToAction(nameof(Index), "Users", new {area=SD.AdminRole});
+            return RedirectToAction(nameof(Index), "Users");
         }
         public IActionResult Details(string userId)
         {

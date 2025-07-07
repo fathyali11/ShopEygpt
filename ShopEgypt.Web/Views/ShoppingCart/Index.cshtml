@@ -24,7 +24,7 @@
                                         <p class="lead fw-normal mb-2">@item.Product.Name</p>
                                     </div>
                                     <div class="col-md-4 col-lg-3 d-flex align-items-center">
-                                        <a class="btn btn-light btn-sm px-3 me-2" asp-action="Minus" asp-controller="ShoppingCart" asp-area="Customer" asp-route-id="@item.ShoppingCartId">
+                                        <a class="btn btn-light btn-sm px-3 me-2" asp-action="Minus" asp-controller="ShoppingCart"  asp-route-id="@item.ShoppingCartId">
                                             <i class="fas fa-minus"></i>
                                         </a>
 
@@ -32,7 +32,7 @@
                                                readonly
                                                class="form-control form-control-sm text-center" />
 
-                                        <a class="btn btn-light btn-sm px-3 ms-2" asp-action="Plus" asp-controller="ShoppingCart" asp-area="Customer" asp-route-id="@item.ShoppingCartId">
+                                        <a class="btn btn-light btn-sm px-3 ms-2" asp-action="Plus" asp-controller="ShoppingCart"  asp-route-id="@item.ShoppingCartId">
                                             <i class="fas fa-plus"></i>
                                         </a>
                                     </div>
@@ -40,7 +40,7 @@
                                         <h5 class="mb-0 align-middle" style="margin-top: 40px;">$@item.Product.Price</h5>
                                     </div>
                                     <div class="col-md-1 text-end" style="margin-top: 30px;">
-                                        <a asp-area="Customer" asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.ShoppingCartId" class="text-danger align-middle">
+                                        <a  asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.ShoppingCartId" class="text-danger align-middle">
                                             <i class="fas fa-trash fa-lg"></i>
                                         </a>
                                     </div>
@@ -60,7 +60,7 @@
                             <br />
                             <br />
                             <div>
-                                <a class="btn btn-warning btn-lg" asp-area="Customer" asp-action="Summary">Proceed to Summary</a>
+                                <a class="btn btn-warning btn-lg"  asp-action="Summary">Proceed to Summary</a>
                             </div>
                         </div>
                     </div>
@@ -77,6 +77,6 @@
     <br />
     <br />
     <div class="btn btn-success text-center">
-        <a class="text-ce" asp-area="Customer" asp-controller="Home" asp-action="Index">Back To Items</a>
+        <a class="text-ce"  asp-controller="Home" asp-action="Index">Back To Items</a>
     </div>
 </section>

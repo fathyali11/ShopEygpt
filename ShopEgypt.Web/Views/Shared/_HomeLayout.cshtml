@@ -49,7 +49,7 @@
 		<div id="top-header">
 			<div class="container">
 				<ul class="header-links pull-left">
-					<li><a asp-area="Admin" asp-controller="Users" asp-action="Index"><i class="bi bi-person-arms-up"></i>admin</a></li>
+					<li><a  asp-controller="Users" asp-action="Index"><i class="bi bi-person-arms-up"></i>admin</a></li>
 				</ul>
 				<partial name="_LoginPartial" />
 			</div>
@@ -75,7 +75,7 @@
 						<div class="header-ctn">
 							<!-- Cart -->
 							<div class="dropdown position-relative">
-								<a asp-action="Index" asp-area="Customer" asp-controller="ShoppingCart" class="d-flex align-items-center text-decoration-none">
+								<a asp-action="Index"  asp-controller="ShoppingCart" class="d-flex align-items-center text-decoration-none">
 									<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
 										@await Component.InvokeAsync("ShoppingCart")
 										
@@ -105,9 +105,9 @@
 			<div id="responsive-nav">
 				<!-- NAV -->
 				<ul class="main-nav nav navbar-nav">
-					<li class="active"><a asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a></li>
-					<li><a asp-area="Customer" asp-controller="Home" asp-action="NewProducts">New Products</a></li>
-					<li><a asp-area="Customer" asp-controller="Home" asp-action="DisplayCategoies">Categories</a></li>
+					<li class="active"><a  asp-controller="Home" asp-action="Index">Home</a></li>
+					<li><a asp-controller="Home" asp-action="NewProducts">New Products</a></li>
+					<li><a asp-controller="Home" asp-action="DisplayCategoies">Categories</a></li>
 				</ul>
 				<!-- /NAV -->
 			</div>
