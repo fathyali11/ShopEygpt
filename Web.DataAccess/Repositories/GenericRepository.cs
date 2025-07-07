@@ -4,15 +4,11 @@ using Web.Entites.IRepositories;
 
 namespace Web.DataAccess.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T>(ApplicationDbContext context) : IGenericRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DbSet<T> _dbSet;
-        public GenericRepository(ApplicationDbContext context)
-        {
-            _context = context;
-            _dbSet = _context.Set<T>();
-        }
+        private readonly ApplicationDbContext _context=context;
+        private readonly DbSet<T> _dbSet=context.Set<T>();
+        
 
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
         {
@@ -30,27 +26,15 @@ namespace Web.DataAccess.Repositories
             }
             return await query.ToListAsync();
         }
-
         public async Task<T?> GetByAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
         {
-            IQueryable<T> query = _dbSet.AsQueryable();
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-            if (includeObj != null)
-            {
-                foreach (var item in includeObj.Split(',', StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(item.Trim());
-                }
-            }
-            return await query.FirstOrDefaultAsync();
+            var result = await GetAllAsync(filter, includeObj);
+            return result.FirstOrDefault();
         }
-
         public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
+            await Task.CompletedTask;
         }
     }
 }
