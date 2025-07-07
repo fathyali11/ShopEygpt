@@ -1,11 +1,13 @@
 
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Stripe;
+using Web.Entites.Mappings;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+CategoryMapping.RegisterMappings();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
