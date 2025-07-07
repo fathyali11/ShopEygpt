@@ -1,5 +1,3 @@
-
-
 using Microsoft.AspNetCore.Identity;
 using Stripe;
 using Web.Entites.Mappings;
@@ -28,7 +26,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddDefaultUI()
 	.AddDefaultTokenProviders();
-builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
