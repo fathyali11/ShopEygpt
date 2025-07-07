@@ -1,15 +1,10 @@
 ﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using Web.Entites.IRepositories;
 
 namespace Web.DataAccess.Repositories
 {
     public class GenericRepository<T>(ApplicationDbContext context) : IGenericRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context=context;
         private readonly DbSet<T> _dbSet=context.Set<T>();
-        
-
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null)
         {
             IQueryable<T> query = _dbSet.AsQueryable();
