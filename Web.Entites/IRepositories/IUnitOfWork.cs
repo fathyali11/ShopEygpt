@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Web.Entites.IRepositories
+﻿namespace Web.Entites.IRepositories
 {
     public interface IUnitOfWork
     {
@@ -14,6 +8,6 @@ namespace Web.Entites.IRepositories
         IOrderHeaderReposittory OrderHeaderReposittory { get; }
         IOrderDetailReposittory OrderDetailReposittory { get; }
         IApplicaionUserRepository ApplicaionUserRepository { get; }
-        int Save();
+        Task<int> SaveAsync();
     }
 }
