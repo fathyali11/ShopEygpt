@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 
 namespace Web.Entites.ModelsValidation;
-public class CreateCategoryVMValidator:AbstractValidator<CreateCategoryVM>
+public class CreateCategoryVMValidator:AbstractValidator<CreateOrEditCategoryVM>
 {
     public CreateCategoryVMValidator()
     {

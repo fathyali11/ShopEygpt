@@ -6,7 +6,7 @@ public class CategoryMapping
 {
     public static void RegisterMappings()
     {
-        TypeAdapterConfig<CreateCategoryVM, Category>.NewConfig();
+        TypeAdapterConfig<CreateOrEditCategoryVM, Category>.NewConfig();
 
         TypeAdapterConfig<Category, CategoryResponse>.NewConfig();
     }
