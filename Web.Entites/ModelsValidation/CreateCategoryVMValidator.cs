@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Web.Entites.ViewModels.CategoryVMs;
 
 namespace Web.Entites.ModelsValidation;
 public class CreateCategoryVMValidator:AbstractValidator<CreateCategoryVM>
