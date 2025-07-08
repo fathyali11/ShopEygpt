@@ -24,6 +24,11 @@ namespace Web.DataAccess.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
+        public async Task<IEnumerable<CategoryResponse>> GetAllCategoriesAsync()
+        {
+            var categories = await GetAllAsync();
+            return categories.Adapt<IEnumerable<CategoryResponse>>();
+        }
         public async Task<IEnumerable<SelectListItem>> CategorySelectListAsync()
         {
             var categories = await GetAllAsync();
