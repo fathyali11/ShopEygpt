@@ -21,7 +21,6 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [HttpPost]
     public async Task<IActionResult> Create(CreateCategoryVM model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
