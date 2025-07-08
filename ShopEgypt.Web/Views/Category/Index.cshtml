@@ -35,8 +35,13 @@
                     <img src="/Images/Categories/@category.ImageName" alt="@category.Name" width="50px" height="50px" />
                 </th>
                 <th>
-                    <a class="btn btn-outline-success" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
-                    <a class="btn btn-outline-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
+                    <a class="btn btn-outline-success" asp-controller="Category" asp-action="Edit"   asp-route-id="@category.Id">Edit</a>
+                    <form asp-action="Delete" asp-controller="Category" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@category.Id" />
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+
                 </th>
             </tr>
         }

@@ -69,42 +69,18 @@ namespace Web.DataAccess.Repositories
             var categories = await GetAllAsync();
             return categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
         }
-        //public async Task DeleteCategoryAsync(Category category)
-        //{
-        //    if (!string.IsNullOrEmpty(category.ImageName))
-        //    {
-        //        var imagePath = Path.Combine("wwwroot", SD.ImagePathCategories, category.ImageName);
-        //        if (File.Exists(imagePath))
-        //        {
-        //            File.Delete(imagePath);
-        //        }
-        //    }
-        //    await RemoveAsync(category);
-        //    await _context.SaveChangesAsync();
-        //}
-        //public async Task UpdateCategoryAsync(Category model)
-        //{
-        //    var category = await GetByAsync(x => x.Id == model.Id);
-        //    if (category != null)
-        //    {
-        //        category.Name = model.Name;
-        //        var hasNewImage = model.ImageCover != null;
-        //        var oldImageName = category.ImageName;
-        //        if (hasNewImage)
-        //        {
-        //            category.ImageName = await SaveImageAsync(model.ImageCover);
-        //            if (!string.IsNullOrEmpty(oldImageName))
-        //            {
-        //                var imagePath = Path.Combine("wwwroot", SD.ImagePathCategories, oldImageName);
-        //                if (File.Exists(imagePath))
-        //                {
-        //                    File.Delete(imagePath);
-        //                }
-        //            }
-        //        }
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
+        public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
+        {
+            var categoryFromDb = await GetByAsync(x => x.Id == id);
+            if (categoryFromDb == null)
+                return new List<ValidationError> { new("Not Found", "Category not found") };
+
+            DeleteImageFile(categoryFromDb.ImageName);
+            _context.Categories.Remove(categoryFromDb);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         private static async Task<string> SaveImageAsync(IFormFile cover)
         {
             string imageName = $"{Guid.NewGuid()}{Path.GetExtension(cover.FileName)}";

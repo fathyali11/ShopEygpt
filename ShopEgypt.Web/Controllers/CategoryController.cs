@@ -67,23 +67,19 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         return View(model);
 
     }
-    //[HttpDelete]
-    //public IActionResult Delete(int id)
-    //{
-    //    if (id == 0)
-    //        return NotFound();
-    //    var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
-    //    _unitOfWork.CategoryRepository.DeleteWithImage(category);
-    //    var res= _unitOfWork.Save();
-    //    if (res != 0)
-    //    {
-    //        TempData["Success"] = "Data removed successfully";
-    //        return Json(new { success = true, message = "Data deleted successfully" });
-    //    }
-    //    else
-    //    {
-    //        TempData["Error"] = "Data not removed";
-    //        return Json(new { success = false, message = "Data deletion failed" });
-    //    }
-    //}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _categoryRepository.DeleteCategoryAsync(id);
+        if (result.IsT1)
+        {
+            TempData["Success"] = "Category deleted successfully.";
+        }
+        else
+        {
+            TempData["Error"] = "Failed to delete category.";
+        }
+        return RedirectToAction(nameof(Index));
+    }
 }
