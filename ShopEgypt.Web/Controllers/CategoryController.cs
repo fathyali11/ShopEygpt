@@ -1,18 +1,16 @@
-﻿using Web.Entites.ViewModels.CategoryVMs;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace ShopEgypt.Web.Controllers;
 
 public class CategoryController(ICategoryRepository _categoryRepository) : Controller
 {
-    //public IActionResult Index()
-    //{
-    //    var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
-    //    return View(categories);
-    //}
+    public async Task<IActionResult> Index()
+    {
+        var response = await _categoryRepository.GetAllCategoriesAsync();
+        return View(response);
+    }
     //public IActionResult GetData()
     //{
-    //    var categories=_unitOfWork.CategoryRepository.GetAll().ToList();
-    //    return Json(new {data=categories});
+    //    var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
+    //    return Json(new { data = categories });
     //}
     [HttpGet]
     public IActionResult Create()
