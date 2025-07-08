@@ -8,7 +8,8 @@ namespace Web.DataAccess.Repositories
 {
     public class CategoryRepository(ApplicationDbContext context,
         ValidationRepository _validationRepository,
-        IValidator<CreateCategoryVM> _createCategoryValidator) : GenericRepository<Category>(context), ICategoryRepository
+        IValidator<CreateCategoryVM> _createCategoryValidator,
+        IValidator<EditCategoryVM> _editCategoryValidator) : GenericRepository<Category>(context), ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
@@ -28,6 +29,40 @@ namespace Web.DataAccess.Repositories
         {
             var categories = await GetAllAsync();
             return categories.Adapt<IEnumerable<CategoryResponse>>();
+        }
+        public async Task<EditCategoryVM> GetCategoryAsync(int id)
+        {
+            var category = await GetByAsync(x => x.Id == id);
+            if (category == null)
+                return new EditCategoryVM(id, null!,null!,null!);
+
+            return category.Adapt<EditCategoryVM>();
+
+        }
+        public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM,CancellationToken cancellationToken = default)
+        {
+            var validationResult = await _validationRepository.ValidateRequest(_editCategoryValidator, categoryVM);
+            if (validationResult is not null)
+                return validationResult;
+
+            var category = await GetByAsync(x => x.Id == categoryVM.Id);
+            if (category == null)
+                return new List<ValidationError> { new("Not Found","Category not found") };
+
+            var categoryImageOldName = category.ImageName;
+
+            categoryVM.Adapt(category);
+            if (categoryVM.Image != null)
+            {
+                DeleteImageFile(categoryImageOldName);
+                category.ImageName = await SaveImageAsync(categoryVM.Image);
+            }
+            else
+            {
+                category.ImageName = categoryImageOldName;
+            }
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
         }
         public async Task<IEnumerable<SelectListItem>> CategorySelectListAsync()
         {
@@ -82,6 +117,16 @@ namespace Web.DataAccess.Repositories
             using var stream = new FileStream(path, FileMode.Create);
             await cover.CopyToAsync(stream);
             return imageName;
+        }
+        // create a method to delete the image file if it exists
+        private static void DeleteImageFile(string imageName)
+        {
+            if (string.IsNullOrEmpty(imageName)) return;
+            string imagePath = Path.Combine("wwwroot", SD.ImagePathCategories, imageName);
+            if (File.Exists(imagePath))
+            {
+                File.Delete(imagePath);
+            }
         }
     }
 }

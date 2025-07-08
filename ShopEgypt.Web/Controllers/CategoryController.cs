@@ -1,17 +1,15 @@
-﻿namespace ShopEgypt.Web.Controllers;
+﻿using System.Threading.Tasks;
+
+namespace ShopEgypt.Web.Controllers;
 
 public class CategoryController(ICategoryRepository _categoryRepository) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var response = await _categoryRepository.GetAllCategoriesAsync();
         return View(response);
     }
-    //public IActionResult GetData()
-    //{
-    //    var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
-    //    return Json(new { data = categories });
-    //}
     [HttpGet]
     public IActionResult Create()
     {
@@ -40,28 +38,35 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         return View(model);
     }
 
-    //[HttpGet]
-    //public IActionResult Edit(int id)
-    //{
-    //    var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
-    //    return View(category);
-    //}
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public IActionResult Edit(Category category,IFormFile ?imageCover)
-    //{
-    //    if (ModelState.IsValid)
-    //    {
-    //        if(imageCover is not null) 
-    //            category.ImageCover=imageCover;
-    //        _unitOfWork.CategoryRepository.Update(category);
-    //        _unitOfWork.Save();
-    //        TempData["Success"] = "Data Updated Successfly";
-    //        return RedirectToAction("Index");
-    //    }
-    //    TempData["Error"] = "Data Not Updated";
-    //    return View(category);
-    //}
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var category =await _categoryRepository.GetCategoryAsync(id);
+        return View(category);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(EditCategoryVM model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var result = await _categoryRepository.UpdateCategoryAsync(model,cancellationToken);
+
+        if (result.IsT1)
+        {
+            TempData["Success"] = "Data Updated Successfly";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var errors = result.AsT0;
+        foreach (var error in errors)
+            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+        TempData["Error"] = "Data Not Updated";
+        return View(model);
+
+    }
     //[HttpDelete]
     //public IActionResult Delete(int id)
     //{

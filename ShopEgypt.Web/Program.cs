@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 CategoryMapping.RegisterMappings();
 builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
+builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
 builder.Services.AddScoped<ValidationRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
