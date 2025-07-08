@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 CategoryMapping.RegisterMappings();
 builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
+builder.Services.AddScoped<ValidationRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

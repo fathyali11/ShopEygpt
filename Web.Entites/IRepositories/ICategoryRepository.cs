@@ -9,8 +9,8 @@ namespace Web.Entites.IRepositories
     public interface ICategoryRepository : IGenericRepository<Category>
     {
         Task<OneOf<List<ValidationError>, bool>> AddCategoryAsync(CreateCategoryVM categoryVM, CancellationToken cancellationToken = default);
-        Task DeleteCategoryAsync(Category category);
-        Task UpdateCategoryAsync(Category model);
+        //Task DeleteCategoryAsync(Category category);
+        //Task UpdateCategoryAsync(Category model);
         Task<IEnumerable<SelectListItem>> CategorySelectListAsync();
     }
 }
