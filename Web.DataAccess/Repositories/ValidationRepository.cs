@@ -1,12 +1,7 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Microsoft.Extensions.Logging;
 namespace Web.DataAccess.Repositories;
-public class ValidationRepository
+public class ValidationRepository(ILogger<ValidationRepository> _logger)
 {
     public async Task<List<ValidationError>?> ValidateRequest<TSource, TRequest>(TSource source, TRequest request)
         where TSource : IValidator<TRequest>
