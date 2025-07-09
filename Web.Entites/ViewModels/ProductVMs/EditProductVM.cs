@@ -1,27 +1,25 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
 
 namespace Web.Entites.ViewModels.ProductVMs;
 
-public class EditProductVM 
-{
-    public int Id { get; set; }
+public record EditProductVM(
+    int Id,
 
     [Required(ErrorMessage = "Product name is required.")]
     [StringLength(50, ErrorMessage = "Product name must be at most 50 characters.")]
-    public string Name { get; set; } = string.Empty;
+    string Name,
 
     [StringLength(500, ErrorMessage = "Description must be at most 500 characters.")]
-    public string Description { get; set; } = string.Empty;
+    string Description,
 
     [Required(ErrorMessage = "Price is required.")]
     [Range(0.01, 1000000, ErrorMessage = "Price must be greater than 0.")]
-    public decimal Price { get; set; }
+    decimal Price,
 
     [Required(ErrorMessage = "Category is required.")]
-    public int CategoryId { get; set; }
+    int CategoryId,
 
-    public string ImageName { get; set; } = string.Empty;
+    string ImageName,
 
-    public IFormFile? ImageFile { get; set; }
-}
+    IFormFile? ImageFile
+);
