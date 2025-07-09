@@ -1,20 +1,11 @@
-﻿
-
-namespace Web.Entites.Models
+﻿namespace Web.Entites.Models;
+public class Product
 {
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        [Required]
-        [Display(Name ="Category")]
-        public int CategoryId {  get; set; }
-        [ValidateNever]
-        [ForeignKey(nameof(CategoryId))]
-        public Category Category { get; set; }
-        [ValidateNever]
-        public string ImageName {  get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public int CategoryId {  get; set; }
+    public Category Category { get; set; }=default!;
+    public string ImageName { get; set; } = string.Empty;
 }
