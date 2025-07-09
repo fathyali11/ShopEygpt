@@ -1,28 +1,27 @@
-﻿using Web.Entites.ViewModels.ProductVMs;
+﻿using FluentValidation;
+using Mapster;
+using OneOf;
+using Web.Entites.Models;
+using Web.Entites.ViewModels.ProductVMs;
 
 namespace Web.DataAccess.Repositories
 {
-    public class ProductRepository(ApplicationDbContext context) : GenericRepository<Product>(context), IProductRepository
+    public class ProductRepository(ApplicationDbContext context,
+        ValidationRepository _validationRepository,
+        IValidator<CreateProductVM> _createProductValidator) : GenericRepository<Product>(context), IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task AddProductAsync(CreateProductVM model)
+        public async Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model,CancellationToken cancellationToken=default)
         {
-            var product = new Product
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                CategoryId = model.CategoryId
-            };
-
-            if (model.ImageFile != null)
-            {
-                product.ImageName = await SaveImageAsync(model.ImageFile);
-            }
-
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
+            var validationResult = await _validationRepository.ValidateRequest(_createProductValidator, model);
+            if (validationResult is not null)
+                return validationResult;
+            var product = model.Adapt<Product>();
+            product.ImageName = await SaveImageAsync(model.ImageFile);
+            await _context.Products.AddAsync(product, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
         }
 
         public async Task UpdateProductAsync(EditProductVM model)
