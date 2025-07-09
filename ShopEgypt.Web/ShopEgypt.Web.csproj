@@ -17,15 +17,6 @@
     <None Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
     <None Include="Views\Shared\_RegisterView.cshtml" />
     <None Include="Views\Shared\_LoginView.cshtml" />
-    <None Include="wwwroot\Home\fonts\fontawesome-webfont.svg" />
-    <None Include="wwwroot\Home\fonts\fontawesome-webfont.woff2" />
-    <None Include="wwwroot\Home\fonts\slick.svg" />
-    <None Include="wwwroot\Home\js\bootstrap.min.js" />
-    <None Include="wwwroot\Home\js\jquery.min.js" />
-    <None Include="wwwroot\Home\js\jquery.zoom.min.js" />
-    <None Include="wwwroot\Home\js\main.js" />
-    <None Include="wwwroot\Home\js\nouislider.min.js" />
-    <None Include="wwwroot\Home\js\slick.min.js" />
     <None Include="wwwroot\js\site.js" />
   </ItemGroup>
 

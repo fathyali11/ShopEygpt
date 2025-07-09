@@ -1,44 +1,40 @@
 ﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home Page";
+    ViewData["Head"] = "Welcome to Shop Egypt";
+    ViewData["PageTitle"] = "Home";
+    Layout = "_HomeLayout";
+}
 
-<div class="container">
-    <!-- Centered Search Bar -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-6">
-            <div class="header-search text-center">
-                <form asp-action="Index" asp-controller="Home"  method="get" class="form-inline">
-                    <input type="text" name="searchItem" class="input" placeholder="Search here" value="@ViewBag.CurrentFilter">
-                    <button type="submit" class="search-btn">Search</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Products -->
-    <div class="row d-flex flex-wrap">
-        @foreach (var item in Model)
-        {
-            <div class="col-md-4 col-xs-6 mb-4">
-                <div class="product h-100 d-flex flex-column">
-                    <div class="product-img d-flex align-items-center justify-content-center" style="height: 200px; overflow: hidden;">
-                        <img src="/Images/Products/@item.ImageName" alt="@item.Name" class="img-fluid" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                        <div class="product-label">
-                            <span class="sale">-30%</span>
-                            <span class="new">NEW</span>
+@foreach (var item in Model)
+{
+    <section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="col mb-5">
+                <div class="card h-100">
+                    <!-- Product image-->
+                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                    <!-- Product details-->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <!-- Product name-->
+                            <h5 class="fw-bolder">Fancy Product</h5>
+                            <!-- Product price-->
+                            $40.00 - $80.00
                         </div>
                     </div>
-                    <div class="product-body flex-grow-1">
-                        <p class="product-category">@item.Category.Name</p>
-                        <h3 class="product-name"><a  asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h3>
-                        <h4 class="product-price">$@item.Price <del class="product-old-price">$@(item.Price - (item.Price * (decimal).3))</del></h4>
-                    </div>
-                    <div class="add-to-cart mt-auto">
-                        <a class="text-danger"  asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <!-- Product actions-->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
                     </div>
                 </div>
             </div>
-        }
-    </div>
-</div>
+            </div>
+        </div>
+    </section>
+}
+
 @section Scripts{
     <link href="~/css/home/index.css" rel="stylesheet" />
 }
