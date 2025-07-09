@@ -1,271 +1,67 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<title>Electro - Home</title>
-	<link rel="icon" type="image/x-icon" href="@Url.Content("~/electronic_store_favicon.ico")">
-	<!-- Icons -->
-	<!-- Font Awesome 6.0 (Free) -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<!-- Google Material Icons -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
-
-	<!-- Google font -->
-	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
-
-	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="~/Home/css/bootstrap.min.css" />
-
-	<!-- Slick -->
-	<link type="text/css" rel="stylesheet" href="~/Home/css/slick.css" />
-	<link type="text/css" rel="stylesheet" href="~/Home/css/slick-theme.css" />
-
-	<!-- nouislider -->
-	<link type="text/css" rel="stylesheet" href="~/Home/css/nouislider.min.css" />
-
-	<!-- Font Awesome Icon -->
-	<link rel="stylesheet" href="~/Home/css/font-awesome.min.css">
-
-	<!-- Custom stylesheet -->
-	<link type="text/css" rel="stylesheet" href="~/Home/css/style.css" />
-
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-	  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-	  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-	<![endif]-->
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="~/electronic_store_favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-	<!-- HEADER -->
-	<header>
-		<!-- TOP HEADER -->
-		<div id="top-header">
-			<div class="container">
-				<ul class="header-links pull-left">
-					<li><a  asp-controller="Users" asp-action="Index"><i class="bi bi-person-arms-up"></i>admin</a></li>
-				</ul>
-				<partial name="_LoginPartial" />
-			</div>
-		</div>
-		<!-- /TOP HEADER -->
-		<!-- MAIN HEADER -->
-		<div id="header">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<!-- LOGO -->
-					<div class="col-md-3">
-						<div class="header-logo">
-							<a href="#" class="logo">
-								<img src="~/Home/img/logo.png" alt="Logo">
-							</a>
-						</div>
-					</div>
-					<!-- /LOGO -->
-					<!-- ACCOUNT -->
-					<div class="col-md-3 clearfix pull-right">
-						<div class="header-ctn">
-							<!-- Cart -->
-							<div class="dropdown position-relative">
-								<a asp-action="Index"  asp-controller="ShoppingCart" class="d-flex align-items-center text-decoration-none">
-									<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-										@await Component.InvokeAsync("ShoppingCart")
-										
-									</span>
-									<i class="fa fa-shopping-cart fs-3"></i>
-									<span class="ms-2">Your Cart</span>
-									
-								</a>
-							</div>
-							
-						</div>
-					</div>
-					<!-- /ACCOUNT -->
-				</div>
-				<!-- row -->
-			</div>
-			<!-- container -->
-		</div>
-		<!-- /MAIN HEADER -->
-	</header>
-	<!-- /HEADER -->
-	<!-- NAVIGATION -->
-	<nav id="navigation">
-		<!-- container -->
-		<div class="container">
-			<!-- responsive-nav -->
-			<div id="responsive-nav">
-				<!-- NAV -->
-				<ul class="main-nav nav navbar-nav">
-					<li class="active"><a  asp-controller="Home" asp-action="Index">Home</a></li>
-					<li><a asp-controller="Home" asp-action="NewProducts">New Products</a></li>
-					<li><a asp-controller="Home" asp-action="DisplayCategoies">Categories</a></li>
-				</ul>
-				<!-- /NAV -->
-			</div>
-			<!-- /responsive-nav -->
-		</div>
-		<!-- /container -->
-	</nav>
-	
-	<div class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			
-				@RenderBody()
-			
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /SECTION -->
-	<!-- NEWSLETTER -->
-	<div id="newsletter" class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-				<div class="col-md-12">
-					<div class="newsletter">
-						<p>Sign Up for the <strong>NEWSLETTER</strong></p>
-						<form>
-							<input class="input" type="email" placeholder="Enter Your Email">
-							<button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
-						</form>
-						<ul class="newsletter-follow">
-							<li>
-								<a href="#"><i class="fa fa-facebook"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-twitter"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-instagram"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-pinterest"></i></a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /NEWSLETTER -->
-	<!-- FOOTER -->
-	<footer id="footer">
-		<!-- top footer -->
-		<div class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-3 col-xs-6">
-						<div class="footer">
-							<h3 class="footer-title">About Us</h3>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
-							<ul class="footer-links">
-								<li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-								<li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-								<li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-md-3 col-xs-6">
-						<div class="footer">
-							<h3 class="footer-title">Categories</h3>
-							<ul class="footer-links">
-								<li><a href="#">Hot deals</a></li>
-								<li><a href="#">Laptops</a></li>
-								<li><a href="#">Smartphones</a></li>
-								<li><a href="#">Cameras</a></li>
-								<li><a href="#">Accessories</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="clearfix visible-xs"></div>
-
-					<div class="col-md-3 col-xs-6">
-						<div class="footer">
-							<h3 class="footer-title">Information</h3>
-							<ul class="footer-links">
-								<li><a href="#">About Us</a></li>
-								<li><a href="#">Contact Us</a></li>
-								<li><a href="#">Privacy Policy</a></li>
-								<li><a href="#">Orders and Returns</a></li>
-								<li><a href="#">Terms & Conditions</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-md-3 col-xs-6">
-						<div class="footer">
-							<h3 class="footer-title">Service</h3>
-							<ul class="footer-links">
-								<li><a href="#">My Account</a></li>
-								<li><a href="#">View Cart</a></li>
-								<li><a href="#">Wishlist</a></li>
-								<li><a href="#">Track My Order</a></li>
-								<li><a href="#">Help</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /top footer -->
-		<!-- bottom footer -->
-		<div id="bottom-footer" class="section">
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12 text-center">
-						<ul class="footer-payments">
-							<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
-							<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
-							<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
-							<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
-							<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
-							<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
-						</ul>
-						<span class="copyright">
-							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-							Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						</span>
-
-
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /bottom footer -->
-	</footer>
-	<!-- /FOOTER -->
-	<!-- jQuery Plugins -->
-	<script src="Home/js/jquery.min.js"></script>
-	<script src="Home/js/bootstrap.min.js"></script>
-	<script src="Home/js/slick.min.js"></script>
-	<script src="Home/js/nouislider.min.js"></script>
-	<script src="Home/js/jquery.zoom.min.js"></script>
-	<script src="Home/js/main.js"></script>
-	@await RenderSectionAsync("Scripts", required: false)
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="#!">Start Bootstrap</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#!">All Products</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <button class="btn btn-outline-dark" type="submit">
+                        <i class="bi-cart-fill me-1"></i>
+                        Cart
+                        <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!-- Header-->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Shop in style</h1>
+                <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+            </div>
+        </div>
+    </header>
+    <!-- Section-->
+    @RenderBody();
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+        <div class="container"><p class="m-0 text-center text-white">Made by fathy ali</p></div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false);
 </body>
 </html>
