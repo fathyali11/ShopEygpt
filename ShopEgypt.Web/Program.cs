@@ -2,7 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
 using Web.Entites.Mappings;
-using Web.Entites.ModelsValidation;
+using Web.Entites.ModelsValidation.CategoryValidations;
 using Web.Entites.ViewModels.CategoryVMs;
 
 
