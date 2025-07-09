@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Stripe;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
-using Web.Entites.ViewModels.CategoryVMs;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 CategoryMapping.RegisterMappings();
+ProductMapping.RegisterMappings();
 builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
 builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
 builder.Services.AddScoped<ValidationRepository>();
