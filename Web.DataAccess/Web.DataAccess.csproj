@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Web.Entites\Web.Entites.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\EntitiesConfigurations\" />
-  </ItemGroup>
-
 </Project>
