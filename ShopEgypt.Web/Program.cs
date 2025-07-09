@@ -1,11 +1,18 @@
-
-
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Stripe;
+using Web.Entites.Mappings;
+using Web.Entites.ModelsValidation;
+using Web.Entites.ViewModels.CategoryVMs;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+CategoryMapping.RegisterMappings();
+builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
+builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
+builder.Services.AddScoped<ValidationRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -26,7 +33,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddDefaultUI()
 	.AddDefaultTokenProviders();
-builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
@@ -61,6 +67,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+	pattern: "{controller=Category}/{action=Index}/{id?}");
 
 app.Run();

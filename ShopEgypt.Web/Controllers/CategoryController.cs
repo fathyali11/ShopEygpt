@@ -1,83 +1,85 @@
-﻿namespace ShopEgypt.Web.Controllers
-{
-    public class CategoryController : Controller
-    {
-        private readonly IUnitOfWork _unitOfWork;
+﻿using System.Threading.Tasks;
 
-        public CategoryController(IUnitOfWork unitOfWork)
+namespace ShopEgypt.Web.Controllers;
+
+public class CategoryController(ICategoryRepository _categoryRepository) : Controller
+{
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var response = await _categoryRepository.GetAllCategoriesAsync();
+        return View(response);
+    }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new CreateCategoryVM(null!,null!));
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateCategoryVM model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var result = await _categoryRepository.AddCategoryAsync(model, cancellationToken);
+
+        if (result.IsT1)
         {
-            _unitOfWork = unitOfWork;
+            TempData["Success"] = "Data Created Successfully";
+            return RedirectToAction("Index");
         }
-        public IActionResult Index()
+
+        var errors = result.AsT0;
+        foreach (var error in errors)
+            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+        TempData["Error"] = "Data Not Created";
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var category =await _categoryRepository.GetCategoryAsync(id);
+        return View(category);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(EditCategoryVM model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var result = await _categoryRepository.UpdateCategoryAsync(model,cancellationToken);
+
+        if (result.IsT1)
         {
-            var categories = _unitOfWork.CategoryRepository.GetAll().ToList();
-            return View(categories);
+            TempData["Success"] = "Data Updated Successfly";
+            return RedirectToAction(nameof(Index));
         }
-        public IActionResult GetData()
+
+        var errors = result.AsT0;
+        foreach (var error in errors)
+            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+        TempData["Error"] = "Data Not Updated";
+        return View(model);
+
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _categoryRepository.DeleteCategoryAsync(id);
+        if (result.IsT1)
         {
-            var categories=_unitOfWork.CategoryRepository.GetAll().ToList();
-            return Json(new {data=categories});
+            TempData["Success"] = "Category deleted successfully.";
         }
-        [HttpGet]
-        public IActionResult Create()
+        else
         {
-            return View(new Category());
+            TempData["Error"] = "Failed to delete category.";
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category,IFormFile imageCover)
-        {
-            if (ModelState.IsValid)
-            {
-                category.ImageCover = imageCover;
-                _unitOfWork.CategoryRepository.AddWithImage(category);
-                _unitOfWork.Save();
-                TempData["Success"] = "Data Created Successfly";
-                return RedirectToAction("Index");
-            }
-            TempData["Error"] = "Data Not Created";
-            return View(category);
-        }
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
-            return View(category);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category,IFormFile ?imageCover)
-        {
-            if (ModelState.IsValid)
-            {
-                if(imageCover is not null) 
-                    category.ImageCover=imageCover;
-                _unitOfWork.CategoryRepository.Update(category);
-                _unitOfWork.Save();
-                TempData["Success"] = "Data Updated Successfly";
-                return RedirectToAction("Index");
-            }
-            TempData["Error"] = "Data Not Updated";
-            return View(category);
-        }
-        [HttpDelete]
-        public IActionResult Delete(int id)
-        {
-            if (id == 0)
-                return NotFound();
-            var category = _unitOfWork.CategoryRepository.GetBy(x => x.Id == id);
-            _unitOfWork.CategoryRepository.DeleteWithImage(category);
-            var res= _unitOfWork.Save();
-            if (res != 0)
-            {
-                TempData["Success"] = "Data removed successfully";
-                return Json(new { success = true, message = "Data deleted successfully" });
-            }
-            else
-            {
-                TempData["Error"] = "Data not removed";
-                return Json(new { success = false, message = "Data deletion failed" });
-            }
-        }
+        return RedirectToAction(nameof(Index));
     }
 }

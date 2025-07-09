@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Category>
+﻿@model IEnumerable<CategoryResponse>
 @{
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Category Management";
@@ -25,26 +25,31 @@
             </th>
         </tr>
     </thead>
-    @* <tbody>
+    <tbody>
         @foreach(var category in Model)
         {
             <tr>
                 <th>@category.Name</th>
-                <th>@category.CreatedDate</th>
+                <th>@category.CreatedAt</th>
                 <th>
-                    <img src="/img/avatar3.png" alt="@category.Name" />
+                    <img src="/Images/Categories/@category.ImageName" alt="@category.Name" width="50px" height="50px" />
                 </th>
                 <th>
-                    <a class="btn btn-outline-success" asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
-                    <a class="btn btn-outline-danger" asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">Delete</a>
+                    <a class="btn btn-outline-success" asp-controller="Category" asp-action="Edit"   asp-route-id="@category.Id">Edit</a>
+                    <form asp-action="Delete" asp-controller="Category" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@category.Id" />
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+
                 </th>
             </tr>
         }
-    </tbody> *@
+    </tbody>
 
 </table>
 @section Scripts {
-    <script src="~/js/category/categorydatatable.js"></script>
+   @*  <script src="~/js/category/categorydatatable.js"></script> *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="~/js/deleteitems.js"></script>
 }

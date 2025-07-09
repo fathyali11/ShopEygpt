@@ -1,14 +1,11 @@
-﻿
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Web.Entites.IRepositories
 {
     public interface IGenericRepository<T> where T : class
     {
-        IEnumerable<T> GetAll(Expression<Func<T,bool>>?filter=null,string ?includeObj=null);
-        T GetBy(Expression<Func<T, bool>>? filter = null, string? includeObj = null);
-        void Add(T entity);
-        void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entities);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null);
+        Task<T?> GetByAsync(Expression<Func<T, bool>>? filter = null, string? includeObj = null);
+        Task RemoveRangeAsync(IEnumerable<T> entities);
     }
 }
