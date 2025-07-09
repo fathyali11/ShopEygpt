@@ -1,6 +1,4 @@
-﻿@using Web.Entites.ViewModels
-@using Web.Entites.ViewModels.ProductVMs
-@model ProductVMCreate
+﻿@model CreateProductVM
 
 @{
     ViewData["Title"] = "Create";
@@ -12,22 +10,22 @@
         <form asp-action="Create" enctype="multipart/form-data" id="productForm">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Product.Name" class="control-label"></label>
-                <input asp-for="Product.Name" class="form-control" />
-                <span asp-validation-for="Product.Name" class="text-danger"></span>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.Description" class="control-label"></label>
-                <textarea id="mytextarea" asp-for="Product.Description" class="form-control"></textarea>
-                <span asp-validation-for="Product.Description" class="text-danger"></span>
+                <label asp-for="Description" class="control-label"></label>
+                <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.Price" class="control-label"></label>
-                <input asp-for="Product.Price" class="form-control" />
-                <span asp-validation-for="Product.Price" class="text-danger"></span>
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.CategoryId" class="control-label"></label>
+                <label asp-for="CategoryId" class="control-label"></label>
                 <br />
                 <select asp-for="Product.CategoryId" asp-items="Model.CategoryList">
                     <option value="">Select Category</option>
@@ -71,5 +69,6 @@
         });
     </script>
 }
+
 
 
