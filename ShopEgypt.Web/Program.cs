@@ -21,6 +21,7 @@ builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator
 
 builder.Services.AddScoped<ValidationRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
