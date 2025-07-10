@@ -30,6 +30,16 @@ namespace Web.DataAccess.Repositories
             var categories = await GetAllAsync();
             return categories.Adapt<IEnumerable<CategoryResponse>>();
         }
+        public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync()
+        {
+            return await _context.Categories
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                })
+                .ToListAsync();
+        }
         public async Task<EditCategoryVM> GetCategoryAsync(int id)
         {
             var category = await GetByAsync(x => x.Id == id);

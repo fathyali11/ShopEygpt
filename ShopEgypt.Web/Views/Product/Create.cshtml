@@ -25,12 +25,12 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <br />
-                <select asp-for="Product.CategoryId" asp-items="Model.CategoryList">
-                    <option value="">Select Category</option>
+                <label for="CategoryId">Category</label>
+                <select asp-for="CategoryId" class="form-control">
+                    <option value="">-- Select Category --</option>
+                    @await Component.InvokeAsync("CategorySelectList", new { selectedCategoryId = Model?.CategoryId })
                 </select>
-                <span asp-validation-for="Product.Description" class="text-danger"></span>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ImageFile" class="control-label">Image</label>
@@ -57,17 +57,6 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/imagedisplay.js"></script>
-    <script src="~/js/product/imagevalidationcreate.js"></script>
-    <script src="https://cdn.tiny.cloud/1/d5i3bnjvxjk362iphf6kzupq6xj3wthkyxdxb87b8n4nh24m/tinymce/6/tinymce.min.js"></script>
-
-    <script>
-        tinymce.init({
-            selector: '#mytextarea',
-            plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-            content_css: '//www.tiny.cloud/css/codepen.min.css'
-        });
-    </script>
 }
 
 
