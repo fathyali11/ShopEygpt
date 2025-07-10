@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Web.Entites.ModelsValidation;
+namespace Web.Entites.ModelsValidation.CategoryValidations;
 
 public class EditCategoryVMValidator : AbstractValidator<EditCategoryVM>
 {

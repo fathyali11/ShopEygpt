@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<ProductReponseForAdmin>
+@{
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Products";
@@ -14,16 +15,45 @@
             <th>Price</th>
             <th>Category</th>
             <th>Image</th>
-            <th></th>
+            <th>Has a Sale</th>
+            <th>Actions</th>
         </tr>
     </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@product.CategoryName</td>
+                <td>
+                    @if (product.ImageName != null)
+                    {
+                        <img src="~/Images/Products/@product.ImageName" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+                <td>@(product.HasSale ? "Yes" : "No")</td>
+                <td>
+                    <a class="btn btn-outline-success" asp-controller="Product" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                    <form asp-controller="Product" asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
 </table>
 
 @section Scripts {
-    <script src="~/js/product/imagedisplay.js"></script>
+@*     <script src="~/js/product/imagedisplay.js"></script>
     <script src="~/js/product/imagevalidation.js"></script>
     <script src="~/js/product/productdatatable.js"></script>
     <script src="~/js/deleteitems.js"></script>
-     
+      *@
 
 }

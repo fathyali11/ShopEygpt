@@ -1,67 +1,123 @@
-﻿
+﻿using FluentValidation;
+using Mapster;
+using OneOf;
+using Web.Entites.Models;
+using Web.Entites.ViewModels.ProductVMs;
 
-//namespace Web.DataAccess.Repositories
-//{
-//    public class ProductRepository : GenericRepository<Product>, IProductRepository
-//    {
-//        private readonly ApplicationDbContext _context;
-//        public ProductRepository(ApplicationDbContext context) : base(context)
-//        {
-//            _context = context;
-//        }
+namespace Web.DataAccess.Repositories
+{
+    public class ProductRepository(ApplicationDbContext context,
+        ValidationRepository _validationRepository,
+        IValidator<CreateProductVM> _createProductValidator) : GenericRepository<Product>(context), IProductRepository
+    {
+        private readonly ApplicationDbContext _context = context;
 
-//        public void AddProductVM(ProductVMCreate Model)
-//        {
-//            Product product = Model.Product;
-//            product.ImageName=SaveImage(Model.ImageFile);
-//            Add(product);
-//        }
+        public async Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model,CancellationToken cancellationToken=default)
+        {
+            var validationResult = await _validationRepository.ValidateRequest(_createProductValidator, model);
+            if (validationResult is not null)
+                return validationResult;
+            var product = model.Adapt<Product>();
+            product.ImageName = await SaveImageAsync(model.ImageFile);
+            await _context.Products.AddAsync(product, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
+        {
+            var response= await _context.Products
+                .Include(x => x.Category)
+                .Select(x => new ProductReponseForAdmin
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    ImageName = x.ImageName,
+                    CategoryName = x.Category.Name,
+                    HasSale= x.IsSale,
+                    CreatedAt = x.CreatedAt,
+                    UpdatedAt = x.UpdatedAt
 
-//        public void DeleteWithImage(Product product)
-//        {
+                })
+                .ToListAsync(cancellationToken);
+            return response;
+        }
 
-//            var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, product.ImageName);
-//            if(System.IO.File.Exists(imagePath))
-//                System.IO.File.Delete(imagePath);
-//            Remove(product);
-//        }
+        public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var product = await _context.Products
+                .Include(x => x.Category)
+                .Select(x => new EditProductVM
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    ImageName = x.ImageName,
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name
+                })
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return product is not null ? product : null;
+        }
+        public async Task<OneOf<List<ValidationError>,bool>> UpdateProductAsync(EditProductVM model,CancellationToken cancellationToken=default)
+        {
+            var productFromDb=await _context.Products
+                .FirstOrDefaultAsync(x=>x.Id==model.Id,cancellationToken);
+            var oldImageName = productFromDb!.ImageName;
+            var categoryId = productFromDb.CategoryId;
+            model.Adapt(productFromDb);
 
-//        public void Update(ProductVMEdit model)
-//        {
-//            var productDB=GetBy(x=>x.Id==model.Product.Id);
-//            var imageFile=model.ImageFile;
-//            var HasNewImage=imageFile is not null;
-//            var imageOldName = productDB.ImageName;
-//            if (HasNewImage)
-//            {
-//                productDB.ImageName=SaveImage(imageFile);
-//                var imagePath=Path.Combine("wwwroot",SD.ImagePathProducts,imageOldName);
-//                if(System.IO.File.Exists(imagePath))
-//                {
-//                    System.IO.File.Delete(imagePath);
-//                }
-//            }
-//            productDB.Name = model.Product.Name;
-//            productDB.Description = model.Product.Description;
-//            productDB.Price = model.Product.Price;
-//        }
+            if (model.ImageFile is not null)
+            {
+                // Delete old image if exists
+                if (!string.IsNullOrEmpty(productFromDb!.ImageName))
+                {
+                    var oldImagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
+                    if (File.Exists(oldImagePath))
+                        File.Delete(oldImagePath);
+                }
+                productFromDb.ImageName = await SaveImageAsync(model.ImageFile);
+            }
+            else
+            productFromDb.ImageName = oldImageName;
+            if (model.CategoryId is null || model.CategoryName is null)
+                productFromDb.CategoryId = categoryId;
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
+        }
 
-//        private string SaveImage(IFormFile cover)
-//        {
-//                var coverName = $"{Guid.NewGuid()}{Path.GetExtension(cover.FileName)}";
-//                var imagesPath = Path.Combine("wwwroot", SD.ImagePathProducts);
-//                var path = Path.Combine(imagesPath, coverName);
-
-//                if (!Directory.Exists(imagesPath))
-//                {
-//                    Directory.CreateDirectory(imagesPath);
-//                }
-
-//                using var stream = new FileStream(path, FileMode.Create);
-//                cover.CopyTo(stream);
-
-//                return coverName;
+        public async Task DeleteProductAsync(int id,CancellationToken cancellationToken=default)
+        {
+            var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
             
-//        }
-//    }
-//}
+            // Delete image if exists
+            if (!string.IsNullOrEmpty(productFromDb!.ImageName))
+            {
+                var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
+                if (File.Exists(imagePath))
+                    File.Delete(imagePath);
+            }
+            _context.Products.Remove(productFromDb);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private static async Task<string> SaveImageAsync(IFormFile file)
+        {
+            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var imagesPath = Path.Combine("wwwroot", SD.ImagePathProducts);
+            var path = Path.Combine(imagesPath, imageName);
+
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
+            using var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return imageName;
+        }
+    }
+}
