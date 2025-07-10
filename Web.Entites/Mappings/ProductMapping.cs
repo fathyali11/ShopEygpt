@@ -11,8 +11,8 @@ public class ProductMapping
 
         //TypeAdapterConfig<Product, ProductResponse>.NewConfig();
 
-        TypeAdapterConfig<EditProductVM, Product>.NewConfig();
-            
+        TypeAdapterConfig<EditProductVM, Product>.NewConfig()
+            .Map(dest => dest.IsSale, src => src.HasSale);
 
     }
 }

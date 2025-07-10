@@ -71,32 +71,12 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         TempData["Error"] = "Data Not Updated";
         return View(model);
     }
-    //[HttpDelete]
-    //public IActionResult Delete(int id)
-    //{
-    //    var product = _unitOfWork.ProductRepository.GetBy(x => x.Id == id);
-
-    //    if (product != null)
-    //    {
-    //        _unitOfWork.ProductRepository.DeleteWithImage(product);
-    //        var res = _unitOfWork.Save();
-
-    //        if (res != 0)
-    //        {
-    //            TempData["Success"] = "Data removed successfully";
-    //            return Json(new { success = true, message = "Data deleted successfully" });
-    //        }
-    //        else
-    //        {
-    //            TempData["Error"] = "Data not removed";
-    //            return Json(new { success = false, message = "Data deletion failed" });
-    //        }
-    //    }
-    //    else
-    //    {
-    //        TempData["Error"] = "Data not found";
-    //        return Json(new { success = false, message = "Data not found" });
-    //    }
-    //}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _productRepositoy.DeleteProductAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
 
 }

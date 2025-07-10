@@ -40,9 +40,7 @@
                 <td>@(product.HasSale ? "Yes" : "No")</td>
                 <td>
                     <a class="btn btn-outline-success" asp-controller="Product" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
-                    <form asp-action="Delete" asp-controller="Product" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@product.Id" />
+                    <form asp-controller="Product" asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline">
                         <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
                     </form>
 

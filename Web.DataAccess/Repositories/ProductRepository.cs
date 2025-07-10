@@ -88,22 +88,19 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        public async Task DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(int id,CancellationToken cancellationToken=default)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-            if (product == null)
-                throw new InvalidOperationException("Product not found.");
-
+            var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            
             // Delete image if exists
-            if (!string.IsNullOrEmpty(product.ImageName))
+            if (!string.IsNullOrEmpty(productFromDb!.ImageName))
             {
-                var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, product.ImageName);
+                var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
                 if (File.Exists(imagePath))
                     File.Delete(imagePath);
             }
-
-            _context.Products.Remove(product);
-            // SaveChangesAsync should be called by UnitOfWork, not here
+            _context.Products.Remove(productFromDb);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         private static async Task<string> SaveImageAsync(IFormFile file)

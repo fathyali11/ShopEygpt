@@ -11,6 +11,6 @@ namespace Web.Entites.IRepositories
         Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);
         Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);
-        Task DeleteProductAsync(int id);
+        Task DeleteProductAsync(int id, CancellationToken cancellationToken = default);
     }
 }
