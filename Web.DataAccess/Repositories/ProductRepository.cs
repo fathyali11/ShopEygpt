@@ -23,6 +23,26 @@ namespace Web.DataAccess.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
+        public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
+        {
+            var response= await _context.Products
+                .Include(x => x.Category)
+                .Select(x => new ProductReponseForAdmin
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    ImageName = x.ImageName,
+                    CategoryName = x.Category.Name,
+                    HasSale= x.IsSale,
+                    CreatedAt = x.CreatedAt,
+                    UpdatedAt = x.UpdatedAt
+
+                })
+                .ToListAsync(cancellationToken);
+            return response;
+        }
 
         public async Task UpdateProductAsync(EditProductVM model)
         {

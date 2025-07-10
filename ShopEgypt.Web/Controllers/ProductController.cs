@@ -5,15 +5,13 @@ namespace ShopEgypt.Web.Controllers;
 
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {
-    //public IActionResult Index()
-    //{
-    //    return View();
-    //}
-    //public IActionResult GetData()
-    //{
-    //    var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category").ToList();
-    //    return Json(new { data = products });
-    //}
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        var response=await _productRepositoy.GetAllProductsAdminAsync();
+        return View(response);
+    }
+
     [HttpGet]
     public IActionResult Create()
     {
