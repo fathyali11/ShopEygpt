@@ -11,8 +11,8 @@ public class ProductMapping
 
         //TypeAdapterConfig<Product, ProductResponse>.NewConfig();
 
-        TypeAdapterConfig<Product, EditProductVM>.NewConfig()
-            .Map(dest => dest.ImageName, src => $"/Images/Products/{src.ImageName}");
+        TypeAdapterConfig<EditProductVM, Product>.NewConfig();
+            
 
     }
 }

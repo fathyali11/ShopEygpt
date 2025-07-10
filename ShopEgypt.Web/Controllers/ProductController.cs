@@ -37,31 +37,40 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
             return View(model);
         }
     }
-    //[HttpGet]
-    //public IActionResult Edit(int id)
-    //{
-    //    var productVM = new ProductVMEdit
-    //    {
-    //        Product = _unitOfWork.ProductRepository.GetBy(x => x.Id == id, includeObj: "Category"),
-    //        CategoryList = _unitOfWork.CategoryRepository.CategorySelectList()
-    //    };
-    //    return View(productVM);
-    //}
-    //[HttpPost]
-    //[ValidateAntiForgeryToken]
-    //public IActionResult Edit(ProductVMEdit model)
-    //{
-    //    if (ModelState.IsValid)
-    //    {
-    //        _unitOfWork.ProductRepository.Update(model);
-    //        _unitOfWork.Save();
-    //        TempData["Success"] = "Data Updated Successfly";
-    //        return RedirectToAction("Index");
-    //    }
-    //    model.CategoryList = _unitOfWork.CategoryRepository.CategorySelectList();
-    //    TempData["Error"] = "Data Not Updated";
-    //    return View(model);
-    //}
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var product= await _productRepositoy.GetProductEditByIdAsync(id);
+        if (product == null)
+        {
+            TempData["Error"] = "Product Not Found";
+            return RedirectToAction(nameof(Index));
+        }
+        return View(product);
+
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditAsync(EditProductVM model,CancellationToken cancellationToken)
+    {
+        if(!ModelState.IsValid)
+            return View(model);
+
+        var result = await _productRepositoy.UpdateProductAsync(model, cancellationToken);
+
+        if (result.IsT1)
+        {
+            TempData["Success"] = "Data Updated Successfly";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var errors = result.AsT0;
+        foreach (var error in errors)
+            ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+
+        TempData["Error"] = "Data Not Updated";
+        return View(model);
+    }
     //[HttpDelete]
     //public IActionResult Delete(int id)
     //{

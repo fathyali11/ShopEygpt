@@ -2,24 +2,15 @@
 
 namespace Web.Entites.ViewModels.ProductVMs;
 
-public record EditProductVM(
-    int Id,
-
-    [Required(ErrorMessage = "Product name is required.")]
-    [StringLength(50, ErrorMessage = "Product name must be at most 50 characters.")]
-    string Name,
-
-    [StringLength(500, ErrorMessage = "Description must be at most 500 characters.")]
-    string Description,
-
-    [Required(ErrorMessage = "Price is required.")]
-    [Range(0.01, 1000000, ErrorMessage = "Price must be greater than 0.")]
-    decimal Price,
-
-    [Required(ErrorMessage = "Category is required.")]
-    int CategoryId,
-
-    string ImageName,
-
-    IFormFile? ImageFile
-);
+public class EditProductVM
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Description { get; set; } = null!;
+    public decimal Price { get; set; }
+    public string? ImageName { get; set; }
+    public string ?CategoryName { get; set; } 
+    public int ?CategoryId { get; set; }
+    public bool HasSale { get; set; }
+    public IFormFile? ImageFile { get; set; } 
+}

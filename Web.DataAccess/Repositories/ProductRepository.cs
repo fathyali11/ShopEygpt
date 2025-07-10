@@ -44,31 +44,48 @@ namespace Web.DataAccess.Repositories
             return response;
         }
 
-        public async Task UpdateProductAsync(EditProductVM model)
+        public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            var productDB = await _context.Products.FirstOrDefaultAsync(x => x.Id == model.Id);
-            if (productDB == null)
-                throw new InvalidOperationException("Product not found.");
+            var product = await _context.Products
+                .Include(x => x.Category)
+                .Select(x => new EditProductVM
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Price = x.Price,
+                    ImageName = x.ImageName,
+                    CategoryId = x.CategoryId,
+                    CategoryName = x.Category.Name
+                })
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return product is not null ? product : null;
+        }
+        public async Task<OneOf<List<ValidationError>,bool>> UpdateProductAsync(EditProductVM model,CancellationToken cancellationToken=default)
+        {
+            var productFromDb=await _context.Products
+                .FirstOrDefaultAsync(x=>x.Id==model.Id,cancellationToken);
+            var oldImageName = productFromDb!.ImageName;
+            var categoryId = productFromDb.CategoryId;
+            model.Adapt(productFromDb);
 
-            if (model.ImageFile != null)
+            if (model.ImageFile is not null)
             {
                 // Delete old image if exists
-                if (!string.IsNullOrEmpty(productDB.ImageName))
+                if (!string.IsNullOrEmpty(productFromDb!.ImageName))
                 {
-                    var oldImagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productDB.ImageName);
+                    var oldImagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
                     if (File.Exists(oldImagePath))
                         File.Delete(oldImagePath);
                 }
-                productDB.ImageName = await SaveImageAsync(model.ImageFile);
+                productFromDb.ImageName = await SaveImageAsync(model.ImageFile);
             }
-
-            productDB.Name = model.Name;
-            productDB.Description = model.Description;
-            productDB.Price = model.Price;
-            productDB.CategoryId = model.CategoryId;
-
-            _context.Products.Update(productDB);
-            // SaveChangesAsync should be called by UnitOfWork, not here
+            else
+            productFromDb.ImageName = oldImageName;
+            if (model.CategoryId is null || model.CategoryName is null)
+                productFromDb.CategoryId = categoryId;
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
         }
 
         public async Task DeleteProductAsync(int id)
