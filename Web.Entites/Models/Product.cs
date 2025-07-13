@@ -11,4 +11,6 @@ public class Product
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsSale { get; set; } = false;
+    public int TotalStock { get; set; } = 0;
+    public int SoldCount { get; set; } = 0;
 }
