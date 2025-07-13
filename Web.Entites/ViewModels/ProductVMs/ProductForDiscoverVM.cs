@@ -1,2 +1,2 @@
 ﻿namespace Web.Entites.ViewModels.ProductVMs;
-public record ProductForDiscoverVM(string Name,string Description,string ImageName,string CategoryName);
+public record ProductForDiscoverVM(int Id,string Name,string Description,string ImageName,string CategoryName);

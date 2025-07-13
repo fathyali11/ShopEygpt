@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Product>
+﻿@model IEnumerable<ProductForDiscoverVM>
 @{
     ViewData["Title"] = "Home Page";
     ViewData["Head"] = "Welcome to Shop Egypt";
@@ -8,33 +8,59 @@
 
 @foreach (var item in Model)
 {
-    <section class="py-5">
-    <div class="container px-4 px-lg-5 mt-5">
-        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">Fancy Product</h5>
-                            <!-- Product price-->
-                            $40.00 - $80.00
-                        </div>
-                    </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
-                    </div>
+    <section id="billboard" class="bg-light py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <h1 class="section-title text-center mt-4" data-aos="fade-up">New Collections</h1>
+                <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe voluptas ut dolorum consequuntur, adipisci
+                        repellat! Eveniet commodi voluptatem voluptate, eum minima, in suscipit explicabo voluptatibus harum,
+                        quibusdam ex repellat eaque!
+                    </p>
                 </div>
             </div>
+            <div class="row">
+                <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="swiper-wrapper d-flex border-animation-left">
+                        <div class="swiper-slide">
+                            <div class="banner-item image-zoom-effect">
+                                <div class="image-holder">
+                                    <a href="#">
+                                        <img src="images/banner-image-6.jpg" alt="product" class="img-fluid">
+                                        @* <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid"> *@
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="index.html" class="item-anchor">@item.Name</a>
+                                    </h5>
+                                    <p>@item.Description</p>
+                                    <div class="btn-left">
+                                        <a asp-action="Discover" asp-controller="Home" asp-route-id="@item.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <div class="icon-arrow icon-arrow-left">
+                    <svg width="50" height="50" viewBox="0 0 24 24">
+                        <use xlink:href="#arrow-left"></use>
+                    </svg>
+                </div>
+                <div class="icon-arrow icon-arrow-right">
+                    <svg width="50" height="50" viewBox="0 0 24 24">
+                        <use xlink:href="#arrow-right"></use>
+                    </svg>
+                </div>
             </div>
         </div>
     </section>
 }
 
 @section Scripts{
-    <link href="~/css/home/index.css" rel="stylesheet" />
+
 }

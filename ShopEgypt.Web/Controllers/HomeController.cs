@@ -1,24 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 
 namespace ShopEgypt.Web.Controllers
 {
     public class HomeController(IProductRepository _productRepository) : Controller
     {
-        //public IActionResult Index(string searchItem)
-        //{
-
-        //    var products = _unitOfWork.ProductRepository.GetAll(includeObj: "Category");
-        //    if (!string.IsNullOrEmpty(searchItem))
-        //    {
-        //        products = _unitOfWork.ProductRepository.GetAll(x => x.Name.ToLower() == searchItem.ToLower() || x.Category.Name == searchItem, includeObj: "Category");
-        //        ViewBag.CurrentFilter = searchItem;
-        //    }
-
-
-        //    return View(products);
-        //}
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        {
+            var response = await _productRepository.GetAllProductsForDiscoverAsync(cancellationToken);
+            return View(response);
+        }
         //public IActionResult DiplayProducts(int categoryId)
         //{
         //    var products = _unitOfWork.ProductRepository.GetAll(x => x.CategoryId == categoryId, includeObj: "Category");
