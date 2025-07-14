@@ -21,7 +21,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     [HttpGet]
     public IActionResult Create()
     {
-        return View(new CreateProductVM(default!,default!, default!, default!, default!));
+        return View(new CreateProductVM(default!,default!, default!, default!,default!, default!));
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
