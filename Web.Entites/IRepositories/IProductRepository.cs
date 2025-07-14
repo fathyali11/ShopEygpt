@@ -10,7 +10,10 @@ namespace Web.Entites.IRepositories
         Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model, CancellationToken cancellationToken = default);
         Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);
         Task<ProductForDiscoverVM> GetProductForDiscoverByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<ProductForBuyVM> GetProductForBuyByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<ProductForBuyVM>> GetAllProductsForBuyAsync(CancellationToken cancellationToken = default);
         Task<IEnumerable<ProductForDiscoverVM>> GetAllProductsForDiscoverAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<ProductForBuyVM>> GetAllProductsInCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
         Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);
         Task DeleteProductAsync(int id, CancellationToken cancellationToken = default);

@@ -75,6 +75,32 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
+        public async Task<ProductForBuyVM> GetProductForBuyByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .Where(x => x.Id == id)
+                .Select(x => new ProductForBuyVM(
+                    x.Id,
+                    x.Name,
+                    x.ImageName,
+                    x.Price
+                    ))
+                .FirstOrDefaultAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<IEnumerable<ProductForBuyVM>> GetAllProductsForBuyAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .Select(x => new ProductForBuyVM
+                (
+                    x.Id,
+                    x.Name,
+                    x.Description,
+                    x.Price
+                ))
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
         public async Task<IEnumerable<ProductForDiscoverVM>> GetAllProductsForDiscoverAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
@@ -85,6 +111,20 @@ namespace Web.DataAccess.Repositories
                     x.Description,
                     x.ImageName,
                     x.Category.Name
+                ))
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<IEnumerable<ProductForBuyVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .Where(x=>x.CategoryId==categoryId)
+                .Select(x => new ProductForBuyVM
+                (
+                    x.Id,
+                    x.Name,
+                    x.ImageName,
+                    x.Price
                 ))
                 .ToListAsync(cancellationToken);
             return response!;
