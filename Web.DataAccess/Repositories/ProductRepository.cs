@@ -60,11 +60,11 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             return product is not null ? product : null;
         }
-        public async Task<ProductForDiscoverVM> GetProductForDiscoverByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var response=await _context.Products
                 .Where(x=>x.Id==id)
-                .Select(x => new ProductForDiscoverVM
+                .Select(x => new DiscoverProductVM
                 (
                     x.Id,
                     x.Name,
@@ -75,11 +75,11 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
-        public async Task<ProductForBuyVM> GetProductForBuyByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
                 .Where(x => x.Id == id)
-                .Select(x => new ProductForBuyVM(
+                .Select(x => new NewArrivalProductsVM(
                     x.Id,
                     x.Name,
                     x.ImageName,
@@ -88,10 +88,10 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
-        public async Task<IEnumerable<ProductForBuyVM>> GetAllProductsForBuyAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
-                .Select(x => new ProductForBuyVM
+                .Select(x => new NewArrivalProductsVM
                 (
                     x.Id,
                     x.Name,
@@ -101,10 +101,10 @@ namespace Web.DataAccess.Repositories
                 .ToListAsync(cancellationToken);
             return response!;
         }
-        public async Task<IEnumerable<ProductForDiscoverVM>> GetAllProductsForDiscoverAsync(CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
-                .Select(x => new ProductForDiscoverVM
+                .Select(x => new DiscoverProductVM
                 (
                     x.Id,
                     x.Name,
@@ -115,11 +115,11 @@ namespace Web.DataAccess.Repositories
                 .ToListAsync(cancellationToken);
             return response!;
         }
-        public async Task<IEnumerable<ProductForBuyVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
                 .Where(x=>x.CategoryId==categoryId)
-                .Select(x => new ProductForBuyVM
+                .Select(x => new NewArrivalProductsVM
                 (
                     x.Id,
                     x.Name,

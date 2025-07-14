@@ -11,8 +11,8 @@ namespace ShopEgypt.Web.Controllers
     {
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var productsForDiscover = await _productRepository.GetAllProductsForDiscoverAsync();
-            var productsForBuy = await _productRepository.GetAllProductsForBuyAsync();
+            var productsForDiscover = await _productRepository.GetDiscoverProductsAsync();
+            var productsForBuy = await _productRepository.GetNewArrivalProductsAsync();
             var categoryForDiscover=await _categoryRepository.GetAllCategoriesAsync();
             var response = new HomeViewVM
             {
@@ -27,7 +27,7 @@ namespace ShopEgypt.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Discover(int id,CancellationToken cancellationToken)
         {
-            var product = await _productRepository.GetProductForDiscoverByIdAsync(id,cancellationToken);
+            var product = await _productRepository.GetDiscoverProductByIdAsync(id,cancellationToken);
             return View(product);
         }
 
