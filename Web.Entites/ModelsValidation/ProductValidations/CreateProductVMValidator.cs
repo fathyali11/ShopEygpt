@@ -16,6 +16,9 @@ public class CreateProductVMValidator:AbstractValidator<CreateProductVM>
             .GreaterThan(0).WithMessage("Price must be greater than 0.");
         RuleFor(x => x.CategoryId)
             .NotEmpty().WithMessage("Category is required.");
+        RuleFor(x => x.StockQuantity)
+            .NotEmpty().WithMessage("Stock quantity is required.")
+            .GreaterThanOrEqualTo(0).WithMessage("Stock quantity must be a non-negative integer.");
         RuleFor(x => x.ImageFile)
             .Must(ImageSignatureValidator.IsValidImage!)
             .WithMessage("Image must be a valid JPEG or PNG file.");
