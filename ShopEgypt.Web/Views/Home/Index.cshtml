@@ -7,60 +7,66 @@
     Layout = "_HomeLayout";
 }
 
-@foreach (var item in Model.ProductsForDiscover)
+
 {
-    <section id="billboard" class="bg-light py-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <h1 class="section-title text-center mt-4" data-aos="fade-up">New Collections</h1>
-                <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300">
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe voluptas ut dolorum consequuntur, adipisci
-                        repellat! Eveniet commodi voluptatem voluptate, eum minima, in suscipit explicabo voluptatibus harum,
-                        quibusdam ex repellat eaque!
-                    </p>
-                </div>
+<section id="billboard" class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <h1 class="section-title text-center mt-4" data-aos="fade-up">New Collections</h1>
+            <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe voluptas ut dolorum consequuntur, adipisci
+                    repellat! Eveniet commodi voluptatem voluptate, eum minima, in suscipit explicabo voluptatibus harum,
+                    quibusdam ex repellat eaque!
+                </p>
             </div>
-            <div class="row">
-                <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
-                    <div class="swiper-wrapper d-flex border-animation-left">
-                        <div class="swiper-slide">
-                            <div class="banner-item image-zoom-effect">
-                                <div class="image-holder">
-                                    <a href="#">
-                                        <img src="images/banner-image-6.jpg" alt="product" class="img-fluid">
-                                        @* <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid"> *@
-                                    </a>
-                                </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="index.html" class="item-anchor">@item.Name</a>
-                                    </h5>
-                                    <p>@item.Description</p>
-                                    <div class="btn-left">
-                                        <a asp-action="Discover" asp-controller="Home" asp-route-id="@item.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
-                                    </div>
+        </div>
+
+        
+        <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="swiper-wrapper d-flex border-animation-left">
+                @foreach (var item in Model.ProductsForDiscover)
+                {
+                    <div class="swiper-slide">
+                        <div class="banner-item image-zoom-effect">
+                            <div class="image-holder">
+                                <a href="#">
+                                    <img src="images/banner-image-6.jpg" alt="product" class="img-fluid">
+                                    @* <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid"> *@
+                                </a>
+                            </div>
+                            <div class="banner-content py-4">
+                                <h5 class="element-title text-uppercase">
+                                    <a href="index.html" class="item-anchor">@item.Name</a>
+                                </h5>
+                                <p>@item.Description</p>
+                                <div class="btn-left">
+                                    <a asp-action="Discover" asp-controller="Home" asp-route-id="@item.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-                <div class="icon-arrow icon-arrow-left">
-                    <svg width="50" height="50" viewBox="0 0 24 24">
-                        <use xlink:href="#arrow-left"></use>
-                    </svg>
-                </div>
-                <div class="icon-arrow icon-arrow-right">
-                    <svg width="50" height="50" viewBox="0 0 24 24">
-                        <use xlink:href="#arrow-right"></use>
-                    </svg>
-                </div>
+                }
             </div>
+
+            <div class="swiper-pagination"></div>
         </div>
-    </section>
-}
+
+        
+        <div class="icon-arrow icon-arrow-left">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+                <use xlink:href="#arrow-left"></use>
+            </svg>
+        </div>
+        <div class="icon-arrow icon-arrow-right">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+                <use xlink:href="#arrow-right"></use>
+            </svg>
+        </div>
+    </div>
+</section>
+
+
 <section class="features py-5">
     <div class="container">
         <div class="row">
@@ -104,50 +110,56 @@
     </div>
 </section>
 
-@foreach(var category in Model.CategoriesResponse)
-{
 
-    <section id="categoriesHome" class="categories overflow-hidden">
-        <div class="container">
-            <div class="open-up" data-aos="zoom-out">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="cat-item image-zoom-effect">
-                            <div class="image-holder">
-                                <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id">
-                                    @* <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid"> *@
-                                    <img src="~/Images/banner-image-1.jpg" alt="categories" class="product-image img-fluid">
-                                </a>
-                            </div>
-                            <div class="category-content">
-                                <div class="product-button">
-                                    <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id" class="btn btn-common text-uppercase">Shop for @category.Name</a>
-                                </div>
+
+
+<section id="categoriesHome" class="categories overflow-hidden">
+    <div class="container">
+        <div class="open-up" data-aos="zoom-out">
+        @foreach (var category in Model.CategoriesResponse)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="cat-item image-zoom-effect">
+                        <div class="image-holder">
+                            <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id">
+                                @* <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid"> *@
+                                <img src="~/Images/banner-image-1.jpg" alt="categories" class="product-image img-fluid">
+                            </a>
+                        </div>
+                        <div class="category-content">
+                            <div class="product-button">
+                                <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id" class="btn btn-common text-uppercase">Shop for @category.Name</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        }
+            
         </div>
-    </section>
-}
+    </div>
+</section>
 
 
-@foreach(var product in Model.productsForBuy)
-{
-    <section id="new-arrival" class="new-arrival product-carousel py-5 position-relative overflow-hidden">
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
-                <h4 class="text-uppercase">Our New Arrivals</h4>
-                <a href="index.html" class="btn-link">View All Products</a>
-            </div>
-            <div class="swiper product-swiper open-up" data-aos="zoom-out">
-                <div class="swiper-wrapper d-flex">
+
+
+<section id="new-arrival" class="new-arrival product-carousel py-5 position-relative overflow-hidden">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
+            <h4 class="text-uppercase">Our New Arrivals</h4>
+            <a href="index.html" class="btn-link">View All Products</a>
+        </div>
+
+        <div class="swiper product-swiper open-up" data-aos="zoom-out">
+            <div class="swiper-wrapper d-flex">
+                @foreach (var product in Model.productsForBuy)
+                {
                     <div class="swiper-slide">
                         <div class="product-item image-zoom-effect link-effect">
                             <div class="image-holder position-relative">
                                 <a href="index.html">
-                                    <img src="images/product-item-1.jpg" alt="categories" class="product-image img-fluid">
+                                    <img src="images/product-item-1.jpg" alt="product" class="product-image img-fluid">
                                 </a>
                                 <a href="index.html" class="btn-icon btn-wishlist">
                                     <svg width="24" height="24" viewBox="0 0 24 24">
@@ -163,23 +175,25 @@
                             </div>
                         </div>
                     </div>
+                }
+            </div>
 
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
-            <div class="icon-arrow icon-arrow-left">
-                <svg width="50" height="50" viewBox="0 0 24 24">
-                    <use xlink:href="#arrow-left"></use>
-                </svg>
-            </div>
-            <div class="icon-arrow icon-arrow-right">
-                <svg width="50" height="50" viewBox="0 0 24 24">
-                    <use xlink:href="#arrow-right"></use>
-                </svg>
-            </div>
+            <div class="swiper-pagination"></div>
         </div>
-    </section>
-}
+
+        <div class="icon-arrow icon-arrow-left">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+                <use xlink:href="#arrow-left"></use>
+            </svg>
+        </div>
+        <div class="icon-arrow icon-arrow-right">
+            <svg width="50" height="50" viewBox="0 0 24 24">
+                <use xlink:href="#arrow-right"></use>
+            </svg>
+        </div>
+    </div>
+</section>
+
 
 
 <section id="best-sellers" class="best-sellers product-carousel py-5 position-relative overflow-hidden">
