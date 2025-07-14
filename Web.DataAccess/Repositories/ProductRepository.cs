@@ -17,6 +17,10 @@ namespace Web.DataAccess.Repositories
             var validationResult = await _validationRepository.ValidateRequest(_createProductValidator, model);
             if (validationResult is not null)
                 return validationResult;
+            var existingProduct = await _context.Products
+                .FirstOrDefaultAsync(x => x.Name == model.Name, cancellationToken);
+            if (existingProduct is not null)
+                return new List<ValidationError> { new("Name", "Product with this name already exists") };
             var product = model.Adapt<Product>();
             product.ImageName = await SaveImageAsync(model.ImageFile);
             await _context.Products.AddAsync(product, cancellationToken);
