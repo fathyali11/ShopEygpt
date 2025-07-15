@@ -8,7 +8,6 @@
 }
 
 
-{
 <section id="billboard" class="bg-light py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -22,7 +21,6 @@
             </div>
         </div>
 
-        
         <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
             <div class="swiper-wrapper d-flex border-animation-left">
                 @foreach (var item in Model.ProductsForDiscover)
@@ -31,8 +29,7 @@
                         <div class="banner-item image-zoom-effect">
                             <div class="image-holder">
                                 <a href="#">
-                                    <img src="images/banner-image-6.jpg" alt="product" class="img-fluid">
-                                    @* <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid"> *@
+                                    <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid">
                                 </a>
                             </div>
                             <div class="banner-content py-4">
@@ -48,21 +45,20 @@
                     </div>
                 }
             </div>
-
-            <div class="swiper-pagination"></div>
         </div>
 
-        
-        <div class="icon-arrow icon-arrow-left">
-            <svg width="50" height="50" viewBox="0 0 24 24">
-                <use xlink:href="#arrow-left"></use>
-            </svg>
-        </div>
-        <div class="icon-arrow icon-arrow-right">
-            <svg width="50" height="50" viewBox="0 0 24 24">
-                <use xlink:href="#arrow-right"></use>
-            </svg>
-        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <div class="icon-arrow icon-arrow-left">
+        <svg width="50" height="50" viewBox="0 0 24 24">
+            <use xlink:href="#arrow-left"></use>
+        </svg>
+    </div>
+    <div class="icon-arrow icon-arrow-right">
+        <svg width="50" height="50" viewBox="0 0 24 24">
+            <use xlink:href="#arrow-right"></use>
+        </svg>
     </div>
 </section>
 

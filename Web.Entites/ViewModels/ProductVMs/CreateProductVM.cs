@@ -18,7 +18,7 @@ public record CreateProductVM(
     int CategoryId,
     [Required(ErrorMessage = "Stock quantity is required.")]
     [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be a non-negative integer.")]
-    int StockQuantity,
+    int TotalStock,
 
     IFormFile ImageFile
 );

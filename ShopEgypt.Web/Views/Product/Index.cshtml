@@ -5,18 +5,23 @@
     ViewData["PageTitle"] = "Products";
     Layout = "_HomeLayout";
 }
+
+
 <p>
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<table id="MyTable" class="table">
+
+<table id="MyTable" class="table table-bordered table-striped table-hover align-middle text-center">
     <thead>
-        <tr>
+        <tr class="align-middle bg-dark text-white">
             <th>Name</th>
             <th>Description</th>
             <th>Price</th>
             <th>Category</th>
             <th>Image</th>
             <th>Has a Sale</th>
+            <th>Total Stock</th>
+            <th>Sold Stock</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,24 +36,44 @@
                 <td>
                     @if (product.ImageName != null)
                     {
-                        <img src="~/Images/Products/@product.ImageName" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                        <img src="~/Images/Products/@product.ImageName" width="100px" height="100px" style="border-radius:3px;" alt="Product Image" class="product-image" />
                     }
                     else
                     {
                         <span>No Image</span>
                     }
                 </td>
-                <td>@(product.HasSale ? "Yes" : "No")</td>
-                <td>
-                    <a class="btn btn-outline-success" asp-controller="Product" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
-                    <form asp-controller="Product" asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
+            <td>
+                @Html.Raw(product.HasSale
+                                ? "<i class='bi bi-check-circle-fill text-success'></i>"
+                                : "<i class='bi bi-x-circle-fill text-danger'></i>")
 
+            </td>
+
+                <td>@product.TotalStock</td>
+                <td>@product.SoldCount</td>
+                <td>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a class="btn btn-outline-success btn-sm"
+                           asp-controller="Product"
+                           asp-action="Edit"
+                           asp-route-id="@product.Id">Edit</a>
+
+                        <form asp-controller="Product"
+                              asp-action="Delete"
+                              asp-route-id="@product.Id"
+                              method="post"
+                              onsubmit="return confirm('Are you sure?')"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }
+    </tbody>
 </table>
+
 
 @section Scripts {
 @*     <script src="~/js/product/imagedisplay.js"></script>

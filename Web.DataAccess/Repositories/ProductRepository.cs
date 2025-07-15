@@ -41,7 +41,9 @@ namespace Web.DataAccess.Repositories
                     CategoryName = x.Category.Name,
                     HasSale= x.IsSale,
                     CreatedAt = x.CreatedAt,
-                    UpdatedAt = x.UpdatedAt
+                    UpdatedAt = x.UpdatedAt,
+                    SoldCount=x.SoldCount,
+                    TotalStock=x.TotalStock
 
                 })
                 .ToListAsync(cancellationToken);
