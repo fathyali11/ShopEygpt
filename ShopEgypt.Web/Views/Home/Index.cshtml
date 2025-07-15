@@ -111,31 +111,33 @@
 
 <section id="categoriesHome" class="categories overflow-hidden">
     <div class="container">
-        <div class="open-up" data-aos="zoom-out">
-        @foreach (var category in Model.CategoriesResponse)
-        {
-            <div class="row">
-                <div class="col-md-4">
+        <div class="row g-3 open-up" data-aos="zoom-out">
+            @foreach (var category in Model.CategoriesResponse)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
                     <div class="cat-item image-zoom-effect">
                         <div class="image-holder">
                             <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id">
-                                @* <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid"> *@
-                                <img src="~/Images/banner-image-1.jpg" alt="categories" class="product-image img-fluid">
+                                <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid">
                             </a>
                         </div>
                         <div class="category-content">
                             <div class="product-button">
-                                <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id" class="btn btn-common text-uppercase">Shop for @category.Name</a>
+                                <a asp-action="GetAllInCategory"
+                                   asp-controller="Product"
+                                   asp-route-categoryId="@category.Id"
+                                   class="btn btn-common text-uppercase">
+                                    Shop for @category.Name
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-            
+            }
         </div>
     </div>
 </section>
+
 
 
 
@@ -144,7 +146,7 @@
     <div class="container">
         <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
             <h4 class="text-uppercase">Our New Arrivals</h4>
-            <a href="index.html" class="btn-link">View All Products</a>
+            <a h class="btn-link">View All Products</a>
         </div>
 
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
@@ -154,8 +156,8 @@
                     <div class="swiper-slide">
                         <div class="product-item image-zoom-effect link-effect">
                             <div class="image-holder position-relative">
-                                <a href="index.html">
-                                    <img src="images/product-item-1.jpg" alt="product" class="product-image img-fluid">
+                                <a >
+                                    <img src="~/Images/Products/@product.ImageName" alt="product" class="product-image img-fluid">
                                 </a>
                                 <a href="index.html" class="btn-icon btn-wishlist">
                                     <svg width="24" height="24" viewBox="0 0 24 24">
