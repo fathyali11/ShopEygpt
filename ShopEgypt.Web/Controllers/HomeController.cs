@@ -11,14 +11,12 @@ namespace ShopEgypt.Web.Controllers
     {
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var productsForDiscover = await _productRepository.GetDiscoverProductsAsync();
-            var productsForBuy = await _productRepository.GetNewArrivalProductsAsync();
-            var categoryForDiscover=await _categoryRepository.GetAllCategoriesAsync();
             var response = new HomeViewVM
             {
-                ProductsForDiscover = productsForDiscover.ToList(),
-                productsForBuy = productsForBuy.ToList(),
-                CategoriesResponse = categoryForDiscover.ToList()
+                ProductsForDiscover = await _productRepository.GetDiscoverProductsAsync(cancellationToken),
+                NewArrivalProducts      = await _productRepository.GetNewArrivalProductsAsync(cancellationToken),
+                CategoriesResponse = await _categoryRepository.GetAllCategoriesAsync(),
+                BestSellingProducts=await _productRepository.GetBestSellingProductsAsync(cancellationToken)
             };
             return View(response);
         }

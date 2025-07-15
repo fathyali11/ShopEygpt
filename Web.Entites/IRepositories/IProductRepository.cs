@@ -11,8 +11,9 @@ namespace Web.Entites.IRepositories
         Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);
         Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default);
-        Task<IEnumerable<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default);
-        Task<IEnumerable<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default);
+        Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default);
+        Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default);
+        Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default);
         Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
         Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);

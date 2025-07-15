@@ -84,15 +84,27 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
-        public async Task<IEnumerable<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
                 .AsNoTracking()
+                .OrderBy(x=>x.CreatedAt)
+                .Take(10)
                 .ProjectToType<NewArrivalProductsVM>()
                 .ToListAsync(cancellationToken);
             return response!;
         }
-        public async Task<IEnumerable<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .AsNoTracking()
+                .OrderBy(x=>x.SoldCount)
+                .Take(10)
+                .ProjectToType<BestSellingProductVM>()
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
                 .AsNoTracking()
