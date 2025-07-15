@@ -69,55 +69,34 @@ namespace Web.DataAccess.Repositories
         public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var response=await _context.Products
+                .AsNoTracking()
                 .Where(x=>x.Id==id)
-                .Select(x => new DiscoverProductVM
-                (
-                    x.Id,
-                    x.Name,
-                    x.Description,
-                    x.ImageName ,
-                    x.Category.Name
-                ))
+                .ProjectToType<DiscoverProductVM>()
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
         public async Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
+                .AsNoTracking()
                 .Where(x => x.Id == id)
-                .Select(x => new NewArrivalProductsVM(
-                    x.Id,
-                    x.Name,
-                    x.ImageName,
-                    x.Price
-                    ))
+                .ProjectToType <NewArrivalProductsVM>()
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
         public async Task<IEnumerable<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
-                .Select(x => new NewArrivalProductsVM
-                (
-                    x.Id,
-                    x.Name,
-                    x.Description,
-                    x.Price
-                ))
+                .AsNoTracking()
+                .ProjectToType<NewArrivalProductsVM>()
                 .ToListAsync(cancellationToken);
             return response!;
         }
         public async Task<IEnumerable<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
         {
             var response = await _context.Products
-                .Select(x => new DiscoverProductVM
-                (
-                    x.Id,
-                    x.Name,
-                    x.Description,
-                    x.ImageName,
-                    x.Category.Name
-                ))
+                .AsNoTracking()
+                .ProjectToType<DiscoverProductVM>()    
                 .ToListAsync(cancellationToken);
             return response!;
         }

@@ -8,6 +8,8 @@ public class ProductMapping
     public static void RegisterMappings()
     {
         TypeAdapterConfig<CreateProductVM, Product>.NewConfig();
+        TypeAdapterConfig<Product, DiscoverProductVM>.NewConfig()
+            .Map(dest=>dest.CategoryName,src=>src.Category.Name);
 
         //TypeAdapterConfig<Product, ProductResponse>.NewConfig();
 
