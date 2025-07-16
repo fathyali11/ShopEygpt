@@ -9,6 +9,8 @@ using Web.Entites.ViewModels.ProductVMs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHybridCache();
+
 CategoryMapping.RegisterMappings();
 ProductMapping.RegisterMappings();
 
