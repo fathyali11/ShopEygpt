@@ -37,9 +37,8 @@
             </div>
                 <div class="form-group">
                     <label for="CategoryId">Category</label>
-                    <select asp-for="CategoryId" class="form-control">
+                <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
                         <option value="">-- Select Category --</option>
-                        @await Component.InvokeAsync("CategorySelectList", new { selectedCategoryId = Model?.CategoryId })
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
@@ -74,4 +73,12 @@
 @*     <script src="~/js/product/imagevalidationedit.js"></script>
     <script src="https://cdn.tiny.cloud/1/d5i3bnjvxjk362iphf6kzupq6xj3wthkyxdxb87b8n4nh24m/tinymce/6/tinymce.min.js"></script>
  *@
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#category-select-list-item-container").load("/Category/LoadCategorySelectedList");
+        });
+    </script>
 }

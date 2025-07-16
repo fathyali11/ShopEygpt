@@ -1,4 +1,4 @@
-﻿namespace Web.DataAccess.Utilities
+﻿namespace Web.Entites.Consts
 {
     public static class SD
     {

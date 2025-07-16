@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using System.Threading;
-using Web.DataAccess.Utilities;
 using Web.Entites.Consts;
 using Web.Entites.ViewModels.CategoryVMs;
 
@@ -85,6 +84,7 @@ namespace Web.DataAccess.Repositories
             await RemoveKeys();
             return true;
         }
+
         public async Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
         {
             var cacheKey = CategoryCacheKeys.AllCategories;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Web.DataAccess.Utilities
+namespace Web.Entites.Consts
 {
     public class MyStatus
     {
