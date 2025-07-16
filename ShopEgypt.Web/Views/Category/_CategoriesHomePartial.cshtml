@@ -1,27 +1,21 @@
 ﻿@model IEnumerable<CategoryResponse>
-@{
-    ViewData["Title"] = "Categories";
-    // Layout = "_HomeLayout";
-}
-@foreach(var category in Model)
+@foreach (var category in Model)
 {
-    <div class="container">
-        <div class="open-up" data-aos="zoom-out">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="cat-item image-zoom-effect">
-                        <div class="image-holder">
-                            <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id">
-                                @* <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid"> *@
-                                <img src="~/Images/banner-image-1.jpg" alt="categories" class="product-image img-fluid">
-                            </a>
-                        </div>
-                        <div class="category-content">
-                            <div class="product-button">
-                                <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id" class="btn btn-common text-uppercase">Shop for @category.Name</a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="cat-item image-zoom-effect">
+            <div class="image-holder">
+                <a asp-action="GetAllInCategory" asp-controller="Product" asp-route-categoryId="@category.Id">
+                    <img src="~/Images/Categories/@category.ImageName" alt="categories" class="product-image img-fluid">
+                </a>
+            </div>
+            <div class="category-content">
+                <div class="product-button">
+                    <a asp-action="GetAllInCategory"
+                       asp-controller="Product"
+                       asp-route-categoryId="@category.Id"
+                       class="btn btn-common text-uppercase">
+                        Shop for @category.Name
+                    </a>
                 </div>
             </div>
         </div>
