@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Mapster;
+using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using Web.Entites.Models;
 using Web.Entites.ViewModels.ProductVMs;
@@ -8,7 +9,8 @@ namespace Web.DataAccess.Repositories
 {
     public class ProductRepository(ApplicationDbContext context,
         ValidationRepository _validationRepository,
-        IValidator<CreateProductVM> _createProductValidator) : GenericRepository<Product>(context), IProductRepository
+        IValidator<CreateProductVM> _createProductValidator,
+        HybridCache _hybridCache) : GenericRepository<Product>(context), IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -86,30 +88,46 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _context.Products
-                .AsNoTracking()
-                .OrderBy(x=>x.CreatedAt)
-                .Take(10)
-                .ProjectToType<NewArrivalProductsVM>()
-                .ToListAsync(cancellationToken);
+            var cacheKey = "NewArrivalProducts";
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ =>
+                {
+                    return await _context.Products
+                            .AsNoTracking()
+                            .OrderBy(x => x.CreatedAt)
+                            .Take(10)
+                            .ProjectToType<NewArrivalProductsVM>()
+                            .ToListAsync(cancellationToken);
+                },
+                cancellationToken:cancellationToken
+                );
+
+            
             return response!;
         }
         public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _context.Products
+            var cacheKey = "BestSellingProducts";
+
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Products
                 .AsNoTracking()
-                .OrderBy(x=>x.SoldCount)
+                .OrderBy(x => x.SoldCount)
                 .Take(10)
                 .ProjectToType<BestSellingProductVM>()
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken),
+                cancellationToken: cancellationToken);
             return response!;
         }
         public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _context.Products
+            var cacheKey = "DiscoverProducts";
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Products
                 .AsNoTracking()
-                .ProjectToType<DiscoverProductVM>()    
-                .ToListAsync(cancellationToken);
+                .ProjectToType<DiscoverProductVM>()
+                .ToListAsync(cancellationToken), cancellationToken: cancellationToken);
+            
             return response!;
         }
         public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)

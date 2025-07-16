@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using Web.Entites.ViewModels.CategoryVMs;
 
@@ -9,7 +10,8 @@ namespace Web.DataAccess.Repositories
     public class CategoryRepository(ApplicationDbContext context,
         ValidationRepository _validationRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
-        IValidator<EditCategoryVM> _editCategoryValidator) : GenericRepository<Category>(context), ICategoryRepository
+        IValidator<EditCategoryVM> _editCategoryValidator,
+        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
@@ -31,8 +33,14 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<CategoryResponse>> GetAllCategoriesAsync()
         {
-            var categories = await GetAllAsync();
-            return categories.Adapt<List<CategoryResponse>>();
+            var cacheKey = "AllCategories";
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ =>
+                {
+                    var categories = await GetAllAsync();
+                    return categories.Adapt<List<CategoryResponse>>();
+                });
+            return response;
         }
         public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync()
         {
@@ -99,28 +107,5 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        private static async Task<string> SaveImageAsync(IFormFile cover)
-        {
-            string imageName = $"{Guid.NewGuid()}{Path.GetExtension(cover.FileName)}";
-            string imagePath = Path.Combine("wwwroot", SD.ImagePathCategories);
-            string path = Path.Combine(imagePath, imageName);
-            if (!Directory.Exists(imagePath))
-            {
-                Directory.CreateDirectory(imagePath);
-            }
-            using var stream = new FileStream(path, FileMode.Create);
-            await cover.CopyToAsync(stream);
-            return imageName;
-        }
-        // create a method to delete the image file if it exists
-        private static void DeleteImageFile(string imageName)
-        {
-            if (string.IsNullOrEmpty(imageName)) return;
-            string imagePath = Path.Combine("wwwroot", SD.ImagePathCategories, imageName);
-            if (File.Exists(imagePath))
-            {
-                File.Delete(imagePath);
-            }
-        }
     }
 }
