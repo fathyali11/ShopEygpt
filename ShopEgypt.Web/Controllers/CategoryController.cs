@@ -11,6 +11,12 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         return View(response);
     }
     [HttpGet]
+    public async Task<IActionResult> GetCategoryInHome()
+    {
+        var response = await _categoryRepository.GetAllCategoriesAsync();
+        return PartialView("_CategoriesHomePartial", response);
+    }
+    [HttpGet]
     public IActionResult Create()
     {
         return View(new CreateCategoryVM(null!,null!));

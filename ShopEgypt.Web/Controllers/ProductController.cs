@@ -11,11 +11,17 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var response=await _productRepositoy.GetAllProductsAdminAsync();
         return View(response);
     }
+    //[HttpGet]
+    //public async Task<IActionResult> GetAllInCategory(int categoryId,CancellationToken cancellationToken)
+    //{
+    //    var products=await _productRepositoy.GetAllProductsInCategoryAsync(categoryId,cancellationToken);
+
+    //}
 
     [HttpGet]
     public IActionResult Create()
     {
-        return View(new CreateProductVM(default!,default!, default!, default!, default!));
+        return View(new CreateProductVM(default!,default!, default!, default!,default!, default!));
     }
     [HttpPost]
     [ValidateAntiForgeryToken]

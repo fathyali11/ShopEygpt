@@ -13,4 +13,5 @@ public class EditProductVM
     public int ?CategoryId { get; set; }
     public bool HasSale { get; set; }
     public IFormFile? ImageFile { get; set; } 
+    public int TotalStock { get; set; }
 }

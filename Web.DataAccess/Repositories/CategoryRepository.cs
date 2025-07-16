@@ -19,16 +19,20 @@ namespace Web.DataAccess.Repositories
             if (validationResult is not null)
                 return validationResult;
 
+            var existingCategory = await GetByAsync(x => x.Name == categoryVM.Name);
+            if (existingCategory != null)
+                return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
+
             var category = categoryVM.Adapt<Category>();
             category.ImageName = await SaveImageAsync(categoryVM.Image);
             await _context.Categories.AddAsync(category, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
-        public async Task<IEnumerable<CategoryResponse>> GetAllCategoriesAsync()
+        public async Task<List<CategoryResponse>> GetAllCategoriesAsync()
         {
             var categories = await GetAllAsync();
-            return categories.Adapt<IEnumerable<CategoryResponse>>();
+            return categories.Adapt<List<CategoryResponse>>();
         }
         public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync()
         {
@@ -84,6 +88,10 @@ namespace Web.DataAccess.Repositories
             var categoryFromDb = await GetByAsync(x => x.Id == id);
             if (categoryFromDb == null)
                 return new List<ValidationError> { new("Not Found", "Category not found") };
+
+            var existingProducts = await _context.Products.AnyAsync(x => x.CategoryId == id);
+            if (existingProducts)
+                return new List<ValidationError> { new("Cannot Delete", "Category cannot be deleted as it has associated products") };
 
             DeleteImageFile(categoryFromDb.ImageName);
             _context.Categories.Remove(categoryFromDb);

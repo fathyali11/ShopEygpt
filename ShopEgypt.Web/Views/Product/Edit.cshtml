@@ -4,6 +4,7 @@
     ViewData["Title"] = "Edit";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Edit";
+    Layout = "_HomeLayout";
 }
 
 <div class="row">
@@ -29,6 +30,11 @@
                     <input asp-for="Price" class="form-control" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
+            <div class="form-group">
+                <label asp-for="TotalStock" class="control-label"></label>
+                <input asp-for="TotalStock" class="form-control" />
+                <span asp-validation-for="TotalStock" class="text-danger"></span>
+            </div>
                 <div class="form-group">
                     <label for="CategoryId">Category</label>
                     <select asp-for="CategoryId" class="form-control">
@@ -42,11 +48,11 @@
                     <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
-                <div class="form-check mb-3">
-                    <input asp-for="HasSale" class="form-check-input" />
-                    <label asp-for="HasSale" class="form-check-label"></label>
-                    <span asp-validation-for="HasSale" class="text-danger"></span>
-                </div>
+            <div class="form-check p-0 m-0 d-inline-flex align-items-center" >
+                <input asp-for="HasSale" class="form-check-input m-0" style="width: 1em; height: 1em;background-color:#8C907E" />
+                <label asp-for="HasSale" class="form-check-label">Has a sale</label>
+            </div>
+
 
             <div class="form-group">
                 <input type="submit" value="Edit" class="btn btn-primary" />

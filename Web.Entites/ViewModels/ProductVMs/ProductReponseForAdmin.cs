@@ -8,6 +8,8 @@ public class ProductReponseForAdmin
     public string ImageName { get; set; } = null!;
     public string CategoryName { get; set; } = null!;
     public bool HasSale { get; set; }
+    public int TotalStock { get; set; }
+    public int SoldCount { get; set; } 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

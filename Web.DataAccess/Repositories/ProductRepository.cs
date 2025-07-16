@@ -17,6 +17,10 @@ namespace Web.DataAccess.Repositories
             var validationResult = await _validationRepository.ValidateRequest(_createProductValidator, model);
             if (validationResult is not null)
                 return validationResult;
+            var existingProduct = await _context.Products
+                .FirstOrDefaultAsync(x => x.Name == model.Name, cancellationToken);
+            if (existingProduct is not null)
+                return new List<ValidationError> { new("Name", "Product with this name already exists") };
             var product = model.Adapt<Product>();
             product.ImageName = await SaveImageAsync(model.ImageFile);
             await _context.Products.AddAsync(product, cancellationToken);
@@ -37,13 +41,14 @@ namespace Web.DataAccess.Repositories
                     CategoryName = x.Category.Name,
                     HasSale= x.IsSale,
                     CreatedAt = x.CreatedAt,
-                    UpdatedAt = x.UpdatedAt
+                    UpdatedAt = x.UpdatedAt,
+                    SoldCount=x.SoldCount,
+                    TotalStock=x.TotalStock
 
                 })
                 .ToListAsync(cancellationToken);
             return response;
         }
-
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products
@@ -60,6 +65,66 @@ namespace Web.DataAccess.Repositories
                 })
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             return product is not null ? product : null;
+        }
+        public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var response=await _context.Products
+                .AsNoTracking()
+                .Where(x=>x.Id==id)
+                .ProjectToType<DiscoverProductVM>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .ProjectToType <NewArrivalProductsVM>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .AsNoTracking()
+                .OrderBy(x=>x.CreatedAt)
+                .Take(10)
+                .ProjectToType<NewArrivalProductsVM>()
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .AsNoTracking()
+                .OrderBy(x=>x.SoldCount)
+                .Take(10)
+                .ProjectToType<BestSellingProductVM>()
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .AsNoTracking()
+                .ProjectToType<DiscoverProductVM>()    
+                .ToListAsync(cancellationToken);
+            return response!;
+        }
+        public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
+        {
+            var response = await _context.Products
+                .Where(x=>x.CategoryId==categoryId)
+                .Select(x => new NewArrivalProductsVM
+                (
+                    x.Id,
+                    x.Name,
+                    x.ImageName,
+                    x.Price
+                ))
+                .ToListAsync(cancellationToken);
+            return response!;
         }
         public async Task<OneOf<List<ValidationError>,bool>> UpdateProductAsync(EditProductVM model,CancellationToken cancellationToken=default)
         {
