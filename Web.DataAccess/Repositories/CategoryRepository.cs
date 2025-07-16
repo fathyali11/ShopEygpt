@@ -8,7 +8,7 @@ using Web.Entites.ViewModels.CategoryVMs;
 namespace Web.DataAccess.Repositories
 {
     public class CategoryRepository(ApplicationDbContext context,
-        ValidationRepository _validationRepository,
+        GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
         IValidator<EditCategoryVM> _editCategoryValidator,
         HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
@@ -17,7 +17,7 @@ namespace Web.DataAccess.Repositories
 
         public async Task<OneOf<List<ValidationError>,bool>> AddCategoryAsync(CreateCategoryVM categoryVM,CancellationToken cancellationToken=default)
         {
-            var validationResult = await _validationRepository.ValidateRequest(_createCategoryValidator, categoryVM);
+            var validationResult = await _generalRepository.ValidateRequest(_createCategoryValidator, categoryVM);
             if (validationResult is not null)
                 return validationResult;
 
@@ -26,7 +26,7 @@ namespace Web.DataAccess.Repositories
                 return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
 
             var category = categoryVM.Adapt<Category>();
-            category.ImageName = await SaveImageAsync(categoryVM.Image);
+            category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
             await _context.Categories.AddAsync(category, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
@@ -42,7 +42,7 @@ namespace Web.DataAccess.Repositories
                 });
             return response;
         }
-        public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync()
+        public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default)
         {
             return await _context.Categories
                 .Select(x => new SelectListItem
@@ -50,7 +50,7 @@ namespace Web.DataAccess.Repositories
                     Text = x.Name,
                     Value = x.Id.ToString()
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
         public async Task<EditCategoryVM> GetCategoryAsync(int id)
         {
@@ -63,7 +63,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM,CancellationToken cancellationToken = default)
         {
-            var validationResult = await _validationRepository.ValidateRequest(_editCategoryValidator, categoryVM);
+            var validationResult = await _generalRepository.ValidateRequest(_editCategoryValidator, categoryVM);
             if (validationResult is not null)
                 return validationResult;
 
@@ -76,8 +76,8 @@ namespace Web.DataAccess.Repositories
             categoryVM.Adapt(category);
             if (categoryVM.Image != null)
             {
-                DeleteImageFile(categoryImageOldName);
-                category.ImageName = await SaveImageAsync(categoryVM.Image);
+               _generalRepository.DeleteImage(categoryImageOldName,SD.ImagePathCategories);
+               category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
             }
             else
             {
@@ -86,11 +86,7 @@ namespace Web.DataAccess.Repositories
             await _context.SaveChangesAsync(cancellationToken);
             return true;
         }
-        public async Task<IEnumerable<SelectListItem>> CategorySelectListAsync()
-        {
-            var categories = await GetAllAsync();
-            return categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
-        }
+        
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
         {
             var categoryFromDb = await GetByAsync(x => x.Id == id);
@@ -101,7 +97,7 @@ namespace Web.DataAccess.Repositories
             if (existingProducts)
                 return new List<ValidationError> { new("Cannot Delete", "Category cannot be deleted as it has associated products") };
 
-            DeleteImageFile(categoryFromDb.ImageName);
+            _generalRepository.DeleteImage(categoryFromDb.ImageName,SD.ImagePathCategories);
             _context.Categories.Remove(categoryFromDb);
             await _context.SaveChangesAsync();
             return true;

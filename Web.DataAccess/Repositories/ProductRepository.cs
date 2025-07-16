@@ -8,7 +8,7 @@ using Web.Entites.ViewModels.ProductVMs;
 namespace Web.DataAccess.Repositories
 {
     public class ProductRepository(ApplicationDbContext context,
-        ValidationRepository _validationRepository,
+        GeneralRepository _generalRepository,
         IValidator<CreateProductVM> _createProductValidator,
         HybridCache _hybridCache) : GenericRepository<Product>(context), IProductRepository
     {
@@ -16,7 +16,7 @@ namespace Web.DataAccess.Repositories
 
         public async Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model,CancellationToken cancellationToken=default)
         {
-            var validationResult = await _validationRepository.ValidateRequest(_createProductValidator, model);
+            var validationResult = await _generalRepository.ValidateRequest(_createProductValidator, model);
             if (validationResult is not null)
                 return validationResult;
             var existingProduct = await _context.Products
@@ -24,7 +24,7 @@ namespace Web.DataAccess.Repositories
             if (existingProduct is not null)
                 return new List<ValidationError> { new("Name", "Product with this name already exists") };
             var product = model.Adapt<Product>();
-            product.ImageName = await SaveImageAsync(model.ImageFile);
+            product.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile, SD.ImagePathProducts);
             await _context.Products.AddAsync(product, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
             return true;
@@ -154,14 +154,8 @@ namespace Web.DataAccess.Repositories
 
             if (model.ImageFile is not null)
             {
-                // Delete old image if exists
-                if (!string.IsNullOrEmpty(productFromDb!.ImageName))
-                {
-                    var oldImagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
-                    if (File.Exists(oldImagePath))
-                        File.Delete(oldImagePath);
-                }
-                productFromDb.ImageName = await SaveImageAsync(model.ImageFile);
+                _generalRepository.DeleteImage(oldImageName, SD.ImagePathProducts);
+                productFromDb.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile,SD.ImagePathProducts);
             }
             else
             productFromDb.ImageName = oldImageName;
@@ -174,33 +168,11 @@ namespace Web.DataAccess.Repositories
         public async Task DeleteProductAsync(int id,CancellationToken cancellationToken=default)
         {
             var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-            
-            // Delete image if exists
-            if (!string.IsNullOrEmpty(productFromDb!.ImageName))
-            {
-                var imagePath = Path.Combine("wwwroot", SD.ImagePathProducts, productFromDb.ImageName);
-                if (File.Exists(imagePath))
-                    File.Delete(imagePath);
-            }
+            _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
             _context.Products.Remove(productFromDb);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        private static async Task<string> SaveImageAsync(IFormFile file)
-        {
-            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var imagesPath = Path.Combine("wwwroot", SD.ImagePathProducts);
-            var path = Path.Combine(imagesPath, imageName);
-
-            if (!Directory.Exists(imagesPath))
-            {
-                Directory.CreateDirectory(imagesPath);
-            }
-
-            using var stream = new FileStream(path, FileMode.Create);
-            await file.CopyToAsync(stream);
-
-            return imageName;
-        }
+        
     }
 }

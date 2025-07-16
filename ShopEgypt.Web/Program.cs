@@ -21,7 +21,7 @@ builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>(
 builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
 
 
-builder.Services.AddScoped<ValidationRepository>();
+builder.Services.AddScoped<GeneralRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
