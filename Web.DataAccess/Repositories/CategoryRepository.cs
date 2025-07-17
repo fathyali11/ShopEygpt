@@ -13,8 +13,7 @@ namespace Web.DataAccess.Repositories
         GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
         IValidator<EditCategoryVM> _editCategoryValidator,
-        HybridCache _hybridCache,
-        ProductRepository _productRepository) : GenericRepository<Category>(context), ICategoryRepository
+        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
@@ -67,7 +66,7 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
-            await _productRepository.RemoveKeys(cancellationToken);
+            await RemoveProductCacheKeys(cancellationToken);
             return true;
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
@@ -131,5 +130,13 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesSelectList, cancellationToken);
         }
 
+        private async Task RemoveProductCacheKeys(CancellationToken cancellationToken = default)
+        {
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
+        }
     }
 }

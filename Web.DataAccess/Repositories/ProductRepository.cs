@@ -173,7 +173,7 @@ namespace Web.DataAccess.Repositories
                 cancellationToken: cancellationToken);
         }
        
-        public async Task RemoveKeys(CancellationToken cancellationToken = default)
+        private async Task RemoveKeys(CancellationToken cancellationToken = default)
         {
             await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
@@ -181,5 +181,6 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
         }
+        
     }
 }
