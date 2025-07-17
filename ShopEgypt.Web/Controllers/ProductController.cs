@@ -29,6 +29,12 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(cancellationToken);
         return PartialView("_BestSellersPartial", bestSellers);
     }
+    [HttpGet]
+    public async Task<IActionResult> Discover(int id, CancellationToken cancellationToken)
+    {
+        var product = await _productRepositoy.GetDiscoverProductByIdAsync(id, cancellationToken);
+        return View(product);
+    }
     //[HttpGet]
     //public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
     //{
