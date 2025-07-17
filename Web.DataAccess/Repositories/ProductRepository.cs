@@ -28,7 +28,37 @@ namespace Web.DataAccess.Repositories
             product.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile, SD.ImagePathProducts);
             await _context.Products.AddAsync(product, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+            await RemoveKeys(cancellationToken);
             return true;
+        }
+        public async Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default)
+        {
+            var productFromDb = await _context.Products
+                .FirstOrDefaultAsync(x => x.Id == model.Id, cancellationToken);
+            var oldImageName = productFromDb!.ImageName;
+            var categoryId = productFromDb.CategoryId;
+            model.Adapt(productFromDb);
+
+            if (model.ImageFile is not null)
+            {
+                _generalRepository.DeleteImage(oldImageName, SD.ImagePathProducts);
+                productFromDb.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile, SD.ImagePathProducts);
+            }
+            else
+                productFromDb.ImageName = oldImageName;
+            if (model.CategoryId is null || model.CategoryName is null)
+                productFromDb.CategoryId = categoryId;
+            await _context.SaveChangesAsync(cancellationToken);
+            await RemoveKeys(cancellationToken);
+            return true;
+        }
+        public async Task DeleteProductAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
+            _context.Products.Remove(productFromDb);
+            await _context.SaveChangesAsync(cancellationToken);
+            await RemoveKeys(cancellationToken);
         }
         public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
         {
@@ -69,6 +99,8 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             return product is not null ? product : null;
         }
+
+
         public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var response=await _context.Products
@@ -89,7 +121,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
         {
-            var cacheKey = "NewArrivalProducts";
+            var cacheKey =ProductCacheKeys.NewArrivalProducts;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ =>
                 {
@@ -108,7 +140,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default)
         {
-            var cacheKey = "BestSellingProducts";
+            var cacheKey = ProductCacheKeys.BestSellingProducts;
 
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
@@ -122,7 +154,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
         {
-            var cacheKey = "DiscoverProducts";
+            var cacheKey = ProductCacheKeys.DiscoverProducts;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
                 .AsNoTracking()
@@ -133,47 +165,21 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
         {
-            var response = await _context.Products
-                .Where(x=>x.CategoryId==categoryId)
-                .Select(x => new NewArrivalProductsVM
-                (
-                    x.Id,
-                    x.Name,
-                    x.ImageName,
-                    x.Price
-                ))
-                .ToListAsync(cancellationToken);
-            return response!;
+            var cacheKey = ProductCacheKeys.AllProductsInCategory;
+            return await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Products
+                .Where(x => x.CategoryId == categoryId)
+                .ProjectToType<NewArrivalProductsVM>()
+                .ToListAsync(cancellationToken),
+                cancellationToken: cancellationToken);
         }
-        public async Task<OneOf<List<ValidationError>,bool>> UpdateProductAsync(EditProductVM model,CancellationToken cancellationToken=default)
+       
+        public async Task RemoveKeys(CancellationToken cancellationToken = default)
         {
-            var productFromDb=await _context.Products
-                .FirstOrDefaultAsync(x=>x.Id==model.Id,cancellationToken);
-            var oldImageName = productFromDb!.ImageName;
-            var categoryId = productFromDb.CategoryId;
-            model.Adapt(productFromDb);
-
-            if (model.ImageFile is not null)
-            {
-                _generalRepository.DeleteImage(oldImageName, SD.ImagePathProducts);
-                productFromDb.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile,SD.ImagePathProducts);
-            }
-            else
-            productFromDb.ImageName = oldImageName;
-            if (model.CategoryId is null || model.CategoryName is null)
-                productFromDb.CategoryId = categoryId;
-            await _context.SaveChangesAsync(cancellationToken);
-            return true;
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
         }
-
-        public async Task DeleteProductAsync(int id,CancellationToken cancellationToken=default)
-        {
-            var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
-            _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
-            _context.Products.Remove(productFromDb);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-
-        
     }
 }
