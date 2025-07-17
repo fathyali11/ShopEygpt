@@ -184,13 +184,13 @@ namespace Web.DataAccess.Repositories
             return response!;
         }
 
-        public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
         {
-            var cacheKey = ProductCacheKeys.AllProductsInCategory;
+            var cacheKey = $"{ProductCacheKeys.AllProductsInCategory}{categoryId}";
             return await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
                 .Where(x => x.CategoryId == categoryId)
-                .ProjectToType<NewArrivalProductsVM>()
+                .ProjectToType<DiscoverProductVM>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
         }

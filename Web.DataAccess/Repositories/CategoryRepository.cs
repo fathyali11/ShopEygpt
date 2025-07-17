@@ -66,7 +66,7 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
-            await RemoveProductCacheKeys(cancellationToken);
+            await RemoveProductCacheKeys(category.Id,cancellationToken);
             return true;
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
@@ -143,9 +143,9 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(CategoryCacheKeys.LimitedCategoriesInHome, cancellationToken);
         }
 
-        private async Task RemoveProductCacheKeys(CancellationToken cancellationToken = default)
+        private async Task RemoveProductCacheKeys(int categoryId,CancellationToken cancellationToken = default)
         {
-            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
+            await _hybridCache.RemoveAsync($"{ProductCacheKeys.AllProductsInCategory}{categoryId}", cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
