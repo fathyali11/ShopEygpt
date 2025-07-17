@@ -16,9 +16,15 @@
                 <div class="col-md-6 column-container bg-white">
                     <div class="collection-content p-5 m-0 m-md-5">
                         <h3 class="element-title text-uppercase">@Model.Name</h3>
+                        <p class="text-muted fs-5 fw-semibold">Price: @Model.Price.ToString("C")</p>
                         <p>
                             @Model.Description
                         </p>
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" asp-for="Id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-dark text-uppercase mt-3">Add to Cart</button>
+                        </form>
+
                         <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
                     </div>
                 </div>
