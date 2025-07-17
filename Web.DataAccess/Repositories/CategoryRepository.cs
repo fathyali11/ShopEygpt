@@ -1,21 +1,25 @@
 ﻿using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
+using System.Threading;
+using Web.Entites.Consts;
 using Web.Entites.ViewModels.CategoryVMs;
 
 namespace Web.DataAccess.Repositories
 {
     public class CategoryRepository(ApplicationDbContext context,
-        ValidationRepository _validationRepository,
+        GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
-        IValidator<EditCategoryVM> _editCategoryValidator) : GenericRepository<Category>(context), ICategoryRepository
+        IValidator<EditCategoryVM> _editCategoryValidator,
+        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
         public async Task<OneOf<List<ValidationError>,bool>> AddCategoryAsync(CreateCategoryVM categoryVM,CancellationToken cancellationToken=default)
         {
-            var validationResult = await _validationRepository.ValidateRequest(_createCategoryValidator, categoryVM);
+            var validationResult = await _generalRepository.ValidateRequest(_createCategoryValidator, categoryVM);
             if (validationResult is not null)
                 return validationResult;
 
@@ -24,64 +28,46 @@ namespace Web.DataAccess.Repositories
                 return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
 
             var category = categoryVM.Adapt<Category>();
-            category.ImageName = await SaveImageAsync(categoryVM.Image);
+            category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
             await _context.Categories.AddAsync(category, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+            await RemoveKeys(cancellationToken);
             return true;
-        }
-        public async Task<List<CategoryResponse>> GetAllCategoriesAsync()
-        {
-            var categories = await GetAllAsync();
-            return categories.Adapt<List<CategoryResponse>>();
-        }
-        public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync()
-        {
-            return await _context.Categories
-                .Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                })
-                .ToListAsync();
         }
         public async Task<EditCategoryVM> GetCategoryAsync(int id)
         {
             var category = await GetByAsync(x => x.Id == id);
             if (category == null)
-                return new EditCategoryVM(id, null!,null!,null!);
-
+                return new EditCategoryVM(id, null!, null!, null!);
             return category.Adapt<EditCategoryVM>();
 
         }
-        public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM,CancellationToken cancellationToken = default)
+        public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM, CancellationToken cancellationToken = default)
         {
-            var validationResult = await _validationRepository.ValidateRequest(_editCategoryValidator, categoryVM);
+            var validationResult = await _generalRepository.ValidateRequest(_editCategoryValidator, categoryVM);
             if (validationResult is not null)
                 return validationResult;
 
             var category = await GetByAsync(x => x.Id == categoryVM.Id);
             if (category == null)
-                return new List<ValidationError> { new("Not Found","Category not found") };
+                return new List<ValidationError> { new("Not Found", "Category not found") };
 
             var categoryImageOldName = category.ImageName;
 
             categoryVM.Adapt(category);
             if (categoryVM.Image != null)
             {
-                DeleteImageFile(categoryImageOldName);
-                category.ImageName = await SaveImageAsync(categoryVM.Image);
+                _generalRepository.DeleteImage(categoryImageOldName, SD.ImagePathCategories);
+                category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
             }
             else
             {
                 category.ImageName = categoryImageOldName;
             }
             await _context.SaveChangesAsync(cancellationToken);
+            await RemoveKeys(cancellationToken);
+            await RemoveProductCacheKeys(cancellationToken);
             return true;
-        }
-        public async Task<IEnumerable<SelectListItem>> CategorySelectListAsync()
-        {
-            var categories = await GetAllAsync();
-            return categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
         {
@@ -93,34 +79,64 @@ namespace Web.DataAccess.Repositories
             if (existingProducts)
                 return new List<ValidationError> { new("Cannot Delete", "Category cannot be deleted as it has associated products") };
 
-            DeleteImageFile(categoryFromDb.ImageName);
+            _generalRepository.DeleteImage(categoryFromDb.ImageName, SD.ImagePathCategories);
             _context.Categories.Remove(categoryFromDb);
             await _context.SaveChangesAsync();
+            await RemoveKeys();
             return true;
         }
 
-        private static async Task<string> SaveImageAsync(IFormFile cover)
+        public async Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
         {
-            string imageName = $"{Guid.NewGuid()}{Path.GetExtension(cover.FileName)}";
-            string imagePath = Path.Combine("wwwroot", SD.ImagePathCategories);
-            string path = Path.Combine(imagePath, imageName);
-            if (!Directory.Exists(imagePath))
-            {
-                Directory.CreateDirectory(imagePath);
-            }
-            using var stream = new FileStream(path, FileMode.Create);
-            await cover.CopyToAsync(stream);
-            return imageName;
+            var cacheKey = CategoryCacheKeys.AllCategories;
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ =>
+                {
+                    var categories = await GetAllAsync();
+                    return categories.Adapt<List<CategoryResponse>>();
+                },cancellationToken:cancellationToken);
+            return response;
         }
-        // create a method to delete the image file if it exists
-        private static void DeleteImageFile(string imageName)
+        public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(CancellationToken cancellationToken=default)
         {
-            if (string.IsNullOrEmpty(imageName)) return;
-            string imagePath = Path.Combine("wwwroot", SD.ImagePathCategories, imageName);
-            if (File.Exists(imagePath))
-            {
-                File.Delete(imagePath);
-            }
+            var cacheKey =CategoryCacheKeys.AllCategoriesInHome;
+            return await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Categories
+                .ProjectToType<CategoryInHomeVM>()
+                .ToListAsync(cancellationToken),
+                cancellationToken:cancellationToken
+                );
+        }
+        public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default)
+        {
+            var cacheKey=CategoryCacheKeys.AllCategoriesSelectList;
+            return await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Categories
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                })
+                .ToListAsync(cancellationToken),
+                cancellationToken:cancellationToken);
+        }
+        
+
+
+        private async Task RemoveKeys(CancellationToken cancellationToken=default)
+        {
+            await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategories, cancellationToken);
+            await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesInHome, cancellationToken);
+            await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesSelectList, cancellationToken);
+        }
+
+        private async Task RemoveProductCacheKeys(CancellationToken cancellationToken = default)
+        {
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
         }
     }
 }

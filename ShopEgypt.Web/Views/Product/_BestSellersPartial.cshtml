@@ -1,0 +1,24 @@
+﻿@model List<BestSellingProductVM>
+@foreach (var item in Model)
+{
+    <div class="swiper-slide">
+        <div class="product-item image-zoom-effect link-effect">
+            <div class="image-holder">
+                <a asp-action="Discover" asp-controller="Home" asp-route-id="@item.Id">
+                    <img src="~/Images/Products/@item.ImageName" alt="product" class="product-image img-fluid">
+                </a>
+                <a href="index.html" class="btn-icon btn-wishlist">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <use xlink:href="#heart"></use>
+                    </svg>
+                </a>
+                <div class="product-content">
+                    <h5 class="text-uppercase fs-5 mt-3">
+                        <a href="index.html">@item.Name</a>
+                    </h5>
+                    <a href="index.html" class="text-decoration-none" data-after="Add to cart"><span>$@item.Price</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -11,10 +11,16 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         return View(response);
     }
     [HttpGet]
-    public async Task<IActionResult> GetCategoryInHome()
+    public async Task<IActionResult> LoadCategoryInHome()
     {
         var response = await _categoryRepository.GetAllCategoriesAsync();
         return PartialView("_CategoriesHomePartial", response);
+    }
+    [HttpGet]
+    public async Task<IActionResult> LoadCategorySelectedList(CancellationToken cancellationToken)
+    {
+        var categories = await _categoryRepository.GetAllCategoriesSelectListAsync(cancellationToken);
+        return PartialView("_CategorySelectedListPartial",categories);
     }
     [HttpGet]
     public IActionResult Create()

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Logging;
 namespace Web.DataAccess.Repositories;
-public class ValidationRepository(ILogger<ValidationRepository> _logger)
+public class GeneralRepository(ILogger<GeneralRepository> _logger)
 {
     public async Task<List<ValidationError>?> ValidateRequest<TSource, TRequest>(TSource source, TRequest request)
         where TSource : IValidator<TRequest>
@@ -23,5 +23,31 @@ public class ValidationRepository(ILogger<ValidationRepository> _logger)
 
         _logger.LogInformation("Validation successful for request type: {RequestType}", typeof(TRequest).Name);
         return null;
+    }
+    public async Task<string> SaveImageAsync(IFormFile file,string folderName)
+    {
+        var imageName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        var imagesPath = Path.Combine("wwwroot", folderName);
+        var path = Path.Combine(imagesPath, imageName);
+
+        if (!Directory.Exists(imagesPath))
+        {
+            Directory.CreateDirectory(imagesPath);
+        }
+
+        using var stream = new FileStream(path, FileMode.Create);
+        await file.CopyToAsync(stream);
+
+        return imageName;
+    }
+    // add remove image
+    public void DeleteImage(string imageName,string folderName)
+    {
+        if(!string.IsNullOrEmpty(imageName))
+        {
+            var path = Path.Combine("wwwroot",folderName,imageName);
+            if(File.Exists(path))
+                File.Delete(path);
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿@model CreateProductVM
-
 @{
     ViewData["Title"] = "Create";
     ViewData["Head"] = "Product Management";
@@ -32,9 +31,8 @@
             </div>
             <div class="form-group">
                 <label for="CategoryId">Category</label>
-                <select asp-for="CategoryId" class="form-control">
+                <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
                     <option value="">-- Select Category --</option>
-                    @await Component.InvokeAsync("CategorySelectList", new { selectedCategoryId = Model?.CategoryId })
                 </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
@@ -63,6 +61,14 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/imagedisplay.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#category-select-list-item-container").load("/Category/LoadCategorySelectedList");
+        });
+    </script>
 }
 
 

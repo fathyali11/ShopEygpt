@@ -11,10 +11,28 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var response=await _productRepositoy.GetAllProductsAdminAsync();
         return View(response);
     }
+    [HttpGet]
+    public async Task<IActionResult> LoadDiscover(CancellationToken cancellationToken)
+    {
+        var discovers = await _productRepositoy.GetDiscoverProductsAsync(cancellationToken);
+        return PartialView("_DiscoverPartial", discovers);
+    }
+    [HttpGet]
+    public async Task<IActionResult> LoadNewArrivals(CancellationToken cancellationToken)
+    {
+        var newArrivals=await _productRepositoy.GetNewArrivalProductsAsync(cancellationToken);
+        return PartialView("_NewArrivalPartial", newArrivals);
+    }
+    [HttpGet]
+    public async Task<IActionResult> LoadBestSellers(CancellationToken cancellationToken)
+    {
+        var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(cancellationToken);
+        return PartialView("_BestSellersPartial", bestSellers);
+    }
     //[HttpGet]
-    //public async Task<IActionResult> GetAllInCategory(int categoryId,CancellationToken cancellationToken)
+    //public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
     //{
-    //    var products=await _productRepositoy.GetAllProductsInCategoryAsync(categoryId,cancellationToken);
+    //    var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
 
     //}
 

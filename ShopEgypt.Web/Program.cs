@@ -9,6 +9,8 @@ using Web.Entites.ViewModels.ProductVMs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHybridCache();
+
 CategoryMapping.RegisterMappings();
 ProductMapping.RegisterMappings();
 
@@ -19,7 +21,7 @@ builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>(
 builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
 
 
-builder.Services.AddScoped<ValidationRepository>();
+builder.Services.AddScoped<GeneralRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
@@ -43,7 +45,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
 	.AddDefaultUI()
 	.AddDefaultTokenProviders();
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+//builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
 builder.Services.AddDistributedMemoryCache();
@@ -76,6 +78,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Category}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
