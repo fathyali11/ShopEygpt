@@ -162,6 +162,28 @@ namespace Web.DataAccess.Repositories
             
             return response!;
         }
+        public async Task<List<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy, CancellationToken cancellationToken = default)
+        {
+            var cacheKey = ProductCacheKeys.AllProductsSortedBy;
+
+            var response = await _hybridCache.GetOrCreateAsync(cacheKey, async _ =>
+            {
+                IQueryable<Product> query = _context.Products.AsNoTracking();
+                query = sortedBy switch
+                {
+                    "SoldCount" => query.OrderByDescending(p => p.SoldCount),
+                    "CreatedAt" => query.OrderByDescending(p => p.CreatedAt),
+                    _ => query.OrderBy(p => p.Id)
+                };
+
+                return await query
+                    .ProjectToType<DiscoverProductVM>()
+                    .ToListAsync(cancellationToken);
+            }, cancellationToken: cancellationToken);
+
+            return response!;
+        }
+
         public async Task<IEnumerable<NewArrivalProductsVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsInCategory;
@@ -180,6 +202,7 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
         }
         
     }

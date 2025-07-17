@@ -137,6 +137,7 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
         }
     }
 }

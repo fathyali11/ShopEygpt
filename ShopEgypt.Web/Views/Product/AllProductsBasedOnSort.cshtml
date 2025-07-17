@@ -1,0 +1,35 @@
+﻿@model List<DiscoverProductVM>
+@{
+    Layout = "_HomeLayout";
+    ViewData["title"] = "All Products";
+}
+<section id="billboard" class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="banner-item image-zoom-effect">
+                        <div class="image-holder">
+                            <a href="#">
+                                <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid">
+                            </a>
+                        </div>
+                        <div class="banner-content py-3">
+                            <h5 class="element-title text-uppercase">
+                                <a href="#" class="item-anchor">@item.Name</a>
+                            </h5>
+                            <p>@item.Description</p>
+                            <div class="btn-left">
+                                <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="btn-center">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+        </div>
+    </div>
+</section>
