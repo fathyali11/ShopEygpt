@@ -4,7 +4,7 @@
     <div class="swiper-slide">
         <div class="banner-item image-zoom-effect">
             <div class="image-holder">
-                <a href="#">
+                <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id">
                     <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid">
                 </a>
             </div>
