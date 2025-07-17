@@ -41,12 +41,13 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var product = await _productRepositoy.GetDiscoverProductByIdAsync(id, cancellationToken);
         return View(product);
     }
-    //[HttpGet]
-    //public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
-    //{
-    //    var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
+    [HttpGet]
+    public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
+    {
+        var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
 
-    //}
+        return View("AllProductsBasedOnSort", products);
+    }
 
     [HttpGet]
     public IActionResult Create()
