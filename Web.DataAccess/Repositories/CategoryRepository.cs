@@ -66,7 +66,7 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
-            await RemoveProductCacheKeys(cancellationToken);
+            await RemoveProductCacheKeys(category.Id,cancellationToken);
             return true;
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
@@ -97,15 +97,27 @@ namespace Web.DataAccess.Repositories
                 },cancellationToken:cancellationToken);
             return response;
         }
-        public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(CancellationToken cancellationToken=default)
+        public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)
         {
-            var cacheKey =CategoryCacheKeys.AllCategoriesInHome;
+            var cacheKey = isAll?CategoryCacheKeys.AllCategoriesInHome: CategoryCacheKeys.LimitedCategoriesInHome;
+            
             return await _hybridCache.GetOrCreateAsync(cacheKey,
-                async _ => await _context.Categories
-                .ProjectToType<CategoryInHomeVM>()
-                .ToListAsync(cancellationToken),
-                cancellationToken:cancellationToken
+                async _ =>
+                {
+                    var query =_context.Categories
+                    .AsNoTracking()
+                    .ProjectToType<CategoryInHomeVM>();
+
+                    if (isAll)
+                        query = query.Take(4);
+
+                    return await query.ToListAsync(cancellationToken);
+
+                }
+                ,
+                cancellationToken: cancellationToken
                 );
+
         }
         public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default)
         {
@@ -128,15 +140,17 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategories, cancellationToken);
             await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesInHome, cancellationToken);
             await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesSelectList, cancellationToken);
+            await _hybridCache.RemoveAsync(CategoryCacheKeys.LimitedCategoriesInHome, cancellationToken);
         }
 
-        private async Task RemoveProductCacheKeys(CancellationToken cancellationToken = default)
+        private async Task RemoveProductCacheKeys(int categoryId,CancellationToken cancellationToken = default)
         {
-            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
+            await _hybridCache.RemoveAsync($"{ProductCacheKeys.AllProductsInCategory}{categoryId}", cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
         }
     }
 }

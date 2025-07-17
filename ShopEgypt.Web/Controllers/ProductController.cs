@@ -29,12 +29,25 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(cancellationToken);
         return PartialView("_BestSellersPartial", bestSellers);
     }
-    //[HttpGet]
-    //public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
-    //{
-    //    var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
+    [HttpGet]
+    public async Task<IActionResult> AllProductsBasedOnSort(string sortedBy,CancellationToken cancellationToken)
+    {
+        var products = await _productRepositoy.GetAllProductsSortedByAsync(sortedBy,cancellationToken);
+        return View(products);
+    }
+    [HttpGet]
+    public async Task<IActionResult> Discover(int id, CancellationToken cancellationToken)
+    {
+        var product = await _productRepositoy.GetDiscoverProductByIdAsync(id, cancellationToken);
+        return View(product);
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
+    {
+        var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
 
-    //}
+        return View("AllProductsBasedOnSort", products);
+    }
 
     [HttpGet]
     public IActionResult Create()
