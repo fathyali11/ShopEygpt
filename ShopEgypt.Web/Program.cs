@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 using Stripe;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
@@ -8,6 +9,11 @@ using Web.Entites.ViewModels.ProductVMs;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+      .ReadFrom.Configuration(builder.Configuration)
+      .CreateLogger();
+builder.Host.UseSerilog();
 
 builder.Services.AddHybridCache();
 
@@ -29,7 +35,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			options.UseSqlServer(connectionString));
 builder.Services.Configure<StripeData>(builder.Configuration.GetSection("StripeData"));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
 {
