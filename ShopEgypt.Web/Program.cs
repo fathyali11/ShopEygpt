@@ -38,7 +38,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlServer(connectionString));
 builder.Services.Configure<StripeData>(builder.Configuration.GetSection("StripeData"));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 {
 	op.Lockout.MaxFailedAccessAttempts=3;
 	op.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(2);
