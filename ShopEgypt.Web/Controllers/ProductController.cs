@@ -27,12 +27,12 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     public async Task<IActionResult> LoadBestSellers(CancellationToken cancellationToken)
     {
         var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(cancellationToken);
-        return PartialView("_BestSellerPartial", bestSellers);
+        return PartialView("_BestSellersPartial", bestSellers);
     }
     //[HttpGet]
-    //public async Task<IActionResult> GetAllInCategory(int categoryId,CancellationToken cancellationToken)
+    //public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
     //{
-    //    var products=await _productRepositoy.GetAllProductsInCategoryAsync(categoryId,cancellationToken);
+    //    var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
 
     //}
 
