@@ -13,7 +13,8 @@ namespace Web.DataAccess.Repositories
         GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
         IValidator<EditCategoryVM> _editCategoryValidator,
-        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
+        HybridCache _hybridCache,
+        ProductRepository _productRepository) : GenericRepository<Category>(context), ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
@@ -66,6 +67,7 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
+            await _productRepository.RemoveKeys(cancellationToken);
             return true;
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
