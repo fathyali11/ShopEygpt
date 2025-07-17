@@ -88,7 +88,7 @@
     <div class="container">
         <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
             <h4 class="text-uppercase">Our Categories</h4>
-            <a asp-controller="Product" asp-action="AllProductsBasedOnSort" asp-route-sortedBy="CreatedAt" class="btn-link">View All Categories</a>
+            <a asp-controller="Category" asp-action="GetAllCategoriesInHome" class="btn-link">View All Categories</a>
         </div>
         <div id="categories-home" class="row g-3 open-up" data-aos="zoom-out">
         </div>
@@ -245,7 +245,7 @@
             $("#new-arrivals-container").load("/Product/LoadNewArrivals");
             $("#best-sellers-container").load("/Product/LoadBestSellers");
             $("#discover-container").load("/Product/LoadDiscover");
-            $("#categories-home").load("/Category/LoadCategoryInHome");
+            $("#categories-home").load("/Category/LoadLimitedCategoryInHome");
         });
     </script>
 
