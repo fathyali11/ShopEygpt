@@ -3,7 +3,6 @@ using Mapster;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using Web.Entites.Consts;
-using Web.Entites.Models;
 using Web.Entites.ViewModels.ProductVMs;
 
 namespace Web.DataAccess.Repositories
@@ -62,7 +61,9 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
         {
-            var response= await _context.Products
+            var cacheKey = ProductCacheKeys.AllProductsAdmin;
+            return await _hybridCache.GetOrCreateAsync(cacheKey,
+                async _ => await _context.Products
                 .Select(x => new ProductReponseForAdmin
                 {
                     Id = x.Id,
@@ -71,15 +72,14 @@ namespace Web.DataAccess.Repositories
                     Price = x.Price,
                     ImageName = x.ImageName,
                     CategoryName = x.Category.Name,
-                    HasSale= x.IsSale,
+                    HasSale = x.IsSale,
                     CreatedAt = x.CreatedAt,
                     UpdatedAt = x.UpdatedAt,
-                    SoldCount=x.SoldCount,
-                    TotalStock=x.TotalStock
-
+                    SoldCount = x.SoldCount,
+                    TotalStock = x.TotalStock
                 })
-                .ToListAsync(cancellationToken);
-            return response;
+                .ToListAsync(cancellationToken),
+                cancellationToken: cancellationToken);
         }
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
@@ -179,6 +179,7 @@ namespace Web.DataAccess.Repositories
             await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
             await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
+            await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
         }
     }
 }
