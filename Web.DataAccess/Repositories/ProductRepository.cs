@@ -63,7 +63,6 @@ namespace Web.DataAccess.Repositories
         public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
         {
             var response= await _context.Products
-                .Include(x => x.Category)
                 .Select(x => new ProductReponseForAdmin
                 {
                     Id = x.Id,
