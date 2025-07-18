@@ -20,25 +20,20 @@ builder.Services.AddHybridCache();
 CategoryMapping.RegisterMappings();
 ProductMapping.RegisterMappings();
 
-builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
-builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
-
-
-builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
-
-
-builder.Services.AddScoped<GeneralRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-			options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(
+	options =>options.UseSqlServer(connectionString)
+	);
+
 builder.Services.Configure<StripeData>(builder.Configuration.GetSection("StripeData"));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 {
 	op.Lockout.MaxFailedAccessAttempts=3;
 	op.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(2);
@@ -51,12 +46,26 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(op =>
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddDefaultUI()
 	.AddDefaultTokenProviders();
+
 builder.Services.AddRazorPages();
 //builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+
+
+builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
+builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
+
+
+builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
+
+
+builder.Services.AddScoped<GeneralRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 
 var app = builder.Build();

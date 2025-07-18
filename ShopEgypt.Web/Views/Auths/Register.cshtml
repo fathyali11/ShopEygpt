@@ -1,0 +1,52 @@
+﻿@model RegisterVM
+@{
+	Layout = "_RegisterLayout";
+}
+
+<div class="wrapper" style="background-image: url('~/Registering/images/bg-registration-form-2.jpg');">
+	<div class="inner">
+		<form asp-action="Register" asp-controller="Auths" method="post">
+			<h3>Registration Form</h3>
+
+			<partial name="_ValidationScriptsPartial" />
+			<div asp-validation-summary="All" class="text-danger"></div>
+
+			<div class="form-group">
+				<div class="form-wrapper">
+					<label asp-for="FirstName">First Name</label>
+					<input asp-for="FirstName" type="text" class="form-control">
+					<span asp-validation-for="FirstName" class="text-danger"></span>
+				</div>
+				<div class="form-wrapper">
+					<label asp-for="LastName">Last Name</label>
+					<input asp-for="LastName" type="text" class="form-control">
+					<span asp-validation-for="LastName" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="form-wrapper">
+				<label asp-for="UserName">UserName</label>
+				<input asp-for="UserName" type="text" class="form-control">
+				<span asp-validation-for="UserName" class="text-danger"></span>
+			</div>
+			<div class="form-wrapper">
+				<label asp-for="Email">Email</label>
+				<input asp-for="Email" type="text" class="form-control">
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+
+			<div class="form-wrapper">
+				<label asp-for="Password">Password</label>
+				<input asp-for="Password" type="password" class="form-control">
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+
+			<div class="form-wrapper">
+				<label asp-for="ConfirmPassword">Confirm Password</label>
+				<input asp-for="ConfirmPassword" type="password" class="form-control">
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+
+			<button>Register Now</button>
+		</form>
+	</div>
+</div>

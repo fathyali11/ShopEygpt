@@ -21,10 +21,10 @@ namespace Web.DataAccess.Repositories
             var oldUser = _context.ApplicationUsers.FirstOrDefault(x => x.Id == user.Id);
             if (oldUser != null)
             {
-                oldUser.Name = user.Name;
-                oldUser.Email = user.Email;
-                oldUser.Phone = user.Phone;
-                oldUser.City = user.City;
+                //oldUser.Name = user.Name;
+                //oldUser.Email = user.Email;
+                //oldUser.Phone = user.Phone;
+                //oldUser.City = user.City;
             }
         }
 
