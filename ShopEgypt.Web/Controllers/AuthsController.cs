@@ -1,7 +1,9 @@
-﻿using Web.Entites.ViewModels.UsersVMs;
+﻿using Microsoft.AspNetCore.Identity;
+using Web.Entites.ViewModels.UsersVMs;
 
 namespace ShopEgypt.Web.Controllers;
-public class AuthsController(IAuthRepository _authRepository) : Controller
+public class AuthsController(IAuthRepository _authRepository,
+    SignInManager<ApplicationUser> _signInManager) : Controller
 {
     [HttpGet]
     public IActionResult Register() => View();
@@ -37,5 +39,12 @@ public class AuthsController(IAuthRepository _authRepository) : Controller
 
         return View(loginVM);
 
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login", "Auths");
     }
 }
