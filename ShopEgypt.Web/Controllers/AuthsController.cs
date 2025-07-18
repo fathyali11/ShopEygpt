@@ -6,6 +6,7 @@ public class AuthsController(IAuthRepository _authRepository) : Controller
     [HttpGet]
     public IActionResult Register() => View();
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterVM registerVM,CancellationToken cancellationToken)
     {
         var result = await _authRepository.RegisterAsync(registerVM, cancellationToken);
