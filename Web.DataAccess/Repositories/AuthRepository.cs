@@ -13,10 +13,11 @@ public class AuthRepository(
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Check if this email found");
-        var userIsExist = await _userManager.FindByEmailAsync(request.Email);
-        if (userIsExist is not null)
+        var userIsExist=await _userManager
+            .Users.AnyAsync(u => u.Email == request.Email || u.UserName == request.UserName, cancellationToken);
+        if (userIsExist)
         {
-            _logger.LogWarning("User already exists with email: {Email}", request.Email);
+            _logger.LogWarning("User already exists with email: {Email} or user name :{UserName}", request.Email,request.UserName);
             return new List<ValidationError> { new("Found", "This user has an email") };
         }
 
