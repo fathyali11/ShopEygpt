@@ -32,14 +32,5 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
-        public decimal GetTotalPrice(IEnumerable<Cart> shoppingCarts)
-        {
-            decimal totalPrice = 0;
-            foreach(var item in shoppingCarts)
-            {
-                totalPrice += (item.Product.Price * item.Count);
-            }
-            return totalPrice;
-        }
     }
 }
