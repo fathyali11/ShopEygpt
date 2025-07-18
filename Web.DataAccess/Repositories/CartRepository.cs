@@ -32,5 +32,13 @@ namespace Web.DataAccess.Repositories
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<int> GetCartItemCountAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var cart = await _context.Carts
+                .Include(x => x.CartItems)
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            return cart?.CartItems.Sum(x => x.Count) ?? 0;
+        }
     }
 }

@@ -14,6 +14,14 @@ namespace ShopEgypt.Web.Controllers
             await _cartRepository.AddToCartAsync(userId!, productId, cancellationToken);
             return RedirectToAction("Index", "Home");
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Count(CancellationToken cancellationToken = default)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var count = await _cartRepository.GetCartItemCountAsync(userId!, cancellationToken);
+            return Json(new { count });
+        }
 
         //private readonly IUnitOfWork _unitOfWork;
         //public ShoppingCartController(IUnitOfWork unitOfWork)
