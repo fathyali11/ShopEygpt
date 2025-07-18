@@ -20,4 +20,22 @@ public class AuthsController(IAuthRepository _authRepository) : Controller
         return View(registerVM);
 
     }
+
+    [HttpGet]
+    public IActionResult Login() => View();
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginVM loginVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.LoginAsync(loginVM, cancellationToken);
+        if (result.IsT1)
+            return RedirectToAction("Index", "Home");
+
+        var errors = result.AsT0;
+        foreach (var item in errors)
+            ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
+
+        return View(loginVM);
+
+    }
 }
