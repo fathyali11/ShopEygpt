@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Web.DataAccess.Repositories
 {
-    public class ShoppingCartRepository : GenericRepository<ShoppingCart>, IShoppingCartRepository
+    public class ShoppingCartRepository : GenericRepository<Cart>, IShoppingCartRepository
     {
         public ShoppingCartRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public decimal GetTotalPrice(IEnumerable<ShoppingCart> shoppingCarts)
+        public decimal GetTotalPrice(IEnumerable<Cart> shoppingCarts)
         {
             decimal totalPrice = 0;
             foreach(var item in shoppingCarts)

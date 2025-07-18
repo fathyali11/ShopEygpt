@@ -7,8 +7,8 @@ using Web.Entites.Models;
 
 namespace Web.Entites.IRepositories
 {
-    public interface IShoppingCartRepository:IGenericRepository<ShoppingCart>
+    public interface IShoppingCartRepository:IGenericRepository<Cart>
     {
-        decimal GetTotalPrice(IEnumerable<ShoppingCart> shoppingCarts);
+        decimal GetTotalPrice(IEnumerable<Cart> shoppingCarts);
     }
 }
