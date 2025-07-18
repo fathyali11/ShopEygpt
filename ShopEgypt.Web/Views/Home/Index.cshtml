@@ -228,10 +228,10 @@
                 <div class="subscribe-header text-center pb-3">
                     <h3 class="section-title text-uppercase">Sign Up for our newsletter</h3>
                 </div>
-                <form id="form" class="d-flex flex-wrap gap-2">
-                    <input type="text" name="email" placeholder="Your Email Addresss" class="form-control form-control-lg">
-                    <button class="btn btn-dark btn-lg text-uppercase w-100">Sign Up</button>
-                </form>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-action="Login"    asp-controller="Auths"    class="btn btn-dark btn-lg text-uppercase w-100">Login</a>
+                    <a asp-action="Register" asp-controller="Auths" class="btn btn-dark btn-lg text-uppercase w-100">Sign Up</a>
+                </div>
             </div>
         </div>
     </div>
