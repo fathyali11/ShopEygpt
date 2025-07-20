@@ -3,16 +3,20 @@ using System.Security.Claims;
 
 namespace ShopEgypt.Web.Controllers
 {
-    public class ShoppingCartController(ICartRepository _cartRepository) : Controller
+    public class CartController(ICartRepository _cartRepository) : Controller
     {
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Add(int productId, CancellationToken cancellationToken = default)
+        [HttpGet]
+        public async Task<IActionResult> Add(int productId,CancellationToken cancellationToken = default)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _cartRepository.AddToCartAsync(userId!, productId, cancellationToken);
-            return RedirectToAction("Index", "Home");
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return Json(new { success = true, message = "The product was added successfully!" });
+            else
+                return RedirectToAction("Index", "Home");
+
         }
         [Authorize]
         [HttpGet]

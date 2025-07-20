@@ -20,12 +20,12 @@
                         <p>
                             @Model.Description
                         </p>
-                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                            <input type="hidden" asp-for="Id" value="@Model.Id" />
-                            <button type="submit" class="btn btn-outline-dark text-uppercase mt-3">Add to Cart</button>
-                        </form>
-
-                        <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+                        <div class="align-items-center">
+                            <a href="#" class="btn btn-primary add-to-cart" data-product-id="@Model.Id">
+                                Add to Cart
+                            </a>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -33,5 +33,5 @@
     </div>
 </section>
 @section Scripts{
-
+    <script src="~/js/Carts/AddToCart.js" ></script>
 }

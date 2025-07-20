@@ -1,4 +1,5 @@
 ﻿@model List<BestSellingProductVM>
+
 @foreach (var item in Model)
 {
     <div class="swiper-slide">
@@ -16,7 +17,9 @@
                     <h5 class="text-uppercase fs-5 mt-3">
                         <a href="index.html">@item.Name</a>
                     </h5>
-                    <a href="index.html" class="text-decoration-none" data-after="Add to cart"><span>$@item.Price</span></a>
+                    <a asp-controller="Cart" asp-action="Add" asp-route-productId="@item.Id" class="text-decoration-none add-to-cart" data-product-id="@item.Id" data-after="Add to cart">
+                        <span>$@item.Price</span>
+                    </a>
                 </div>
             </div>
         </div>
