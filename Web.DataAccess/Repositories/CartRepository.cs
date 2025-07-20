@@ -38,7 +38,7 @@ namespace Web.DataAccess.Repositories
             var cart = await _context.Carts
                 .Include(x => x.CartItems)
                 .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-            return cart?.CartItems.Sum(x => x.Count) ?? 0;
+            return cart?.CartItems.Sum(x=>x.CartId) ?? 0;
         }
     }
 }
