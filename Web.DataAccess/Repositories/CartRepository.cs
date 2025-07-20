@@ -40,5 +40,51 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
             return cart?.CartItems.Sum(x=>x.CartId) ?? 0;
         }
+
+        public async Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var cart = await _context.Carts
+                .Include(x => x.CartItems)
+                .ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            return cart?? new Cart
+            {
+                UserId = userId,
+                CartItems = []
+            };
+        }
+        public async Task<int> IncreaseAsync(int cartItemId, CancellationToken cancellationToken = default)
+        {
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
+            if (cartItem is not null)
+            {
+                cartItem.Count++;
+                await _context.SaveChangesAsync(cancellationToken);
+                return cartItem.Count;
+            }
+            return 0;
+        }
+        public async Task<int> DecreaseAsync(int cartItemId, CancellationToken cancellationToken = default)
+        {
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
+            if (cartItem is not null)
+            {
+                if (cartItem.Count > 1)
+                {
+                    cartItem.Count--;
+                    await _context.SaveChangesAsync(cancellationToken);
+                    return cartItem.Count;
+                }
+                else
+                {
+                    _context.CartItems.Remove(cartItem);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    return 0;
+                }
+            }
+            return 0;
+        }
     }
 }

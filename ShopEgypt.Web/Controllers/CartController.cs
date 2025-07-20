@@ -7,7 +7,14 @@ namespace ShopEgypt.Web.Controllers;
 public class CartController(ICartRepository _cartRepository) : Controller
 {
 
-    
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken cancellationToken = default)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var cart = await _cartRepository.GetCartItemsAsync(userId!, cancellationToken);
+        return View(cart);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Add(int productId,CancellationToken cancellationToken = default)
     {
@@ -24,6 +31,18 @@ public class CartController(ICartRepository _cartRepository) : Controller
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var count = await _cartRepository.GetCartItemCountAsync(userId!, cancellationToken);
+        return Json(new { count });
+    }
+    [HttpGet]
+    public async Task<IActionResult> Increase(int cartItemId, CancellationToken cancellationToken = default)
+    {
+        var count = await _cartRepository.IncreaseAsync(cartItemId, cancellationToken);
+        return Json(new { count });
+    }
+    [HttpGet]
+    public async Task<IActionResult> Decrease(int cartItemId, CancellationToken cancellationToken = default)
+    {
+        var count = await _cartRepository.DecreaseAsync(cartItemId, cancellationToken);
         return Json(new { count });
     }
 
