@@ -20,12 +20,15 @@
                         <p>
                             @Model.Description
                         </p>
-                        <div class="align-items-center">
-                            <a href="#" class="btn btn-primary add-to-cart" data-product-id="@Model.Id">
+                        <div class="d-flex align-items-center">
+                            <a href="#" class="btn btn-primary add-to-cart me-3" data-product-id="@Model.Id">
                                 Add to Cart
                             </a>
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase">
+                                Shop Collection
+                            </a>
                         </div>
+
                     </div>
                 </div>
             </div>
