@@ -261,7 +261,7 @@
                             </a>
                         </li>
                         <li class="d-none d-lg-block">
-                            <a href="index.html" class="text-uppercase mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                            <a asp-action="Index" asp-controller="Cart" class="text-uppercase mx-3" 
                                aria-controls="offcanvasCart">
                                 Cart - <i class="bi bi-cart"></i>
                                 @if (User.Identity!.IsAuthenticated)
