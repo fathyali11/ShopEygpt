@@ -258,7 +258,7 @@
                         <li class="d-none d-lg-block">
                             <a href="index.html" class="text-uppercase mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                aria-controls="offcanvasCart">
-                                Cart <span class="cart-count">(0)</span>
+                                Cart <span id="cart-count" class="cart-count">(0)</span>
                             </a>
                         </li>
                         <li class="d-lg-none">
@@ -495,6 +495,25 @@
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script src="~/js/script.min.js"></script>
+    <script>
+        function updateCartCount(){
+            $.ajax({
+                url: "/Cart/Count",
+                type: "GET",
+                success: function(data) {
+                    $("#cart-count").text("(" + data.count + ")");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching cart count:", error);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            updateCartCount();
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 
