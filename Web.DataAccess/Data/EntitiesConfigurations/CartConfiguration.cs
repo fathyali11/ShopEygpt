@@ -11,6 +11,10 @@ internal class CartConfiguration : IEntityTypeConfiguration<Cart>
         builder.Property(c => c.UserId)
             .IsRequired();
 
+        builder.Property(c=>c.TotalPrice)
+            .HasColumnType("decimal(18,2)")
+            .HasDefaultValue(0.0m);
+
         builder.HasMany(c =>c.CartItems )
             .WithOne(c => c.Cart)
             .HasForeignKey(p => p.CartId)
