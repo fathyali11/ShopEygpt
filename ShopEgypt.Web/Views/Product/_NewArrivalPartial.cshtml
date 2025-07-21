@@ -17,15 +17,20 @@
                     <h5 class="element-title text-uppercase fs-5 mt-3">
                         <a href="index.html">@product.Name</a>
                     </h5>
-                    <a asp-controller="Cart" asp-action="Add" asp-route-productId="@product.Id" class="text-decoration-none add-to-cart" data-product-id="@product.Id" data-after="Add to cart">
+                    <a href="#" class="text-decoration-none add-to-cart" data-after="Add to cart"
+                       data-product-id="@product.Id"
+                       data-product-name="@product.Name"
+                       data-image-name="@product.ImageName"
+                       data-price="@product.Price"
+                       data-count="1">
                         <span>$@product.Price</span>
                     </a>
+
+
+
 
                 </div>
             </div>
         </div>
     </div>
-}
-@section Scripts {
-    <script src="~/js/Carts/AddToCart.js"></script>
 }

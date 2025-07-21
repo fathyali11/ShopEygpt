@@ -17,7 +17,13 @@
                     <h5 class="text-uppercase fs-5 mt-3">
                         <a href="index.html">@item.Name</a>
                     </h5>
-                    <a asp-controller="Cart" asp-action="Add" asp-route-productId="@item.Id" class="text-decoration-none add-to-cart" data-product-id="@item.Id" data-after="Add to cart">
+                    @Html.AntiForgeryToken()
+                    <a href="#" class="text-decoration-none add-to-cart" data-after="Add to cart"
+                       data-product-id="@item.Id"
+                       data-product-name="@item.Name"
+                       data-image-name="@item.ImageName"
+                       data-price="@item.Price"
+                       data-count="1">
                         <span>$@item.Price</span>
                     </a>
                 </div>

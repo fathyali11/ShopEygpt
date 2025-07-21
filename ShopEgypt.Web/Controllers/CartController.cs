@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Web.Entites.ViewModels.CartItemVMs;
 
 namespace ShopEgypt.Web.Controllers;
 
@@ -15,11 +16,12 @@ public class CartController(ICartRepository _cartRepository) : Controller
         return View(cart);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Add(int productId,CancellationToken cancellationToken = default)
+    [HttpPost]
+    //[ValidateAntiForgeryToken]
+    public async Task<IActionResult> Add(AddCartItemVM addCartItemVM,CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        await _cartRepository.AddToCartAsync(userId!, productId, cancellationToken);
+        await _cartRepository.AddToCartAsync(userId!, addCartItemVM, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return Json(new { success = true, message = "The product was added successfully!" });
         else
@@ -34,23 +36,23 @@ public class CartController(ICartRepository _cartRepository) : Controller
         return Json(new { count });
     }
     [HttpGet]
-    public async Task<IActionResult> Increase(int cartItemId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Increase(int cartItemId,int cartId, CancellationToken cancellationToken = default)
     {
-        var count = await _cartRepository.IncreaseAsync(cartItemId, cancellationToken);
-        return Json(new { count });
+        var (count, totalPrice) = await _cartRepository.IncreaseAsync(cartItemId, cartId, cancellationToken);
+        return Json(new { count, totalPrice });
     }
     [HttpGet]
-    public async Task<IActionResult> Decrease(int cartItemId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Decrease(int cartItemId,int cartId, CancellationToken cancellationToken = default)
     {
-        var count = await _cartRepository.DecreaseAsync(cartItemId, cancellationToken);
-        return Json(new { count });
+        var (count, totalPrice) = await _cartRepository.DecreaseAsync(cartItemId, cartId, cancellationToken);
+        return Json(new { count, totalPrice });
     }
     [HttpGet]
-    public async Task<IActionResult> Delete(int itemId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Delete(int itemId, int cartId, CancellationToken cancellationToken = default)
     {
-        await _cartRepository.DeleteCartItemAsync(itemId, cancellationToken);
+        var totalPrice=await _cartRepository.DeleteCartItemAsync(itemId,cartId, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            return Json(new { success = true, message = "The product was deleted successfully!" });
+            return Json(new { success = true, message = "The product was deleted successfully!",totalPrice });
         else
             return RedirectToAction("Index", "Home");
 

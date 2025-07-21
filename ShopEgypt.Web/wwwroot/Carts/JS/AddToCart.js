@@ -5,10 +5,31 @@
 
         
         const productId = $(this).data("product-id");
-        console.log(`Adding product with ID: ${productId} to cart`);
+        const productName = $(this).data("product-name");
+        const imageName = $(this).data("image-name");
+        const price = $(this).data("price");
+        const count = $(this).data("count");
+
+        // طباعة البيانات للتحقق
+        console.log('Product ID:', productId);
+        console.log('Product Name:', productName);
+        console.log('Image Name:', imageName);
+        console.log('Price:', price);
+        console.log('Count:', count);
+        //console.log('Token exists:', $('input[name="__RequestVerificationToken"]').length);
+        //console.log('Token value:', $('input[name="__RequestVerificationToken"]').val());
+        /*console.log($('input[name "__RequestVerificationToken"]').length)*/
         $.ajax({
-            url: `/Cart/Add?productId=${productId}`,
-            method: 'GET',
+            url: `/Cart/Add`,
+            method: 'POST',
+            data: {
+                productId: productId,
+                productName: productName,
+                imageName: imageName,
+                price: price,
+                count: count
+                /*__RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()*/
+            },
             success: function (response) {
                 if (response.success) {
                     Swal.fire({
