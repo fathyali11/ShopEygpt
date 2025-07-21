@@ -7,8 +7,8 @@ public class CartItem
     public string ImageName { get; set; } = string.Empty;
     public int CartId {  get; set; }
     public int Count {  get; set; }
-    public decimal TotalPrice => Product.Price * Count;
+    public decimal Price { get; set; } = 0.0m;
+    public decimal TotalPrice => Price * Count;
 
     public Cart Cart { get; set; } = default!;
-    public Product Product { get; set; } = default!;
 }
