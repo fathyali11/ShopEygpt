@@ -28,7 +28,11 @@ namespace Web.DataAccess.Repositories
                 cartItem.Count++;
             else
             {
-                cart.CartItems.Add(new CartItem { ProductId=productId,Count=1 });
+                var imageName = await _context.Products
+                    .Where(x => x.Id == productId)
+                    .Select(x => x.ImageName)
+                    .FirstOrDefaultAsync(cancellationToken);
+                cart.CartItems.Add(new CartItem { ProductId=productId,Count=1,ImageName=imageName??string.Empty });
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
