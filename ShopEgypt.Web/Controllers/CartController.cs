@@ -45,6 +45,17 @@ public class CartController(ICartRepository _cartRepository) : Controller
         var count = await _cartRepository.DecreaseAsync(cartItemId, cancellationToken);
         return Json(new { count });
     }
+    [HttpGet]
+    public async Task<IActionResult> Delete(int itemId, CancellationToken cancellationToken = default)
+    {
+        await _cartRepository.DeleteCartItemAsync(itemId, cancellationToken);
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return Json(new { success = true, message = "The product was deleted successfully!" });
+        else
+            return RedirectToAction("Index", "Home");
+
+    }
+
 
     //private readonly IUnitOfWork _unitOfWork;
     //public ShoppingCartController(IUnitOfWork unitOfWork)

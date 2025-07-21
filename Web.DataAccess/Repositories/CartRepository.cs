@@ -11,18 +11,18 @@ namespace Web.DataAccess.Repositories
         private readonly ApplicationDbContext _context = context;
         public async Task AddToCartAsync(string userId, int productId, CancellationToken cancellationToken = default)
         {
-            var cart=await _context.Carts
-                .Include(x=>x.CartItems)
-                .FirstOrDefaultAsync(x=>x.UserId==userId,cancellationToken);
+            var cart = await _context.Carts
+                .Include(x => x.CartItems)
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
 
-            if(cart==null)
+            if (cart == null)
             {
                 cart = new Cart { UserId = userId, CartItems = [] };
                 await _context.AddAsync(cart, cancellationToken);
             }
 
-            var cartItem=await _context.CartItems
-                .FirstOrDefaultAsync(x=>x.ProductId==productId,cancellationToken);
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(x => x.ProductId == productId, cancellationToken);
 
             if (cartItem is not null)
                 cartItem.Count++;
@@ -32,7 +32,7 @@ namespace Web.DataAccess.Repositories
                     .Where(x => x.Id == productId)
                     .Select(x => x.ImageName)
                     .FirstOrDefaultAsync(cancellationToken);
-                cart.CartItems.Add(new CartItem { ProductId=productId,Count=1,ImageName=imageName??string.Empty });
+                cart.CartItems.Add(new CartItem { ProductId = productId, Count = 1, ImageName = imageName ?? string.Empty });
             }
             await _context.SaveChangesAsync(cancellationToken);
         }
@@ -42,7 +42,7 @@ namespace Web.DataAccess.Repositories
             var cart = await _context.Carts
                 .Include(x => x.CartItems)
                 .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-            return cart?.CartItems.Sum(x=>x.CartId) ?? 0;
+            return cart?.CartItems.Sum(x => x.CartId) ?? 0;
         }
 
         public async Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default)
@@ -51,7 +51,7 @@ namespace Web.DataAccess.Repositories
                 .Include(x => x.CartItems)
                 .ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-            return cart?? new Cart
+            return cart ?? new Cart
             {
                 UserId = userId,
                 CartItems = []
@@ -89,6 +89,17 @@ namespace Web.DataAccess.Repositories
                 }
             }
             return 0;
+        }
+
+        public async Task DeleteCartItemAsync(int cartItemId, CancellationToken cancellationToken = default)
+        {
+            var cartItem = await _context.CartItems
+                .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
+            if (cartItem is not null)
+            {
+                _context.CartItems.Remove(cartItem);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
     }
 }

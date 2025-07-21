@@ -17,16 +17,18 @@
                 $.ajax({
                     url: `/Cart/Delete?itemId=${itemId}`,
                     method: 'GET',
-                    success: function () {
-                        Swal.fire({
-                            title: 'Deleted',
-                            text: 'Item Deleted',
-                            icon: 'success',
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload();
-                        });
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Deleted',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
                     },
                     error: function () {
                         Swal.fire('error','error', 'error');
