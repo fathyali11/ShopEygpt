@@ -506,24 +506,7 @@
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script src="~/js/script.min.js"></script>
-    <script>
-        function updateCartCount(){
-            $.ajax({
-                url: "/Cart/Count",
-                type: "GET",
-                success: function(data) {
-                    $("#cart-count").text("(" + data.count + ")");
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching cart count:", error);
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            updateCartCount();
-        });
-    </script>
+    <script src="~/carts/js/addtocart.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>
