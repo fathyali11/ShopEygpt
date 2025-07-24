@@ -15,18 +15,18 @@
             {
                 <div class="row border-top border-bottom">
                     <div class="row main align-items-center">
-                        <div class="col-2"><img class="img-fluid" alt="product-img" src="~/Images/banner-image-1.jpg"></div>
+                        <div class="col-2"><img class="img-fluid" alt="product-img" src="~/Images/Products/@item.ImageName"></div>
                         <div class="col">
                             <div class="row text-muted">Shirt</div>
                             <div class="row">Cotton T-shirt</div>
                         </div>
                         <div class="col">
-                            <a href="#" class="decrease-item text-decoration-none" data-item-id="@item.Id">-</a>
+                            <a href="#" class="decrease-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.Id">-</a>
                             <a href="#" class="border item-count text-decoration-none">@item.Count</a>
-                            <a href="#" class="increase-item text-decoration-none" data-item-id="@item.Id">+</a>
+                            <a href="#" class="increase-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.Id">+</a>
                         </div>
 
-                        <div class="col">&euro; 44.00 <span class="close">&#10005;</span></div>
+                        <div class="col">&euro; @item.Price <span class="close">&#10005;</span></div>
                         <div class="col"><i data-item-id ="@item.Id" class="bi bi-trash3-fill delete"></i></div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
 
                 <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
                 <div class="col">TOTAL PRICE</div>
-                <div class="col text-right">&euro; 137.00</div>
+                <div id="total-price" class="col text-right">&euro; @Model.TotalPrice</div>
             </div>
             <button class="btn">CHECKOUT</button>
         </div>
@@ -56,6 +56,8 @@
     </div>
 </div>
 @section Scripts {
+        @Html.AntiForgeryToken()
+    <script src="~/carts/js/addtocart.js?v=@DateTime.Now.Ticks" asp-append-version="true"></script>
         <script src="~/carts/js/decrease.js"></script>
         <script src="~/carts/js/increase.js"></script>
         <script src="~/carts/js/delete.js"></script>

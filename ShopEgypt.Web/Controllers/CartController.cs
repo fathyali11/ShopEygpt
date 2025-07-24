@@ -17,7 +17,7 @@ public class CartController(ICartRepository _cartRepository) : Controller
     }
 
     [HttpPost]
-    //[ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Add(AddCartItemVM addCartItemVM,CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

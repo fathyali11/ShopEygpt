@@ -21,7 +21,6 @@
                             @Model.Description
                         </p>
                         <div class="d-flex align-items-center">
-                            @Html.AntiForgeryToken()
                             <a href="#" class="text-decoration-none btn btn-primary add-to-cart me-3"
                                data-product-id="@Model.Id"
                                data-product-name="@Model.Name"
@@ -44,5 +43,6 @@
     </div>
 </section>
 @section Scripts{
-    <script src="~/Carts/JS/AddToCart.js"></script>
+    @Html.AntiForgeryToken()
+    <script src="~/carts/js/addtocart.js?v=@DateTime.Now.Ticks" asp-append-version="true"></script>
 }

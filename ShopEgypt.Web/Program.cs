@@ -72,7 +72,6 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-
 var app = builder.Build();
 
 using(var scope=app.Services.CreateScope())
@@ -81,7 +80,6 @@ using(var scope=app.Services.CreateScope())
 	if(dbContext.Database.GetPendingMigrations().Any())
 		await dbContext.Database.MigrateAsync();
 }
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -95,6 +93,7 @@ app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeData:Secretkey").Get<string>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
