@@ -28,7 +28,14 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
         }
         else
         {
-            cart.CartItems.Add(new CartItem { ProductId = addCartItemVM.ProductId,Price=addCartItemVM.Price, ProductName=addCartItemVM.ProductName,Count = 1, ImageName = addCartItemVM.ImageName ?? string.Empty });
+            cart.CartItems.Add(new CartItem 
+            { 
+                ProductId = addCartItemVM.ProductId,
+                Price=addCartItemVM.Price, 
+                ProductName=addCartItemVM.ProductName
+                ,Count = 1, 
+                ImageName = addCartItemVM.ImageName ?? string.Empty 
+            });
             cart.TotalPrice+=addCartItemVM.Price;
         }
         await _context.SaveChangesAsync(cancellationToken);
@@ -48,6 +55,7 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
             .Include(x => x.CartItems)
             .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
         cart!.TotalPrice = cart.CartItems.Sum(x => x.TotalPrice);
+        await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("total price of cart: {TotalPrice}", cart.TotalPrice);
         return cart ?? new Cart
         {
@@ -63,7 +71,9 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
         if (cartItem is not null)
         {
             cartItem.Count++;
-            //cart!.TotalPrice += cartItem.Product.Price;
+            cart!.TotalPrice += cartItem.Price;
+            _logger.LogInformation("Cart item count increased to {Count}", cartItem.Count);
+            _logger.LogInformation("Cart total price updated to {TotalPrice}", cart.TotalPrice);
             await _context.SaveChangesAsync(cancellationToken);
             return (cartItem.Count,cart!.TotalPrice);
         }
@@ -79,8 +89,9 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
             if (cartItem.Count > 1)
             {
                 cartItem.Count--;
-                //_context.Entry(cartItem).Reference(x => x.Product).Load();
-                //cart!.TotalPrice -= cartItem.Product.Price;
+                cart!.TotalPrice -= cartItem.Price;
+                _logger.LogInformation("Cart item count decreased to {Count}", cartItem.Count);
+                _logger.LogInformation("Cart total price updated to {TotalPrice}", cart.TotalPrice);
                 await _context.SaveChangesAsync(cancellationToken);
                 return (cartItem.Count,cart!.TotalPrice);
             }
