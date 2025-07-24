@@ -56,6 +56,6 @@ public class AuthsController(IAuthRepository _authRepository,
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return RedirectToAction("Login", "Auths");
+        return RedirectToAction("Index", "Home");
     }
 }
