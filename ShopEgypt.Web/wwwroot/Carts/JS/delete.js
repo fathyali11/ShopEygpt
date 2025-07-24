@@ -4,6 +4,11 @@
 
         const itemId = $(this).data('item-id');
         const cartId = $(this).data('cart-id');
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        console.log(`Item ID: ${itemId}, Cart ID: ${cartId}`);
+        console.log(`CSRF Token: ${token}`);
+
         Swal.fire({
             title: 'Delete',
             text: 'Are You Sure',
@@ -17,7 +22,14 @@
             if (result.isConfirmed) {
                 $.ajax({
                     url: `/Cart/Delete?itemId=${itemId}&cartId=${cartId}`,
-                    method: 'GET',
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    data: {
+                        cartItemId: itemId,
+                        cartId: cartId
+                    },
                     success: function (response) {
                         if (response.success) {
                             $('#total-price').text("€ " + response.totalPrice);

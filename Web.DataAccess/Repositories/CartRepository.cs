@@ -94,14 +94,13 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
         return (0, 0.0m);
     }
 
-    public async Task<decimal> DeleteCartItemAsync(int cartItemId,int cartId, CancellationToken cancellationToken = default)
+    public async Task<decimal> DeleteCartItemAsync(DeleteCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
-        var cart = await _context.Carts.FindAsync(cartId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
+        var cart = await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
         if (cartItem is not null)
         {
-            //_context.Entry(cartItem).Reference(x => x.Product).Load();
             _context.CartItems.Remove(cartItem);
             cart!.TotalPrice -= cartItem.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);

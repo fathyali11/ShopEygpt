@@ -10,6 +10,6 @@ namespace Web.Entites.IRepositories
         Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default);
         Task<(int, decimal)> IncreaseAsync(int cartItemId,int cartId, CancellationToken cancellationToken = default);
         Task<(int, decimal)> DecreaseAsync(int cartItemId,int cartId, CancellationToken cancellationToken = default);
-        Task<decimal> DeleteCartItemAsync(int cartItemId,int cartId, CancellationToken cancellationToken = default);
+        Task<decimal> DeleteCartItemAsync(DeleteCartItemVM cartItemVM, CancellationToken cancellationToken = default);
     }
 }

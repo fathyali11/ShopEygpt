@@ -47,10 +47,11 @@ public class CartController(ICartRepository _cartRepository) : Controller
         var (count, totalPrice) = await _cartRepository.DecreaseAsync(cartItemId, cartId, cancellationToken);
         return Json(new { count, totalPrice });
     }
-    [HttpGet]
-    public async Task<IActionResult> Delete(int itemId, int cartId, CancellationToken cancellationToken = default)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(DeleteCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var totalPrice=await _cartRepository.DeleteCartItemAsync(itemId,cartId, cancellationToken);
+        var totalPrice=await _cartRepository.DeleteCartItemAsync(cartItemVM, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return Json(new { success = true, message = "The product was deleted successfully!",totalPrice });
         else
