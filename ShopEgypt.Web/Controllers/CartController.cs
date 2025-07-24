@@ -35,21 +35,23 @@ public class CartController(ICartRepository _cartRepository) : Controller
         var count = await _cartRepository.GetCartItemCountAsync(userId!, cancellationToken);
         return Json(new { count });
     }
-    [HttpGet]
-    public async Task<IActionResult> Increase(int cartItemId,int cartId, CancellationToken cancellationToken = default)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Increase(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var (count, totalPrice) = await _cartRepository.IncreaseAsync(cartItemId, cartId, cancellationToken);
-        return Json(new { count, totalPrice });
-    }
-    [HttpGet]
-    public async Task<IActionResult> Decrease(int cartItemId,int cartId, CancellationToken cancellationToken = default)
-    {
-        var (count, totalPrice) = await _cartRepository.DecreaseAsync(cartItemId, cartId, cancellationToken);
+        var (count, totalPrice) = await _cartRepository.IncreaseAsync(cartItemVM, cancellationToken);
         return Json(new { count, totalPrice });
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(DeleteCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Decrease(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    {
+        var (count, totalPrice) = await _cartRepository.DecreaseAsync(cartItemVM, cancellationToken);
+        return Json(new { count, totalPrice });
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var totalPrice=await _cartRepository.DeleteCartItemAsync(cartItemVM, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")

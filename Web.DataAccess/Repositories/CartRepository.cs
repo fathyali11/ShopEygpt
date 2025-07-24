@@ -55,25 +55,25 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
             CartItems = []
         };
     }
-    public async Task<(int,decimal)> IncreaseAsync(int cartItemId, int cartId, CancellationToken cancellationToken = default)
+    public async Task<(int,decimal)> IncreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
-        var cart=await _context.Carts.FindAsync(cartId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
+        var cart=await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
         if (cartItem is not null)
         {
             cartItem.Count++;
             //cart!.TotalPrice += cartItem.Product.Price;
             await _context.SaveChangesAsync(cancellationToken);
-            return (cartItem.Count,cart.TotalPrice);
+            return (cartItem.Count,cart!.TotalPrice);
         }
         return (0,0.0m);
     }
-    public async Task<(int, decimal)> DecreaseAsync(int cartItemId, int cartId, CancellationToken cancellationToken = default)
+    public async Task<(int, decimal)> DecreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemId, cancellationToken);
-        var cart = await _context.Carts.FindAsync(cartId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
+        var cart = await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
         if (cartItem is not null)
         {
             if (cartItem.Count > 1)
@@ -82,7 +82,7 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
                 //_context.Entry(cartItem).Reference(x => x.Product).Load();
                 //cart!.TotalPrice -= cartItem.Product.Price;
                 await _context.SaveChangesAsync(cancellationToken);
-                return (cartItem.Count,cart.TotalPrice);
+                return (cartItem.Count,cart!.TotalPrice);
             }
             else
             {
@@ -94,7 +94,7 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
         return (0, 0.0m);
     }
 
-    public async Task<decimal> DeleteCartItemAsync(DeleteCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<decimal> DeleteCartItemAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
             .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
