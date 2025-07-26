@@ -51,13 +51,17 @@ namespace Web.DataAccess.Repositories
             await RemoveKeys(cancellationToken);
             return true;
         }
-        public async Task DeleteProductAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteProductAsync(int id, CancellationToken cancellationToken = default)
         {
             var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (productFromDb is null)
+                return false;
             _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
             _context.Products.Remove(productFromDb);
-            await _context.SaveChangesAsync(cancellationToken);
+            var numberOfChanges=await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
+
+            return numberOfChanges>0?true:false;
         }
         public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
         {

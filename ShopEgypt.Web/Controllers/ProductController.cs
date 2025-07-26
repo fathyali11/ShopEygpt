@@ -112,8 +112,11 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        await _productRepositoy.DeleteProductAsync(id);
-        return RedirectToAction(nameof(Index));
+        var result=await _productRepositoy.DeleteProductAsync(id);
+        if(result)
+            return Json(new { success = true, message = "Data Deleted Successfully" });
+        else
+            return Json(new { success = false, message = "Data Not Deleted" });
     }
 
 }
