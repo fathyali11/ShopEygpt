@@ -68,38 +68,17 @@ namespace Web.DataAccess.Repositories
             var cacheKey = ProductCacheKeys.AllProductsAdmin;
             return await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
-                .Select(x => new ProductReponseForAdmin
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Price = x.Price,
-                    ImageName = x.ImageName,
-                    CategoryName = x.Category.Name,
-                    HasSale = x.IsSale,
-                    CreatedAt = x.CreatedAt,
-                    UpdatedAt = x.UpdatedAt,
-                    SoldCount = x.SoldCount,
-                    TotalStock = x.TotalStock
-                })
+                .ProjectToType<ProductReponseForAdmin>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
         }
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products
+                .Where(x => x.Id == id)
                 .Include(x => x.Category)
-                .Select(x => new EditProductVM
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Price = x.Price,
-                    ImageName = x.ImageName,
-                    CategoryId = x.CategoryId,
-                    CategoryName = x.Category.Name
-                })
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+                .ProjectToType<EditProductVM>()
+                .FirstOrDefaultAsync(cancellationToken);
             return product is not null ? product : null;
         }
 
