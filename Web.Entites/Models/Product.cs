@@ -10,7 +10,10 @@ public class Product
     public string ImageName { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public bool IsSale { get; set; } = false;
+    public bool HasSale { get; set; } = false;
+    public DateTime? SaleEndDate { get; set; } = null;
+    public DateTime? SaleStartDate { get; set; } = null;
+    public int? SalePercentage { get; set; } = null;
     public int TotalStock { get; set; } = 0;
     public int SoldCount { get; set; } = 0;
 }
