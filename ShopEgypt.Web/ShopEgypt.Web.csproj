@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <Content Remove="Views\Cart\OrderConfirmation.cshtml" />
     <Content Remove="Views\Shared\_LoginView.cshtml" />
     <Content Remove="Views\Shared\_RegisterView.cshtml" />
     <Content Remove="Views\_ShoppingCartDetails.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <None Include="Views\Cart\OrderConfirmation.cshtml" />
     <None Include="Views\Shared\_RegisterView.cshtml" />
     <None Include="Views\Shared\_LoginView.cshtml" />
   </ItemGroup>
@@ -53,11 +53,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <UpToDateCheckInput Remove="Views\Cart\OrderConfirmation.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\ShoppingCart\OrderConfirmation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Cart\OrderConfirmation.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Shared\_LoginView.cshtml" />
   </ItemGroup>
 

@@ -7,7 +7,7 @@
 	<div class="inner">
 		<form asp-action="Login" asp-controller="Auths" method="post">
 			<h3>Login Form</h3>
-
+			<input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
 			<partial name="_ValidationScriptsPartial" />
 			<div asp-validation-summary="All" class="text-danger"></div>
 

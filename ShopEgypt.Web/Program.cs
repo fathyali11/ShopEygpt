@@ -44,11 +44,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 	op.Password.RequireLowercase = false;
 })
 	.AddEntityFrameworkStores<ApplicationDbContext>()
-	.AddDefaultUI()
 	.AddDefaultTokenProviders();
 
-builder.Services.AddRazorPages();
-//builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.ConfigureApplicationCookie(options =>
+	{
+		options.LoginPath = "/Auths/Login";
+		options.LogoutPath = "/Auths/Logout";
+		options.AccessDeniedPath = "/Auths/AccessDenied";
+		options.ExpireTimeSpan = TimeSpan.FromDays(2);
+	});
 
 
 builder.Services.AddDistributedMemoryCache();
@@ -66,7 +70,7 @@ builder.Services.AddScoped<GeneralRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 var app = builder.Build();
 
@@ -76,7 +80,6 @@ using(var scope=app.Services.CreateScope())
 	if(dbContext.Database.GetPendingMigrations().Any())
 		await dbContext.Database.MigrateAsync();
 }
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -90,6 +93,7 @@ app.UseStaticFiles();
 app.UseSession();
 app.UseRouting();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeData:Secretkey").Get<string>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(

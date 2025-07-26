@@ -20,12 +20,22 @@
                         <p>
                             @Model.Description
                         </p>
-                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                            <input type="hidden" asp-for="Id" value="@Model.Id" />
-                            <button type="submit" class="btn btn-outline-dark text-uppercase mt-3">Add to Cart</button>
-                        </form>
+                        <div class="d-flex align-items-center">
+                            <a href="#" class="text-decoration-none btn btn-primary add-to-cart me-3"
+                               data-product-id="@Model.Id"
+                               data-product-name="@Model.Name"
+                               data-image-name="@Model.ImageName"
+                               data-price="@Model.Price"
+                               data-count="1"
+                               data-after="Add to cart">
+                                <span>Add to Cart ($@Model.Price)</span>
+                            </a>
 
-                        <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase">
+                                Shop Collection
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -33,5 +43,5 @@
     </div>
 </section>
 @section Scripts{
-
+    @Html.AntiForgeryToken()
 }

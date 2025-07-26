@@ -1,4 +1,5 @@
 ﻿@model List<NewArrivalProductsVM>
+
 @foreach (var product in Model)
 {
     <div class="swiper-slide">
@@ -16,7 +17,18 @@
                     <h5 class="element-title text-uppercase fs-5 mt-3">
                         <a href="index.html">@product.Name</a>
                     </h5>
-                    <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$@product.Price</span></a>
+                    <a href="#" class="text-decoration-none add-to-cart" data-after="Add to cart"
+                       data-product-id="@product.Id"
+                       data-product-name="@product.Name"
+                       data-image-name="@product.ImageName"
+                       data-price="@product.Price"
+                       data-count="1">
+                        <span>$@product.Price</span>
+                    </a>
+
+
+
+
                 </div>
             </div>
         </div>
