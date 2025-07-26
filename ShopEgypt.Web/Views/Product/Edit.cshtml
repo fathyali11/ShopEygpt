@@ -4,10 +4,13 @@
     ViewData["Title"] = "Edit";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Edit";
-    Layout = "_HomeLayout";
+    Layout = "_AdminLayout";
 }
 
-<div class="row">
+<div class="row m-lg-5">
+    <div class="col-md-12">
+        <h2>Edit Product</h2>
+    </div>
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data" id="productForm">
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -47,11 +50,27 @@
                     <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
-            <div class="form-check p-0 m-0 d-inline-flex align-items-center" >
-                <input asp-for="HasSale" class="form-check-input m-0" style="width: 1em; height: 1em;background-color:#8C907E" />
-                <label asp-for="HasSale" class="form-check-label">Has a sale</label>
+            <div class="form-check form-switch mt-3 mb-3">
+                <input asp-for="HasSale" class="form-check-input" type="checkbox" role="switch" id="hasSaleSwitch" />
+                <label class="form-check-label" for="hasSaleSwitch">Has a sale</label>
             </div>
-
+            <div id="sale-properties" class="hide">
+                <div class="form-group">
+                    <label asp-for="SalePercentage" class="control-label">Sale Price</label>
+                    <input asp-for="SalePercentage" class="form-control" />
+                    <span asp-validation-for="SalePercentage" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SaleStartDate" class="control-label">Sale Price</label>
+                    <input asp-for="SaleStartDate" class="form-control" />
+                    <span asp-validation-for="SaleStartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SaleEndDate" class="control-label">Sale Price</label>
+                    <input asp-for="SaleEndDate" class="form-control" />
+                    <span asp-validation-for="SaleEndDate" class="text-danger"></span>
+                </div>
+            </div>
 
             <div class="form-group">
                 <input type="submit" value="Edit" class="btn btn-primary" />
@@ -63,18 +82,14 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="mx-4">
+    <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/product/imagedisplay.js"></script>
-@*     <script src="~/js/product/imagevalidationedit.js"></script>
-    <script src="https://cdn.tiny.cloud/1/d5i3bnjvxjk362iphf6kzupq6xj3wthkyxdxb87b8n4nh24m/tinymce/6/tinymce.min.js"></script>
- *@
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="~/products/salesproperties.js"></script>
 
     <script>
         $(document).ready(function () {
