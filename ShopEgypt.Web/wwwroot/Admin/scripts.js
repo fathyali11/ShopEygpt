@@ -4,9 +4,11 @@
     console.log(`btn was pressed`);
     toggleBtn.addEventListener('click', function () {
         const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('main-content');
+        const contents = document.querySelectorAll('.main-content');
         sidebar.classList.toggle('collapsed');
-        content.classList.toggle('expanded');
+        contents.forEach(content => {
+            content.classList.toggle('expanded');
+        });
     });
 });
 
