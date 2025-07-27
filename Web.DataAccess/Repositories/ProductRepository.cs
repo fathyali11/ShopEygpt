@@ -76,11 +76,19 @@ namespace Web.DataAccess.Repositories
         {
             var product = await _context.Products
                 .Where(x => x.Id == id)
-                .Include(x => x.Category)
                 .ProjectToType<EditProductVM>()
                 .FirstOrDefaultAsync(cancellationToken);
             return product is not null ? product : null;
         }
+        public async Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var product = await _context.Products
+                .Where(x => x.Id == id)
+                .ProjectToType<ProductReponseForAdmin>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return product is not null ? product : null;
+        }
+
 
 
         public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)

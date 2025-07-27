@@ -7,7 +7,7 @@
 }
 
 <!-- Main Content -->
-<div class="content mt-5" id="main-content">
+<div class="content mt-5 main-content">
     <!-- Products Section -->
     <section id="products">
         <h3>Products</h3>
@@ -15,15 +15,12 @@
         <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Image</th>
-                    <th>Has a Sale</th>
-                    <th>Total Stock</th>
-                    <th>Sold Stock</th>
-                    <th>Actions</th>
+                    <th class="text-center align-middle">Name</th>
+                    <th class="text-center align-middle">Price</th>
+                    <th class="text-center align-middle">Category</th>
+                    <th class="text-center align-middle">Image</th>
+                    <th class="text-center align-middle">Has a Sale</th>
+                    <th class="text-center align-middle">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +28,6 @@
                 {
                     <tr>
                         <td class="text-center align-middle">@product.Name</td>
-                        <td class="text-center align-middle">@product.Description</td>
                         <td class="text-center align-middle">@product.Price.ToString("C")</td>
                         <td class="text-center align-middle">@product.CategoryName</td>
                         <td class="text-center align-middle">
@@ -50,9 +46,6 @@
                                                 : "<i class='bi bi-x-circle-fill text-danger fs-3'></i>")
                     </td>
 
-
-                    <td class="text-center align-middle">@product.TotalStock</td>
-                    <td class="text-center align-middle">@product.SoldCount</td>
                     <td class="text-center align-middle">
                         <div class="d-flex justify-content-center gap-2">
                             <a class="btn btn-success btn-sm"
@@ -61,6 +54,11 @@
                                asp-route-id="@product.Id">Edit</a>
 
                             <a href="#" class="btn btn-danger btn-sm delete-btn" data-product-id="@product.Id">Delete</a>
+
+                            <a class="btn btn-info btn-sm"
+                               asp-controller="Product"
+                               asp-action="Details"
+                               asp-route-id="@product.Id">Details</a>
                         </div>
                     </td>
                 </tr>

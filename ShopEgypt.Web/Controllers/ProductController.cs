@@ -118,5 +118,15 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         else
             return Json(new { success = false, message = "Data Not Deleted" });
     }
-
+    [HttpGet]
+    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
+    {
+        var product = await _productRepositoy.GetProductDetailsByIdAsync(id, cancellationToken);
+        if (product == null)
+        {
+            TempData["Error"] = "Product Not Found";
+            return RedirectToAction(nameof(Index));
+        }
+        return View(product);
+    }
 }
