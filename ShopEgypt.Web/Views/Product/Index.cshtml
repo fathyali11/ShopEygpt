@@ -5,22 +5,7 @@
     ViewData["PageTitle"] = "Products";
     Layout = "_AdminLayout";
 }
-<!-- Navbar -->
-<nav class="navbar navbar-dark fixed-top w-100 px-3">
-    <button class="toggle-btn">☰</button>
-    <a class="navbar-brand text-white" href="#">Admin Panel</a>
-    <form class="d-flex ms-auto">
-        <input id="search-term" class="form-control form-control-sm me-2 bg-dark-subtle" type="search" placeholder="Search">
-        <button class="btn btn-outline-light btn-sm" type="submit">Search</button>
-    </form>
-</nav>
 
-<div class="sidebar" id="sidebar">
-    <a href="#products">🛒 Products</a>
-    <a href="#categories">📂 Categories</a>
-    <a href="#orders">📦 Orders</a>
-    <a href="#users">👤 Users</a>
-</div>
 <!-- Main Content -->
 <div class="content mt-5" id="main-content">
     <!-- Products Section -->
@@ -88,6 +73,7 @@
 
 
 @section Scripts {
+
     @Html.AntiForgeryToken()
     <script src="~/products/delete.js"></script>
 }

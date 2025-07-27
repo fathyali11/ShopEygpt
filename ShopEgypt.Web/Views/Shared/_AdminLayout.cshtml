@@ -11,16 +11,31 @@
     <link href="~/admin/style.css" rel="stylesheet" asp-append-version="true" />
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark fixed-top w-100 px-3">
+        <button class="toggle-btn">☰</button>
+        <a class="navbar-brand text-white" href="#">Admin Panel</a>
+        <form class="d-flex ms-auto">
+            <input id="search-term" class="form-control form-control-sm me-2 bg-dark-subtle" type="search" placeholder="Search">
+            <button class="btn btn-outline-light btn-sm" type="submit">Search</button>
+        </form>
+    </nav>
 
+    <div class="sidebar" id="sidebar">
+        <a href="#products">🛒 Products</a>
+        <a href="#categories">📂 Categories</a>
+        <a href="#orders">📦 Orders</a>
+        <a href="#users">👤 Users</a>
+    </div>
     
 
-    @RenderBody();
+    @RenderBody()
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="~/admin/scripts.js" asp-append-version="true"></script>
 
-    @RenderSection("Scripts", required: false);
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
