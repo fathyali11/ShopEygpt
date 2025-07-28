@@ -31,11 +31,14 @@
                     },
                     success: function (response) {
                         if (response.success === true) {
-                            console.log("Product deleted successfully.");
+                            console.log("deleted successfully.");
                             Swal.fire("Deleted!", response.message, "success")
                                 .then(() => {
                                     location.reload();
                                 });
+                        } else {
+                            console.log("not deleted");
+                            Swal.fire("Not Deleted", response.message);
                         }
 
                     },
