@@ -25,15 +25,6 @@ public class EditProductVM
     [Required(ErrorMessage = "Category is required.")]
     public int? CategoryId { get; set; }
 
-    public bool HasSale { get; set; }
-
-    public DateTime? SaleStartDate { get; set; }
-
-    public DateTime? SaleEndDate { get; set; }
-
-    [Range(1, 100, ErrorMessage = "Sale percentage must be between 1 and 100.")]
-    public int? SalePercentage { get; set; }
-
     [Required(ErrorMessage = "Stock quantity is required.")]
     [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be a non-negative integer.")]
     public int TotalStock { get; set; }

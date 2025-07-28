@@ -22,17 +22,6 @@ public record CreateProductVM(
     [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be a non-negative integer.")]
     int TotalStock,
 
-    IFormFile ImageFile,
+    IFormFile ImageFile
 
-    // Optional sale-related properties
-    bool HasSale,
-
-    [DataType(DataType.Date)]
-    DateTime? SaleStartDate,
-
-    [DataType(DataType.Date)]
-    DateTime? SaleEndDate,
-
-    [Range(1, 100, ErrorMessage = "Sale percentage must be between 1 and 100.")]
-    int? SalePercentage
 );

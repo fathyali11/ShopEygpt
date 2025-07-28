@@ -19,7 +19,6 @@
                     <th class="text-center align-middle">Price</th>
                     <th class="text-center align-middle">Category</th>
                     <th class="text-center align-middle">Image</th>
-                    <th class="text-center align-middle">Has a Sale</th>
                     <th class="text-center align-middle">Actions</th>
                 </tr>
             </thead>
@@ -39,11 +38,6 @@
                             {
                                 <span>No Image</span>
                             }
-                    </td>
-                    <td class="text-center align-middle">
-                        @Html.Raw(product.HasSale == true
-                                                ? "<i class='bi bi-check-circle-fill text-success fs-3'></i>"
-                                                : "<i class='bi bi-x-circle-fill text-danger fs-3'></i>")
                     </td>
 
                     <td class="text-center align-middle">
