@@ -3,7 +3,7 @@ using Web.Entites.ViewModels.CartItemVMs;
 
 namespace Web.Entites.IRepositories
 {
-    public interface ICartRepository:IGenericRepository<Cart>
+    public interface ICartRepository
     {
         Task AddToCartAsync(string userId, AddCartItemVM addCartItemVM, CancellationToken cancellationToken = default);
         Task<int> GetCartItemCountAsync(string userId, CancellationToken cancellationToken = default);

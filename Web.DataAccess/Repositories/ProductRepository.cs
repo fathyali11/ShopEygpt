@@ -10,7 +10,7 @@ namespace Web.DataAccess.Repositories
     public class ProductRepository(ApplicationDbContext context,
         GeneralRepository _generalRepository,
         IValidator<CreateProductVM> _createProductValidator,
-        HybridCache _hybridCache) : GenericRepository<Product>(context), IProductRepository
+        HybridCache _hybridCache) : IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 

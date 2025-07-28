@@ -7,7 +7,7 @@ using Web.Entites.ViewModels.CategoryVMs;
 
 namespace Web.Entites.IRepositories
 {
-    public interface ICategoryRepository : IGenericRepository<Category>
+    public interface ICategoryRepository
     {
         Task<OneOf<List<ValidationError>, bool>> AddCategoryAsync(CreateCategoryVM categoryVM, CancellationToken cancellationToken = default);
         Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);

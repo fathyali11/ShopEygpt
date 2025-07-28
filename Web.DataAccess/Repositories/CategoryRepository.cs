@@ -13,7 +13,7 @@ namespace Web.DataAccess.Repositories
         GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
         IValidator<EditCategoryVM> _editCategoryValidator,
-        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
+        HybridCache _hybridCache) :ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 

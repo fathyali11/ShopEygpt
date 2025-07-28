@@ -5,7 +5,7 @@ using Web.Entites.ViewModels.ProductVMs;
 
 namespace Web.Entites.IRepositories
 {
-    public interface IProductRepository : IGenericRepository<Product>
+    public interface IProductRepository
     {
         Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model, CancellationToken cancellationToken = default);
         Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);

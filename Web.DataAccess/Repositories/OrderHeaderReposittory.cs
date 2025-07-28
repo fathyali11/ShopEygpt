@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Web.DataAccess.Repositories
 {
-    public class OrderHeaderReposittory : GenericRepository<OrderHeader>, IOrderHeaderReposittory
+    public class OrderHeaderReposittory :IOrderHeaderReposittory
     {
         private readonly ApplicationDbContext _context;
-        public OrderHeaderReposittory(ApplicationDbContext context) : base(context)
+        public OrderHeaderReposittory(ApplicationDbContext context) 
         {
             _context = context;
         }

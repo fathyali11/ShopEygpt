@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Web.DataAccess.Repositories
 {
-    public class OrderDetailReposittory : GenericRepository<OrderDetail>, IOrderDetailReposittory
+    public class OrderDetailReposittory :  IOrderDetailReposittory
     {
         private readonly ApplicationDbContext _context;
-        public OrderDetailReposittory(ApplicationDbContext context) : base(context)
+        public OrderDetailReposittory(ApplicationDbContext context) 
         {
             _context = context;
         }
