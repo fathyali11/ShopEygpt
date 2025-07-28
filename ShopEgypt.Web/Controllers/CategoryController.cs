@@ -59,8 +59,8 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
     [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var category =await _categoryRepository.GetCategoryAsync(id);
-        return View(category);
+        var response =await _categoryRepository.GetCategoryAsync(id);
+        return response is not null ? View(response) : RedirectToAction(nameof(Index),"Category");
     }
     [HttpPost]
     [ValidateAntiForgeryToken]

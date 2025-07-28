@@ -34,12 +34,13 @@ namespace Web.DataAccess.Repositories
             await RemoveKeys(cancellationToken);
             return true;
         }
-        public async Task<EditCategoryVM> GetCategoryAsync(int id)
+        public async Task<EditCategoryVM?> GetCategoryAsync(int id,CancellationToken cancellationToken=default)
         {
-            var category = await GetByAsync(x => x.Id == id);
-            if (category == null)
-                return new EditCategoryVM(id, null!, null!, null!);
-            return category.Adapt<EditCategoryVM>();
+            var response=await _context.Categories
+                .Where(c => c.Id == id)
+                .ProjectToType<EditCategoryVM>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return response is not null ? response : null;
 
         }
         public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM, CancellationToken cancellationToken = default)

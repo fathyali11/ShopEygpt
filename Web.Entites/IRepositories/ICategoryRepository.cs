@@ -13,7 +13,7 @@ namespace Web.Entites.IRepositories
         Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
         Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll, CancellationToken cancellationToken = default);
         Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
-        Task<EditCategoryVM> GetCategoryAsync(int id);
+        Task<EditCategoryVM?> GetCategoryAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id);
     }
