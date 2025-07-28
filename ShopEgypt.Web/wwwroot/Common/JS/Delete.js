@@ -1,10 +1,13 @@
 ﻿$(document).ready(function () {
     $(document).on("click", ".delete-btn", function (e) {
         e.preventDefault();
-        let productId = $(this).data("product-id");
+        let itemId = $(this).data("id");
+        let controllerName = $(this).data("controller-name");
+
         const token = $('input[name="__RequestVerificationToken"]').val();
 
-        console.log("Product ID:", productId);
+        console.log("Product ID:", itemId);
+
         console.log("CSRF Token:", token);
 
         Swal.fire({
@@ -18,13 +21,13 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/Product/Delete`,
+                    url: `/${controllerName}/Delete`,
                     type: "POST",
                     headers: {
                         'RequestVerificationToken': token
                     },
                     data: {
-                        id: productId
+                        id: itemId
                     },
                     success: function (response) {
                         if (response.success === true) {
@@ -34,7 +37,7 @@
                                     location.reload();
                                 });
                         }
-                        
+
                     },
                     error: function () {
                         Swal.fire("Error", "Something went wrong.", "error");
