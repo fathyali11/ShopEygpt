@@ -72,16 +72,12 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         var result = await _categoryRepository.UpdateCategoryAsync(model,cancellationToken);
 
         if (result.IsT1)
-        {
-            TempData["Success"] = "Data Updated Successfly";
             return RedirectToAction(nameof(Index));
-        }
 
         var errors = result.AsT0;
         foreach (var error in errors)
             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-        TempData["Error"] = "Data Not Updated";
         return View(model);
 
     }
@@ -90,14 +86,8 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _categoryRepository.DeleteCategoryAsync(id);
-        if (result.IsT1)
-        {
-            TempData["Success"] = "Category deleted successfully.";
-        }
-        else
-        {
-            TempData["Error"] = "Failed to delete category.";
-        }
-        return RedirectToAction(nameof(Index));
+
+        return result.IsT1 ? Json(new { success = true, message = "Category deleted successfully." }) :
+            Json(new { success = false, message = "Failed to delete category." });
     }
 }
