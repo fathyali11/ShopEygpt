@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using Web.Entites.Consts;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace Web.DataAccess.Repositories;
@@ -29,6 +30,7 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
+        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
 
         await _signInManager.SignInAsync(user, isPersistent: false);
