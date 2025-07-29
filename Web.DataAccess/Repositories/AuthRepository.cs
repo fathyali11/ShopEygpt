@@ -30,7 +30,13 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
-        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        //await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        if (string.IsNullOrEmpty(request.Role))
+            await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        else
+            await _userManager.AddToRoleAsync(user, request.Role);
+
+
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
 
         await _signInManager.SignInAsync(user, isPersistent: false);
