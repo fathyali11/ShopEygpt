@@ -1,10 +1,6 @@
 ﻿using Mapster;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
-using System.Text;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace Web.DataAccess.Repositories;
