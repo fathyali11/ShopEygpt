@@ -7,7 +7,6 @@ public class UserMapping:IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<RegisterVM, ApplicationUser>()
-            .Map(dest => dest.UserName, src => src.Email);
+        config.NewConfig<RegisterVM, ApplicationUser>();
     }
 }
