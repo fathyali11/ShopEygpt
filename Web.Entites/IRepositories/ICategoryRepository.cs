@@ -10,11 +10,14 @@ namespace Web.Entites.IRepositories
     public interface ICategoryRepository
     {
         Task<OneOf<List<ValidationError>, bool>> AddCategoryAsync(CreateCategoryVM categoryVM, CancellationToken cancellationToken = default);
-        Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
-        Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll, CancellationToken cancellationToken = default);
-        Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
         Task<EditCategoryVM?> GetCategoryAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id);
+
+
+        Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
+        Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll, CancellationToken cancellationToken = default);
+        Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
+        
     }
 }
