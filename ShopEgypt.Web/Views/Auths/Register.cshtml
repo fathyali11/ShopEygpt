@@ -34,18 +34,6 @@
 				<span asp-validation-for="Email" class="text-danger"></span>
 			</div>
 
-			@if(User.IsInRole(UserRoles.Admin))
-			{
-				<div class="form-wrapper">
-					<label asp-for="Role"></label>
-					<select class="form-control" asp-for="Role">
-						<option value="">--Select Role--</option>
-						<option value="@UserRoles.Admin" class="form-control">@UserRoles.Admin</option>
-						<option value="@UserRoles.Customer" class="form-control">@UserRoles.Customer</option>
-					</select>
-				</div>
-			}
-
 			<div class="form-wrapper">
 				<label asp-for="Password">Password</label>
 				<input asp-for="Password" type="password" class="form-control">
