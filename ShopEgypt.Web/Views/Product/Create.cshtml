@@ -3,72 +3,68 @@
     ViewData["Title"] = "Create";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Create";
-    Layout = "_HomeLayout";
+    Layout = "_AdminLayout";
 }
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data" id="productForm">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create Product</h4>
+                <form class="forms-sample" enctype="multipart/form-data" asp-action="Create">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalStock" class="control-label"></label>
+                        <input asp-for="TotalStock" class="form-control" />
+                        <span asp-validation-for="TotalStock" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">Category</label>
+                        <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImageFile" class="control-label">Image</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
+                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary me-2">Create</button>
+                    <a asp-action="Index" class="btn btn-dark">Cancel</a>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalStock" class="control-label"></label>
-                <input asp-for="TotalStock" class="form-control" />
-                <span asp-validation-for="TotalStock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label for="CategoryId">Category</label>
-                <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
-                    <option value="">-- Select Category --</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFile" class="control-label">Image</label>
-                <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-    <div class="col-md-4">
-        <!-- Image preview container -->
-        <div class="container" id="imagePreview">
-            <img id="previewImage" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <img id="previewImage" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
+            </div>
         </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/imagedisplay.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            $("#category-select-list-item-container").load("/Category/LoadCategorySelectedList");
-        });
-    </script>
+    <script src="~/common/js/previewimage.js" asp-append-version="true"></script>
+    <script src="~/categories/loadall.js" asp-append-version="true"></script>
+    
 }
 
 

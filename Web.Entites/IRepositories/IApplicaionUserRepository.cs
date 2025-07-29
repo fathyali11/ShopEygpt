@@ -8,7 +8,7 @@ using Web.Entites.Models;
 
 namespace Web.Entites.IRepositories
 {
-    public interface IApplicaionUserRepository : IGenericRepository<ApplicationUser>
+    public interface IApplicaionUserRepository
     {
         void Update(ApplicationUser user);
     }

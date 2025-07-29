@@ -1,4 +1,5 @@
 using FluentValidation;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
 using Stripe;
@@ -17,8 +18,7 @@ builder.Host.UseSerilog();
 
 builder.Services.AddHybridCache();
 
-CategoryMapping.RegisterMappings();
-ProductMapping.RegisterMappings();
+TypeAdapterConfig.GlobalSettings.Scan(typeof(CategoryMapping).Assembly);
 
 
 // Add services to the container.

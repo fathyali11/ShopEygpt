@@ -3,18 +3,25 @@ using Web.Entites.Models;
 using Web.Entites.ViewModels.ProductVMs;
 namespace Web.Entites.Mappings;
 
-public class ProductMapping
+public class ProductMapping:IRegister
 {
-    public static void RegisterMappings()
+    public void Register(TypeAdapterConfig config)
     {
-        TypeAdapterConfig<CreateProductVM, Product>.NewConfig();
-        TypeAdapterConfig<Product, DiscoverProductVM>.NewConfig()
+        config.NewConfig<CreateProductVM, Product>();
+
+        config.NewConfig<Product, ProductReponseForAdmin>()
+            .Map(dest => dest.CategoryName, src => src.Category != null ? src.Category.Name : string.Empty);
+
+
+        config.NewConfig<Product, DiscoverProductVM>()
             .Map(dest=>dest.CategoryName,src=>src.Category.Name);
 
-        //TypeAdapterConfig<Product, ProductResponse>.NewConfig();
+        config.NewConfig<Product, EditProductVM>()
+        .Map(dest => dest.CategoryName, src => src.Category.Name);
 
-        TypeAdapterConfig<EditProductVM, Product>.NewConfig()
-            .Map(dest => dest.IsSale, src => src.HasSale);
+        config.NewConfig<EditProductVM, Product>()
+        .Ignore(dest => dest.Category) 
+        .Ignore(dest => dest.ImageName);
 
     }
 }

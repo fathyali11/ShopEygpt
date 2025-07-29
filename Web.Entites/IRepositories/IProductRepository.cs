@@ -5,7 +5,7 @@ using Web.Entites.ViewModels.ProductVMs;
 
 namespace Web.Entites.IRepositories
 {
-    public interface IProductRepository : IGenericRepository<Product>
+    public interface IProductRepository
     {
         Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model, CancellationToken cancellationToken = default);
         Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);
@@ -17,7 +17,8 @@ namespace Web.Entites.IRepositories
         Task<List<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy, CancellationToken cancellationToken = default);
         Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
         Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);
-        Task DeleteProductAsync(int id, CancellationToken cancellationToken = default);
+        Task<bool> DeleteProductAsync(int id, CancellationToken cancellationToken = default);
     }
 }

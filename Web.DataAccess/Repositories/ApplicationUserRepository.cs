@@ -9,10 +9,10 @@ using Web.Entites.IRepositories;
 
 namespace Web.DataAccess.Repositories
 {
-    public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicaionUserRepository
+    public class ApplicationUserRepository :  IApplicaionUserRepository
 	{
         private readonly ApplicationDbContext _context;
-        public ApplicationUserRepository(ApplicationDbContext context) : base(context)
+        public ApplicationUserRepository(ApplicationDbContext context) 
         {
             _context = context;
         }

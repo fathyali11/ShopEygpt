@@ -4,81 +4,72 @@
     ViewData["Title"] = "Edit";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Edit";
-    Layout = "_HomeLayout";
+    Layout = "_AdminLayout";
 }
 
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data" id="productForm">
-            <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                <input asp-for="Id" hidden />
-                </div>
-                <div class="form-group">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Edit Product</h4>
+                <form class="forms-sample" enctype="multipart/form-data" asp-action="Edit">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SoldCount" class="control-label"></label>
+                        <input asp-for="SoldCount" class="form-control" />
+                        <span asp-validation-for="SoldCount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TotalStock" class="control-label"></label>
+                        <input asp-for="TotalStock" class="form-control" />
+                        <span asp-validation-for="TotalStock" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="CategoryId">Category</label>
+                        <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImageFile" class="control-label">Image</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
+                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    </div>
 
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Description" class="control-label"></label>
-                    <textarea id="mytextarea" asp-for="Description" class="form-control"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Price" class="control-label"></label>
-                    <input asp-for="Price" class="form-control" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-            <div class="form-group">
-                <label asp-for="TotalStock" class="control-label"></label>
-                <input asp-for="TotalStock" class="form-control" />
-                <span asp-validation-for="TotalStock" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary me-2">Save</button>
+                    <a asp-action="Index" class="btn btn-dark">Cancel</a>
+                </form>
             </div>
-                <div class="form-group">
-                    <label for="CategoryId">Category</label>
-                <select id="category-select-list-item-container" asp-for="CategoryId" class="form-control">
-                        <option value="">-- Select Category --</option>
-                    </select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ImageFile" class="control-label">Image</label>
-                    <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" />
-                    <span asp-validation-for="ImageFile" class="text-danger"></span>
-                </div>
-            <div class="form-check p-0 m-0 d-inline-flex align-items-center" >
-                <input asp-for="HasSale" class="form-check-input m-0" style="width: 1em; height: 1em;background-color:#8C907E" />
-                <label asp-for="HasSale" class="form-check-label">Has a sale</label>
-            </div>
-
-
-            <div class="form-group">
-                <input type="submit" value="Edit" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-    <div class="col-md-4">
-        <img id="previewImage" src="~/Images/Products/@Model.ImageName" alt="@Model.ImageName" style="max-width: 400px" />
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <img id="previewImage" src="#" alt="Image Preview" style="max-width: 100%; display: none;" />
+            </div>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/product/imagedisplay.js"></script>
-@*     <script src="~/js/product/imagevalidationedit.js"></script>
-    <script src="https://cdn.tiny.cloud/1/d5i3bnjvxjk362iphf6kzupq6xj3wthkyxdxb87b8n4nh24m/tinymce/6/tinymce.min.js"></script>
- *@
+    <script src="~/common/js/previewimage.js" asp-append-version="true"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            $("#category-select-list-item-container").load("/Category/LoadCategorySelectedList");
-        });
-    </script>
+    <script src="~/categories/loadall.js" asp-append-version="true"></script>
 }

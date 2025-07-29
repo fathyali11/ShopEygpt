@@ -309,7 +309,7 @@ namespace ShopEgypt.Web.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -434,9 +434,6 @@ namespace ShopEgypt.Web.Migrations
                     b.Property<string>("ImageName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSale")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

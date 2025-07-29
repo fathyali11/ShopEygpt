@@ -2,19 +2,15 @@
 using Web.Entites.Models;
 using Web.Entites.ViewModels.CategoryVMs;
 namespace Web.Entites.Mappings;
-public class CategoryMapping
+public class CategoryMapping : IRegister
 {
-    public static void RegisterMappings()
+    public void Register(TypeAdapterConfig config)
     {
-        TypeAdapterConfig<CreateCategoryVM, Category>.NewConfig();
+        config.NewConfig<CreateCategoryVM, Category>();
 
-        TypeAdapterConfig<Category, CategoryResponse>.NewConfig();
+        config.NewConfig<Category, CategoryResponse>();
 
-        TypeAdapterConfig<Category, EditCategoryVM>.NewConfig()
-            .Map(dest => dest.ExistImageUrl, src => $"/Images/Categories/{src.ImageName}");
-
-
-
-
+        config.NewConfig<Category, EditCategoryVM>()
+              .Map(dest => dest.ExistImageUrl,src => src.ImageName);
     }
 }

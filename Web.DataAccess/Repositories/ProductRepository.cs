@@ -10,7 +10,7 @@ namespace Web.DataAccess.Repositories
     public class ProductRepository(ApplicationDbContext context,
         GeneralRepository _generalRepository,
         IValidator<CreateProductVM> _createProductValidator,
-        HybridCache _hybridCache) : GenericRepository<Product>(context), IProductRepository
+        HybridCache _hybridCache) : IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -51,53 +51,44 @@ namespace Web.DataAccess.Repositories
             await RemoveKeys(cancellationToken);
             return true;
         }
-        public async Task DeleteProductAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteProductAsync(int id, CancellationToken cancellationToken = default)
         {
             var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (productFromDb is null)
+                return false;
             _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
             _context.Products.Remove(productFromDb);
-            await _context.SaveChangesAsync(cancellationToken);
+            var numberOfChanges=await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
+
+            return numberOfChanges>0?true:false;
         }
         public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsAdmin;
             return await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
-                .Select(x => new ProductReponseForAdmin
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Price = x.Price,
-                    ImageName = x.ImageName,
-                    CategoryName = x.Category.Name,
-                    HasSale = x.IsSale,
-                    CreatedAt = x.CreatedAt,
-                    UpdatedAt = x.UpdatedAt,
-                    SoldCount = x.SoldCount,
-                    TotalStock = x.TotalStock
-                })
+                .ProjectToType<ProductReponseForAdmin>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
         }
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var product = await _context.Products
-                .Include(x => x.Category)
-                .Select(x => new EditProductVM
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description,
-                    Price = x.Price,
-                    ImageName = x.ImageName,
-                    CategoryId = x.CategoryId,
-                    CategoryName = x.Category.Name
-                })
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+                .Where(x => x.Id == id)
+                .ProjectToType<EditProductVM>()
+                .FirstOrDefaultAsync(cancellationToken);
             return product is not null ? product : null;
         }
+        public async Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var product = await _context.Products
+                .Where(x => x.Id == id)
+                .ProjectToType<ProductReponseForAdmin>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return product is not null ? product : null;
+        }
+
 
 
         public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)

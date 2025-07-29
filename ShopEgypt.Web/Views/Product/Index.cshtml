@@ -3,83 +3,69 @@
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Product Management";
     ViewData["PageTitle"] = "Products";
-    Layout = "_HomeLayout";
+    Layout = "_AdminLayout";
 }
 
+<!-- Main Content -->
+<div class="content mt-5 main-content">
+    <!-- Products Section -->
+    <section id="products">
+        <h3>Products</h3>
+        <a asp-action="Create" asp-controller="Product" class="btn btn-primary text-dark bg-opacity-10 btn-sm mb-2" data-bs-toggle="tooltip" title="Add a new product">Add Product</a>
+        <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">Name</th>
+                    <th class="text-center align-middle">Price</th>
+                    <th class="text-center align-middle">Category</th>
+                    <th class="text-center align-middle">Image</th>
+                    <th class="text-center align-middle">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td class="text-center align-middle">@product.Name</td>
+                        <td class="text-center align-middle">@product.Price.ToString("C")</td>
+                        <td class="text-center align-middle">@product.CategoryName</td>
+                        <td class="text-center align-middle">
+                            @if (product.ImageName != null)
+                            {
+                                <img src="~/Images/Products/@product.ImageName" width="100px" height="100px" style="border-radius:3px;" alt="Product Image" class="product-image" />
+                            }
+                            else
+                            {
+                                <span>No Image</span>
+                            }
+                    </td>
 
-<p>
-    <a class="btn btn-primary" asp-action="Create">Create New</a>
-</p>
+                    <td class="text-center align-middle">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a class="btn btn-success btn-sm"
+                               asp-controller="Product"
+                               asp-action="Edit"
+                               asp-route-id="@product.Id">Edit</a>
 
-<table id="MyTable" class="table table-bordered table-striped table-hover align-middle text-center">
-    <thead>
-        <tr class="align-middle bg-dark text-white">
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Image</th>
-            <th>Has a Sale</th>
-            <th>Total Stock</th>
-            <th>Sold Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.Name</td>
-                <td>@product.Description</td>
-                <td>@product.Price.ToString("C")</td>
-                <td>@product.CategoryName</td>
-                <td>
-                    @if (product.ImageName != null)
-                    {
-                        <img src="~/Images/Products/@product.ImageName" width="100px" height="100px" style="border-radius:3px;" alt="Product Image" class="product-image" />
-                    }
-                    else
-                    {
-                        <span>No Image</span>
-                    }
-                </td>
-            <td>
-                @Html.Raw(product.HasSale
-                                ? "<i class='bi bi-check-circle-fill text-success'></i>"
-                                : "<i class='bi bi-x-circle-fill text-danger'></i>")
+                            <a href="#" class="btn btn-danger btn-sm delete-btn" data-product-id="@product.Id">Delete</a>
 
-            </td>
+                            <a class="btn btn-info btn-sm"
+                               asp-controller="Product"
+                               asp-action="Details"
+                               asp-route-id="@product.Id">Details</a>
+                        </div>
+                    </td>
+                </tr>
+             }
 
-                <td>@product.TotalStock</td>
-                <td>@product.SoldCount</td>
-                <td>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a class="btn btn-outline-success btn-sm"
-                           asp-controller="Product"
-                           asp-action="Edit"
-                           asp-route-id="@product.Id">Edit</a>
-
-                        <form asp-controller="Product"
-                              asp-action="Delete"
-                              asp-route-id="@product.Id"
-                              method="post"
-                              onsubmit="return confirm('Are you sure?')"
-                              class="d-inline">
-                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </section>
+</div>
 
 
 @section Scripts {
-@*     <script src="~/js/product/imagedisplay.js"></script>
-    <script src="~/js/product/imagevalidation.js"></script>
-    <script src="~/js/product/productdatatable.js"></script>
-    <script src="~/js/deleteitems.js"></script>
-      *@
 
+    @Html.AntiForgeryToken()
+    <script src="~/products/delete.js" asp-append-version="true"></script>
 }

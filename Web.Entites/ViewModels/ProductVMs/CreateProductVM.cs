@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Entites.ViewModels.ProductVMs;
 
@@ -16,9 +17,11 @@ public record CreateProductVM(
 
     [Required(ErrorMessage = "Category is required.")]
     int CategoryId,
+
     [Required(ErrorMessage = "Stock quantity is required.")]
     [Range(0, int.MaxValue, ErrorMessage = "Stock quantity must be a non-negative integer.")]
     int TotalStock,
 
     IFormFile ImageFile
+
 );

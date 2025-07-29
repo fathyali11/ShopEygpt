@@ -3,7 +3,7 @@ using Web.Entites.ViewModels.CartItemVMs;
 
 namespace Web.DataAccess.Repositories;
 
-public class CartRepository(ApplicationDbContext context,ILogger<CartRepository> _logger) : GenericRepository<Cart>(context), ICartRepository
+public class CartRepository(ApplicationDbContext context,ILogger<CartRepository> _logger) : ICartRepository
 {
     private readonly ApplicationDbContext _context = context;
     public async Task AddToCartAsync(string userId, AddCartItemVM addCartItemVM, CancellationToken cancellationToken = default)

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace Web.DataAccess.Repositories
         GeneralRepository _generalRepository,
         IValidator<CreateCategoryVM> _createCategoryValidator,
         IValidator<EditCategoryVM> _editCategoryValidator,
-        HybridCache _hybridCache) : GenericRepository<Category>(context), ICategoryRepository
+        HybridCache _hybridCache) :ICategoryRepository
     {
         private readonly ApplicationDbContext _context= context;
 
@@ -23,7 +24,7 @@ namespace Web.DataAccess.Repositories
             if (validationResult is not null)
                 return validationResult;
 
-            var existingCategory = await GetByAsync(x => x.Name == categoryVM.Name);
+            var existingCategory = await _context.Categories.FirstOrDefaultAsync(x=>x.Name == categoryVM.Name);
             if (existingCategory != null)
                 return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
 
@@ -34,12 +35,13 @@ namespace Web.DataAccess.Repositories
             await RemoveKeys(cancellationToken);
             return true;
         }
-        public async Task<EditCategoryVM> GetCategoryAsync(int id)
+        public async Task<EditCategoryVM?> GetCategoryAsync(int id,CancellationToken cancellationToken=default)
         {
-            var category = await GetByAsync(x => x.Id == id);
-            if (category == null)
-                return new EditCategoryVM(id, null!, null!, null!);
-            return category.Adapt<EditCategoryVM>();
+            var response=await _context.Categories
+                .Where(c => c.Id == id)
+                .ProjectToType<EditCategoryVM>()
+                .FirstOrDefaultAsync(cancellationToken);
+            return response is not null ? response : null;
 
         }
         public async Task<OneOf<List<ValidationError>, bool>> UpdateCategoryAsync(EditCategoryVM categoryVM, CancellationToken cancellationToken = default)
@@ -48,7 +50,7 @@ namespace Web.DataAccess.Repositories
             if (validationResult is not null)
                 return validationResult;
 
-            var category = await GetByAsync(x => x.Id == categoryVM.Id);
+            var category = await _context.Categories.FindAsync(categoryVM.Id);
             if (category == null)
                 return new List<ValidationError> { new("Not Found", "Category not found") };
 
@@ -64,6 +66,7 @@ namespace Web.DataAccess.Repositories
             {
                 category.ImageName = categoryImageOldName;
             }
+            category.UpdatedAt= DateTime.UtcNow;
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
             await RemoveProductCacheKeys(category.Id,cancellationToken);
@@ -71,7 +74,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
         {
-            var categoryFromDb = await GetByAsync(x => x.Id == id);
+            var categoryFromDb = await _context.Categories.FindAsync(id);
             if (categoryFromDb == null)
                 return new List<ValidationError> { new("Not Found", "Category not found") };
 
@@ -86,15 +89,15 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        public async Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
+        public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
         {
             var cacheKey = CategoryCacheKeys.AllCategories;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ =>
-                {
-                    var categories = await GetAllAsync();
-                    return categories.Adapt<List<CategoryResponse>>();
-                },cancellationToken:cancellationToken);
+                await _context.Categories
+                .ProjectToType<Category>()
+                .ToListAsync(cancellationToken)
+                ,cancellationToken:cancellationToken);
             return response;
         }
         public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)

@@ -1,0 +1,59 @@
+﻿@model ProductReponseForAdmin
+
+@{
+    ViewData["Title"] = "Product Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create Product</h4>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea id="mytextarea" asp-for="Description" class="form-control" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SoldCount" class="control-label"></label>
+                    <input asp-for="SoldCount" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="TotalStock" class="control-label"></label>
+                    <input asp-for="TotalStock" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="CategoryName" class="control-label"></label>
+                    <input asp-for="CategoryName" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="CreatedAt" class="control-label"></label>
+                    <input asp-for="CreatedAt" class="form-control" readonly />
+                </div>
+                <div class="form-group">
+                    <label asp-for="UpdatedAt" class="control-label"></label>
+                    <input asp-for="UpdatedAt" class="form-control" readonly />
+                </div>
+                <a asp-action="Index" class="btn btn-dark">Cancel</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <img src="~/Images/Products/@Model.ImageName" alt="Image Preview" style="max-width: 100%;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+}
