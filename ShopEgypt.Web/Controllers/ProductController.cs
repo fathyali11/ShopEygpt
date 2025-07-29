@@ -64,13 +64,13 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var result=await _productRepositoy.AddProductAsync(model, cancellationToken);
         if(result.IsT1)
         {
-            TempData["Success"] = "Data Created Successfully";
+            TempData["SuccessMessage"] = "Data Created Successfully";
             return RedirectToAction("Index");
         }
         else
         {
             result.AsT0.ForEach(error => ModelState.AddModelError(error.PropertyName, error.ErrorMessage));
-            TempData["Error"] = "Data Not Created";
+            TempData["ErrorMessage"] = "Data Not Created";
             return View(model);
         }
     }
@@ -80,7 +80,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var product= await _productRepositoy.GetProductEditByIdAsync(id);
         if (product == null)
         {
-            TempData["Error"] = "Product Not Found";
+            TempData["ErrorMessage"] = "Data Not Updated";
             return RedirectToAction(nameof(Index));
         }
         return View(product);
@@ -97,7 +97,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
 
         if (result.IsT1)
         {
-            TempData["Success"] = "Data Updated Successfly";
+            TempData["SuccessMessage"] = "Data Updated Successfully";
             return RedirectToAction(nameof(Index));
         }
 
@@ -105,7 +105,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         foreach (var error in errors)
             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-        TempData["Error"] = "Data Not Updated";
+        TempData["ErrorMessage"] = "Data Not Updated";
         return View(model);
     }
     [HttpPost]
@@ -124,7 +124,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var product = await _productRepositoy.GetProductDetailsByIdAsync(id, cancellationToken);
         if (product == null)
         {
-            TempData["Error"] = "Product Not Found";
+            TempData["ErrorMessage"] = "Data Not Found";
             return RedirectToAction(nameof(Index));
         }
         return View(product);

@@ -1,0 +1,9 @@
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <div id="success-message-data" data-message="@TempData["SuccessMessage"]"></div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="error-message-data" data-message="@TempData["ErrorMessage"]"></div>
+}

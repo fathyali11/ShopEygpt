@@ -207,6 +207,7 @@
             <!-- partial -->
             <div class="main-panel" >
                 <div class="content-wrapper blank-page" style="overflow-y: auto;">
+                    <partial name="_Notifications" />
                     @RenderBody()
                 </div>
                
@@ -227,7 +228,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script src="~/common/js/createnotification.js" asp-append-version="true"></script>
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="~/Admin/assets/vendors/js/vendor.bundle.base.js"></script>

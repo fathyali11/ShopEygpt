@@ -44,7 +44,7 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
 
         if (result.IsT1)
         {
-            TempData["Success"] = "Data Created Successfully";
+            TempData["SuccessMessage"] = "Data Created Successfully";
             return RedirectToAction("Index");
         }
 
@@ -52,7 +52,7 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         foreach (var error in errors)
             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
 
-        TempData["Error"] = "Data Not Created";
+        TempData["ErrorMessage"] = "Data Not Created";
         return View(model);
     }
 
@@ -60,7 +60,12 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
     public async Task<IActionResult> Edit(int id)
     {
         var response =await _categoryRepository.GetCategoryAsync(id);
-        return response is not null ? View(response) : RedirectToAction(nameof(Index),"Category");
+        if (response == null)
+        {
+            TempData["ErrorMessage"] = "Data Not Updated";
+            return RedirectToAction(nameof(Index), "Category");
+        }
+        return View(response);
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -72,12 +77,16 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         var result = await _categoryRepository.UpdateCategoryAsync(model,cancellationToken);
 
         if (result.IsT1)
+        {
+            TempData["SuccessMessage"] = "Data Updated Successfully";
             return RedirectToAction(nameof(Index));
+        }
+            
 
         var errors = result.AsT0;
         foreach (var error in errors)
             ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
+        TempData["ErrorMessage"] = "Data Not Updated";
         return View(model);
 
     }
