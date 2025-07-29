@@ -32,9 +32,15 @@ public class AuthRepository(
         }
         //await _userManager.AddToRoleAsync(user, UserRoles.Admin);
         if (string.IsNullOrEmpty(request.Role))
+        {
             await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+            _logger.LogInformation("set user to customer role");
+        }
         else
+        {
             await _userManager.AddToRoleAsync(user, request.Role);
+            _logger.LogInformation("set user to {Role}",request.Role);
+        }
 
 
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
