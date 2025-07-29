@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace Web.DataAccess.Repositories
             if (validationResult is not null)
                 return validationResult;
 
-            var existingCategory = await GetByAsync(x => x.Name == categoryVM.Name);
+            var existingCategory = await _context.Categories.FirstOrDefaultAsync(x=>x.Name == categoryVM.Name);
             if (existingCategory != null)
                 return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
 
@@ -49,7 +50,7 @@ namespace Web.DataAccess.Repositories
             if (validationResult is not null)
                 return validationResult;
 
-            var category = await GetByAsync(x => x.Id == categoryVM.Id);
+            var category = await _context.Categories.FindAsync(categoryVM.Id);
             if (category == null)
                 return new List<ValidationError> { new("Not Found", "Category not found") };
 
@@ -65,6 +66,7 @@ namespace Web.DataAccess.Repositories
             {
                 category.ImageName = categoryImageOldName;
             }
+            category.UpdatedAt= DateTime.UtcNow;
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveKeys(cancellationToken);
             await RemoveProductCacheKeys(category.Id,cancellationToken);
@@ -72,7 +74,7 @@ namespace Web.DataAccess.Repositories
         }
         public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
         {
-            var categoryFromDb = await GetByAsync(x => x.Id == id);
+            var categoryFromDb = await _context.Categories.FindAsync(id);
             if (categoryFromDb == null)
                 return new List<ValidationError> { new("Not Found", "Category not found") };
 
@@ -87,15 +89,15 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        public async Task<List<CategoryResponse>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
+        public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
         {
             var cacheKey = CategoryCacheKeys.AllCategories;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ =>
-                {
-                    var categories = await GetAllAsync();
-                    return categories.Adapt<List<CategoryResponse>>();
-                },cancellationToken:cancellationToken);
+                await _context.Categories
+                .ProjectToType<Category>()
+                .ToListAsync(cancellationToken)
+                ,cancellationToken:cancellationToken);
             return response;
         }
         public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)
