@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CategoryResponse>
+﻿@model IEnumerable<Category>
 @{
     ViewData["Title"] = "Index";
     ViewData["Head"] = "Category Management";
@@ -21,6 +21,9 @@
                         Created Date
                     </th >
                     <th class="text-center align-middle">
+                        Updated Date
+                    </th>
+                    <th class="text-center align-middle">
                         Images
                     </th>
                     <th class="text-center align-middle">
@@ -33,7 +36,12 @@
                 {
                     <tr>
                         <td class="text-center align-middle">@category.Name</td>
-                        <td class="text-center align-middle">@category.CreatedAt</td>
+                        <td class="text-center align-middle">@category.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="text-center align-middle">
+                            @(category.UpdatedAt == null ? "Not updated" : category.UpdatedAt?.ToString("yyyy-MM-dd HH:mm"))
+                        </td>
+
+
                         <td class="text-center align-middle">
                             @if (category.ImageName != null)
                             {
