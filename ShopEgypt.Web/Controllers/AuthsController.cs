@@ -89,6 +89,6 @@ public class AuthsController(IAuthRepository _authRepository,
                 var error = errors.FirstOrDefault();
                 return View("ConfirmEmailError");
             },
-             success => View("ConfirmEmailSuccess"));
+             success => View("SuccesfulResendEmailConfirmation"));
     }
 }
