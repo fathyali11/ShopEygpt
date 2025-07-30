@@ -6,7 +6,9 @@ using Stripe;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
 using Web.Entites.ModelsValidation.ProductValidations;
+using Web.Entites.ModelsValidation.UserValidations;
 using Web.Entites.ViewModels.ProductVMs;
+using Web.Entites.ViewModels.UsersVMs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,10 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 builder.Services.AddHybridCache();
+
+builder.Services.AddOptions<EmailSettings>()
+            .Bind(builder.Configuration.GetSection(nameof(EmailSettings)))
+            .ValidateOnStart();
 
 TypeAdapterConfig.GlobalSettings.Scan(typeof(CategoryMapping).Assembly);
 
@@ -65,6 +71,8 @@ builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>(
 
 builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
 
+
+builder.Services.AddScoped<IValidator<ConfirmEmailVM>, ConfirmEmailVMValidator>();
 
 builder.Services.AddScoped<GeneralRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
