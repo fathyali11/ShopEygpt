@@ -1,6 +1,9 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using Mapster;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using System.Text;
 using Web.Entites.Consts;
 using Web.Entites.ViewModels.UsersVMs;
 
@@ -8,7 +11,9 @@ namespace Web.DataAccess.Repositories;
 public class AuthRepository(
     ILogger<AuthRepository> _logger,
     UserManager<ApplicationUser>_userManager,
-    SignInManager<ApplicationUser> _signInManager): IAuthRepository
+    SignInManager<ApplicationUser> _signInManager,
+    IValidator<ConfirmEmailVM> _confirmEmailVMValidator,
+    GeneralRepository _generalRepository): IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
@@ -69,4 +74,45 @@ public class AuthRepository(
         _logger.LogInformation("Login successful for user: {Username}", request.UserName);
         return true;
     }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ConfirmEmailAsync(ConfirmEmailVM confirmEmailVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Confirming email for user ID: {UserId}", confirmEmailVM.UserId);
+
+        var validationResult = await _generalRepository.ValidateRequest(_confirmEmailVMValidator, confirmEmailVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for email confirmation: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for email confirmation");
+
+        var user = await _userManager.FindByIdAsync(confirmEmailVM.UserId);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with ID: {UserId}", confirmEmailVM.UserId);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        if (user.EmailConfirmed)
+        {
+            _logger.LogInformation("Email already confirmed for user ID: {UserId}", confirmEmailVM.UserId);
+            return new List<ValidationError> { new ValidationError("Confirmed", "Email is confirmed") };
+        }
+
+        var decodedBytes = WebEncoders.Base64UrlDecode(confirmEmailVM.Token);
+        var decodedToken = Encoding.UTF8.GetString(decodedBytes);
+
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            _logger.LogError("Email confirmation failed for user ID: {UserId}, Errors: {Errors}", confirmEmailVM.UserId, result.Errors);
+            return new List<ValidationError> { new ValidationError(error.Code, error.Description) };
+        }
+
+        _logger.LogInformation("Email confirmed successfully for user ID: {UserId}", confirmEmailVM.UserId);
+        return true;
+    }
+
 }

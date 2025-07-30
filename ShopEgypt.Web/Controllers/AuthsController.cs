@@ -58,4 +58,18 @@ public class AuthsController(IAuthRepository _authRepository,
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailVM confirmEmailVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ConfirmEmailAsync(confirmEmailVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ConfirmEmailError");
+            },
+             success => View("ConfirmEmailSuccess"));
+    }
 }
