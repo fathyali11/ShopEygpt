@@ -1,65 +1,27 @@
-﻿//using Microsoft.AspNetCore.Authorization;
-//using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Runtime.CompilerServices;
+using Web.Entites.ViewModels.UsersVMs;
 
-//namespace ShopEgypt.Web.Controllers
-//{
-//    public class UsersController : Controller
-//    {
-//        private readonly IUnitOfWork _unitOfWork;
-//        public UsersController(IUnitOfWork unitOfWork)
-//        {
-//            _unitOfWork = unitOfWork;
-//        }
-//        public IActionResult Index()
-//        {
-//            var claims = (ClaimsIdentity)User.Identity;
-//            var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-//            var users = _unitOfWork.ApplicaionUserRepository.GetAll(x => x.Id != userId);
-//            return View(users);
-//        }
-//        public IActionResult GetData()
-//        {
-//            var claims = (ClaimsIdentity)User.Identity;
-//            var userId = claims.FindFirst(ClaimTypes.NameIdentifier).Value;
-//            var users = _unitOfWork.ApplicaionUserRepository.GetAll(x => x.Id != userId);
-//            return Json(new {data=users});
-//        }
-//        [HttpGet]
-//        public IActionResult LockOrOpen(string userId)
-//        {
-//            if (string.IsNullOrEmpty(userId))
-//                return NotFound();
+namespace ShopEgypt.Web.Controllers
+{
+    [Authorize(Roles =$"{UserRoles.Admin},{UserRoles.Customer}")]
+    public class UsersController(IAuthRepository _authRepository) : Controller
+    {
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(RegisterVM model,CancellationToken cancellationToken)
+        {
+            var result=await _authRepository.RegisterAsync(model, cancellationToken);
+            if (result.IsT1)
+                return RedirectToAction(nameof(Index));
+            result.AsT0.ForEach(error =>
+            {
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            });
 
-//            var user = _unitOfWork.ApplicaionUserRepository.GetBy(x => x.Id == userId);
-//            if (user == null)
-//                return NotFound();
+            return View(model);
+        }
 
-//            if (user.LockoutEnd == null || user.LockoutEnd < DateTime.Now)
-//                user.LockoutEnd = DateTime.Now + TimeSpan.FromDays(4);
-//            else
-//                user.LockoutEnd = null;
 
-//            _unitOfWork.Save();
-
-//            return RedirectToAction(nameof(Index), "Users");
-//        }
-//        public IActionResult Details(string userId)
-//        {
-//            var user=_unitOfWork.ApplicaionUserRepository.GetBy(x=>x.Id == userId);
-//            if(user == null)
-//                return NotFound();
-//            return View(user);
-//        }
-//        public IActionResult Edit(ApplicationUser user)
-//        {
-//            if(ModelState.IsValid)
-//            {
-//                _unitOfWork.ApplicaionUserRepository.Update(user);
-//                _unitOfWork.Save();
-//                return RedirectToAction(nameof(Index));
-//            }
-//            return View(user);
-//        }
-
-//    }
-//}
+    }
+}

@@ -58,4 +58,72 @@ public class AuthsController(IAuthRepository _authRepository,
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailVM confirmEmailVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ConfirmEmailAsync(confirmEmailVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ConfirmEmailError");
+            },
+             success => View("ConfirmEmailSuccess"));
+    }
+    [HttpGet]
+    public IActionResult ResendEmailConfirmation()
+    {
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ResendEmailConfirmationAsync(resendEmailConfirmationVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ConfirmEmailError");
+            },
+             success => View("SuccesfulResendEmailConfirmation"));
+    }
+
+    [HttpGet]
+    public IActionResult ForgotPassword() => View();
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordVM forgotPasswordVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ForgetPasswordAsync(forgotPasswordVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ForgotPasswordError");
+            },
+             success => View("ForgotPasswordSuccess"));
+    }
+    [HttpGet]
+    public IActionResult ResetPassword(ResetPasswordVM resetPasswordVM) => View(resetPasswordVM);
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ResetPasswordAsync(resetPasswordVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ForgotPasswordError");
+            },
+             success => View("Login"));
+    }
+
 }

@@ -3,27 +3,58 @@
 	Layout = "_RegisterLayout";
 }
 
-<div class="wrapper" style="background-image: url('~/Registering/images/bg-registration-form-2.jpg');">
-	<div class="inner">
-		<form asp-action="Login" asp-controller="Auths" method="post">
-			<h3>Login Form</h3>
-			<input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-			<partial name="_ValidationScriptsPartial" />
-			<div asp-validation-summary="All" class="text-danger"></div>
-
-			<div class="form-wrapper">
-				<label asp-for="UserName">UserName</label>
-				<input asp-for="UserName" type="text" class="form-control">
-				<span asp-validation-for="UserName" class="text-danger"></span>
-			</div>
-
-			<div class="form-wrapper">
-				<label asp-for="Password">Password</label>
-				<input asp-for="Password" type="password" class="form-control">
-				<span asp-validation-for="Password" class="text-danger"></span>
-			</div>
-
-			<button>Login Now</button>
-		</form>
-	</div>
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100">
+            <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+                <div class="card col-lg-4 mx-auto">
+                    <div class="card-body px-5 py-5">
+                        <h3 class="card-title text-start mb-3">Login</h3>
+                        <form asp-action="Login" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="UserName"></label>
+                                <input asp-for="UserName" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" type="password" class="form-control p_input">
+                            </div>
+                            <div class="form-group d-flex align-items-center justify-content-between">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input"> Remember me
+                                    </label>
+                                </div>
+                                <a asp-action="ForgotPassword" asp-controller="Auths" class="forgot-pass">Forgot password</a>
+                            </div>
+                            <div class="text-center d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-block enter-btn">Login</button>
+                            </div>
+                            <div class="d-flex">
+                                <button class="btn btn-facebook me-2 col">
+                                    <i class="mdi mdi-facebook"></i> Facebook
+                                </button>
+                                <button class="btn btn-google col">
+                                    <i class="mdi mdi-google-plus"></i> Google plus
+                                </button>
+                                <a asp-action="ResendEmailConfirmation" asp-controller="Auths" class="btn btn-facebook col me-2">
+                                    <i class="mdi mdi-email-check"></i> Confirm Email
+                                </a>
+                            </div>
+                            <p class="sign-up">Don't have an Account?<a asp-action="Register" asp-controller="Auths"> Sign Up</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- row ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
 </div>
+
+@section Scripts{
+	<partial name="_ValidationScriptsPartial" />
+}
+

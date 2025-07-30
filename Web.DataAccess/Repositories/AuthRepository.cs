@@ -1,17 +1,29 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Identity;
+﻿using FluentValidation;
+using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using System.Buffers.Text;
+using System.Net;
 using System.Text;
+using Web.Entites.Consts;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace Web.DataAccess.Repositories;
 public class AuthRepository(
     ILogger<AuthRepository> _logger,
     UserManager<ApplicationUser>_userManager,
-    SignInManager<ApplicationUser> _signInManager): IAuthRepository
+    SignInManager<ApplicationUser> _signInManager,
+    IValidator<ConfirmEmailVM> _confirmEmailVMValidator,
+    IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
+    IValidator<ForgotPasswordVM> _forgetPasswordVMValidator,
+    IValidator<ResetPasswordVM> _resetPasswordVMValidator,
+    GeneralRepository _generalRepository,
+    IEmailRepository _emailRepository,
+    IHttpContextAccessor _httpContextAccessor) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
@@ -33,9 +45,14 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
+        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        _logger.LogInformation("set user to customer role");
+
+
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await SendEmailConfirmationAsync(user);
+
         return true;
     }
     public async Task<OneOf<List<ValidationError>,bool>> LoginAsync(LoginVM request, CancellationToken cancellationToken = default)
@@ -46,7 +63,11 @@ public class AuthRepository(
             _logger.LogWarning("User not found with username: {Username}", request.UserName);
             return new List<ValidationError> { new("NotFound", "User not found") };
         }
-
+        if(!user.EmailConfirmed)
+        {
+            _logger.LogInformation("User with email {Email} not confirmed",user.Email);
+            return new List<ValidationError> { new("NotConfirmed", "This email not confirmed") };
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isPasswordValid)
         {
@@ -59,4 +80,186 @@ public class AuthRepository(
         _logger.LogInformation("Login successful for user: {Username}", request.UserName);
         return true;
     }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ConfirmEmailAsync(ConfirmEmailVM confirmEmailVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Confirming email for user ID: {UserId}", confirmEmailVM.UserId);
+
+        var validationResult = await _generalRepository.ValidateRequest(_confirmEmailVMValidator, confirmEmailVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for email confirmation: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for email confirmation");
+
+        var user = await _userManager.FindByIdAsync(confirmEmailVM.UserId);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with ID: {UserId}", confirmEmailVM.UserId);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        if (user.EmailConfirmed)
+        {
+            _logger.LogInformation("Email already confirmed for user ID: {UserId}", confirmEmailVM.UserId);
+            return new List<ValidationError> { new ValidationError("Confirmed", "Email is confirmed") };
+        }
+
+        var decodedBytes = WebEncoders.Base64UrlDecode(confirmEmailVM.Token);
+        var decodedToken = Encoding.UTF8.GetString(decodedBytes);
+
+        var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            _logger.LogError("Email confirmation failed for user ID: {UserId}, Errors: {Errors}", confirmEmailVM.UserId, result.Errors);
+            return new List<ValidationError> { new ValidationError(error.Code, error.Description) };
+        }
+
+        _logger.LogInformation("Email confirmed successfully for user ID: {UserId}", confirmEmailVM.UserId);
+        await _signInManager.SignInAsync(user,false);
+        return true;
+    }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ResendEmailConfirmationAsync(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Resending email confirmation for email: {Email}", resendEmailConfirmationVM.Email);
+
+        var validationResult = await _generalRepository.ValidateRequest(_resendEmailConfirmationVMValidator, resendEmailConfirmationVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for resending email confirmation: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for resending email confirmation");
+
+        var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.Email);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with email: {Email}", resendEmailConfirmationVM.Email);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        await SendEmailConfirmationAsync(user);
+        _logger.LogInformation("Email confirmation resent successfully to: {Email}", resendEmailConfirmationVM.Email);
+        return true;
+    }
+
+
+    public async Task<OneOf<List<ValidationError>, bool>> ForgetPasswordAsync(ForgotPasswordVM forgetPasswordVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Processing forget password request for email: {Email}", forgetPasswordVM.Email);
+
+        var validationResult = await _generalRepository.ValidateRequest(_forgetPasswordVMValidator, forgetPasswordVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for forget password: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for forget password");
+
+        var user = await _userManager.FindByEmailAsync(forgetPasswordVM.Email);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with email: {Email}", forgetPasswordVM.Email);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        await SendForgotPasswordEmailAsync(user);
+        _logger.LogInformation("Forget password email sent successfully to: {Email}", forgetPasswordVM.Email);
+        return true;
+    }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ResetPasswordAsync(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Resetting password for user ID: {UserId}", resetPasswordVM.UserId);
+
+        var validationResult = await _generalRepository.ValidateRequest(_resetPasswordVMValidator, resetPasswordVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for reset password: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for reset password");
+
+        var user = await _userManager.FindByIdAsync(resetPasswordVM.UserId);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with ID: {UserId}", resetPasswordVM.UserId);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        var decodedBytes = WebEncoders.Base64UrlDecode(resetPasswordVM.Token);
+        var decodedToken = Encoding.UTF8.GetString(decodedBytes);
+
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordVM.NewPassword);
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            _logger.LogError("Password reset failed for user ID: {UserId}, Errors: {Errors}", resetPasswordVM.UserId, result.Errors);
+            return new List<ValidationError> { new ValidationError(error.Code,error.Description) };
+        }
+
+        _logger.LogInformation("Password reset successful for user ID: {UserId}", resetPasswordVM.UserId);
+        return true;
+    }
+
+
+    private async Task SendEmailConfirmationAsync(ApplicationUser user)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+        _logger.LogInformation($"Sending decoded token: {encodedToken}");
+        var request = _httpContextAccessor.HttpContext?.Request;
+        var baseUrl = $"{request?.Scheme}://{request?.Host}";
+
+        var confirmationLink = $"{baseUrl}/Auths/ConfirmEmail?userId={user.Id}&token={encodedToken}";
+        await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailConfirmationBody(user.UserName!, confirmationLink!));
+    }
+    private static string GetEmailConfirmationBody(string userName,string confirmationLink)=>
+        $@"
+    <h2>Hello {userName},</h2>
+    <p>Thank you for registering on our website.</p>
+    <p>Please confirm your email by clicking the link below:</p>
+    <a href='{confirmationLink}' style='
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        background-color: #28a745;
+        text-decoration: none;
+        border-radius: 5px;'>Confirm Email</a>
+    <p>If you did not create this account, you can safely ignore this email.</p>
+    <br/>
+    <p>Thanks,<br/>The Team</p>";
+
+    private async Task SendForgotPasswordEmailAsync(ApplicationUser user)
+    {
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+        _logger.LogInformation($"Sending password reset token: {encodedToken}");
+        var request = _httpContextAccessor.HttpContext?.Request;
+        var baseUrl = $"{request?.Scheme}://{request?.Host}";
+
+        var resetLink = $"{baseUrl}/Auths/ResetPassword?userId={user.Id}&token={encodedToken}";
+        await _emailRepository.SendEmailAsync(user.Email!, "Reset Your Password", GetResetPasswordEmailBody(user.UserName!, resetLink!));
+    }
+    private static string GetResetPasswordEmailBody(string userName, string resetLink) =>
+                $@"
+        <h2>Hello {userName},</h2>
+        <p>We received a request to reset your password.</p>
+        <p>You can reset your password by clicking the link below:</p>
+        <a href='{resetLink}' style='
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;'>Reset Password</a>
+        <p>If you did not request a password reset, please ignore this email or contact support.</p>
+        <br/>
+        <p>Thanks,<br/>The Team</p>";
+
 }

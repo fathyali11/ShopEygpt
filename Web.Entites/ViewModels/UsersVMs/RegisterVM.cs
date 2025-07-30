@@ -10,6 +10,7 @@ public record RegisterVM(
     string UserName,
     [EmailAddress]
     string Email,
+    string ?Role,
     [PasswordPropertyText]
     string Password,
     [PasswordPropertyText]

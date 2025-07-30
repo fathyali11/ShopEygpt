@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "_RegisterLayout";
+}
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100">
+            <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+                <div class="card col-lg-4 mx-auto">
+                    <div class="card-body px-5 py-5 text-center">
+                        <h3 class="card-title text-danger mb-3">Confirmation Failed</h3>
+                        <p class="mb-4">Something went wrong while confirming your email. Please try again later or contact support.</p>
+                        <a asp-action="ResendEmailConfirmation" asp-controller="Auths" class="btn btn-secondary w-100">Resend Email Confirmation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
