@@ -63,6 +63,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
 
 
 builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
@@ -80,6 +81,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 
 var app = builder.Build();
 
