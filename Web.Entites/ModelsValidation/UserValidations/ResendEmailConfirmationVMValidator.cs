@@ -7,6 +7,7 @@ public class ResendEmailConfirmationVMValidator : AbstractValidator<ResendEmailC
 {
     public ResendEmailConfirmationVMValidator()
     {
-        RuleFor(x => x.Email).NotEmpty().WithMessage("Email id not empty");
+        RuleFor(x => x.Email).NotEmpty().WithMessage("Email id not empty")
+            .EmailAddress().WithMessage("enter correct email");
     }
 }
