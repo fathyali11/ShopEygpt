@@ -1,26 +1,40 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>RegistrationForm_v2 by Colorlib</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLR2mA5jF9a+H+qz5U04DF5kkWT+Oa+31XToYH+PSx" crossorigin="anonymous">
-
-
-	<!-- MATERIAL DESIGN ICONIC FONT -->
-	<link rel="stylesheet" href="~/Registering/css/material-design-iconic-font.min.css">
-
-	<!-- STYLE CSS -->
-	<link rel="stylesheet" href="~/Registering/css/style.css">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Register</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/Admin/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/Admin/assets/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="~/Admin/assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="~/Admin/assets/vendors/font-awesome/css/font-awesome.min.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="~/Admin/assets/css/style.css">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="~/Admin/assets/images/favicon.png" />
 </head>
-
 <body>
-	@RenderBody();
-	<!-- Bootstrap JS Bundle (includes Popper) -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-GZLkblOeV2VXv2RG6zZzrrq3NybKf3iGf4qV9rJ/ScAfB/JRHuEcy6zXjB6h0aCm" crossorigin="anonymous"></script>
-
-    @RenderSection("Scripts", required: false);
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+    @RenderBody()
+    
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="~/Admin/assets/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="~/Admin/assets/js/off-canvas.js"></script>
+    <script src="~/Admin/assets/js/misc.js"></script>
+    <script src="~/Admin/assets/js/settings.js"></script>
+    <script src="~/Admin/assets/js/todolist.js"></script>
+    @RenderSection("Scripts",required:false)
+    <!-- endinject -->
+</body>
 </html>

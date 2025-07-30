@@ -2,51 +2,58 @@
 @{
 	Layout = "_RegisterLayout";
 }
-
-<div class="wrapper" style="background-image: url('~/Registering/images/bg-registration-form-2.jpg');">
-	<div class="inner">
-		<form asp-action="Register" asp-controller="Auths" method="post">
-			<h3>Registration Form</h3>
-
-			<partial name="_ValidationScriptsPartial" />
-			<div asp-validation-summary="All" class="text-danger"></div>
-
-			<div class="form-group">
-				<div class="form-wrapper">
-					<label asp-for="FirstName">First Name</label>
-					<input asp-for="FirstName" type="text" class="form-control">
-					<span asp-validation-for="FirstName" class="text-danger"></span>
-				</div>
-				<div class="form-wrapper">
-					<label asp-for="LastName">Last Name</label>
-					<input asp-for="LastName" type="text" class="form-control">
-					<span asp-validation-for="LastName" class="text-danger"></span>
-				</div>
-			</div>
-			<div class="form-wrapper">
-				<label asp-for="UserName">UserName</label>
-				<input asp-for="UserName" type="text" class="form-control">
-				<span asp-validation-for="UserName" class="text-danger"></span>
-			</div>
-			<div class="form-wrapper">
-				<label asp-for="Email">Email</label>
-				<input asp-for="Email" type="text" class="form-control">
-				<span asp-validation-for="Email" class="text-danger"></span>
-			</div>
-
-			<div class="form-wrapper">
-				<label asp-for="Password">Password</label>
-				<input asp-for="Password" type="password" class="form-control">
-				<span asp-validation-for="Password" class="text-danger"></span>
-			</div>
-
-			<div class="form-wrapper">
-				<label asp-for="ConfirmPassword">Confirm Password</label>
-				<input asp-for="ConfirmPassword" type="password" class="form-control">
-				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-			</div>
-
-			<button>Register Now</button>
-		</form>
-	</div>
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100">
+            <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+                <div class="card col-lg-4 mx-auto">
+                    <div class="card-body px-5 py-5">
+                        <h3 class="card-title text-start mb-3">Register</h3>
+                        <form asp-action="Register" asp-controller="Auths" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="FirstName"></label>
+                                <input asp-for="FirstName" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="LastName"></label>
+                                <input asp-for="LastName" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserName"></label>
+                                <input asp-for="UserName" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" type="password" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ConfirmPassword"></label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control p_input">
+                            </div>
+                            <div class="text-center d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-block enter-btn">Register</button>
+                            </div>
+                            <div class="d-flex">
+                                <button class="btn btn-facebook col me-2">
+                                    <i class="mdi mdi-facebook"></i> Facebook
+                                </button>
+                                <button class="btn btn-google col">
+                                    <i class="mdi mdi-google-plus"></i> Google plus
+                                </button>
+                            </div>
+                            <p class="sign-up text-center">Already have an Account?<a asp-action="Login" asp-controller="Auths"> Login</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- row ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
 </div>
