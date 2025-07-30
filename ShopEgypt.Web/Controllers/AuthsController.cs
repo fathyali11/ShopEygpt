@@ -108,4 +108,22 @@ public class AuthsController(IAuthRepository _authRepository,
             },
              success => View("ForgotPasswordSuccess"));
     }
+    [HttpGet]
+    public IActionResult ResetPassword(ResetPasswordVM resetPasswordVM) => View(resetPasswordVM);
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ResetPasswordAsync(resetPasswordVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ForgotPasswordError");
+            },
+             success => View("Login"));
+    }
+
 }

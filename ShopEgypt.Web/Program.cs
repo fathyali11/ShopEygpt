@@ -76,6 +76,7 @@ builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator
 builder.Services.AddScoped<IValidator<ConfirmEmailVM>, ConfirmEmailVMValidator>();
 builder.Services.AddScoped<IValidator<ResendEmailConfirmationVM>, ResendEmailConfirmationVMValidator>();
 builder.Services.AddScoped<IValidator<ForgotPasswordVM>, ForgotPasswordVMValidator>();
+builder.Services.AddScoped<IValidator<ResetPasswordVM>, ResetPasswordVMValidator>();
 
 builder.Services.AddScoped<GeneralRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

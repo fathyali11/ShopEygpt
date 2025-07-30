@@ -9,7 +9,10 @@ public interface IAuthRepository
 {
     Task<OneOf<List<ValidationError>, bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default);
     Task<OneOf<List<ValidationError>, bool>> LoginAsync(LoginVM request, CancellationToken cancellationToken = default);
+
     Task<OneOf<List<ValidationError>, bool>> ConfirmEmailAsync(ConfirmEmailVM confirmEmailVM, CancellationToken cancellationToken = default);
     Task<OneOf<List<ValidationError>, bool>> ResendEmailConfirmationAsync(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken = default);
+
     Task<OneOf<List<ValidationError>, bool>> ForgetPasswordAsync(ForgotPasswordVM forgetPasswordVM, CancellationToken cancellationToken = default);
+    Task<OneOf<List<ValidationError>, bool>> ResetPasswordAsync(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken = default);
 }
