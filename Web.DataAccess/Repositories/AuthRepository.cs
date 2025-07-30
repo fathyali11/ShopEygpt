@@ -1,8 +1,11 @@
 ﻿using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using System.Net;
 using System.Text;
 using Web.Entites.Consts;
 using Web.Entites.ViewModels.UsersVMs;
@@ -13,7 +16,10 @@ public class AuthRepository(
     UserManager<ApplicationUser>_userManager,
     SignInManager<ApplicationUser> _signInManager,
     IValidator<ConfirmEmailVM> _confirmEmailVMValidator,
-    GeneralRepository _generalRepository): IAuthRepository
+    GeneralRepository _generalRepository,
+    IEmailRepository _emailRepository,
+    IUrlHelper _urlHelper,
+    IHttpContextAccessor _httpContextAccessor) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
@@ -35,22 +41,22 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
-        //await _userManager.AddToRoleAsync(user, UserRoles.Admin);
-        if (string.IsNullOrEmpty(request.Role))
-        {
-            await _userManager.AddToRoleAsync(user, UserRoles.Customer);
-            _logger.LogInformation("set user to customer role");
-        }
-        else
-        {
-            await _userManager.AddToRoleAsync(user, request.Role);
-            _logger.LogInformation("set user to {Role}",request.Role);
-        }
+        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        _logger.LogInformation("set user to customer role");
 
 
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebUtility.UrlEncode(token);
+
+        var confirmationLink = _urlHelper.Action(
+            action: "ConfirmEmail",
+            controller: "Auths",
+            values: new { userId = user.Id, token = encodedToken },
+            protocol: _httpContextAccessor.HttpContext?.Request.Scheme
+        );
+        await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailBody(user.UserName!,confirmationLink!));
         return true;
     }
     public async Task<OneOf<List<ValidationError>,bool>> LoginAsync(LoginVM request, CancellationToken cancellationToken = default)
@@ -112,6 +118,7 @@ public class AuthRepository(
         }
 
         _logger.LogInformation("Email confirmed successfully for user ID: {UserId}", confirmEmailVM.UserId);
+        await _signInManager.SignInAsync(user,false);
         return true;
     }
 
