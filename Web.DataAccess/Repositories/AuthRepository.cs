@@ -16,6 +16,7 @@ public class AuthRepository(
     UserManager<ApplicationUser>_userManager,
     SignInManager<ApplicationUser> _signInManager,
     IValidator<ConfirmEmailVM> _confirmEmailVMValidator,
+    IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
     GeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
     IUrlHelper _urlHelper,
@@ -121,6 +122,18 @@ public class AuthRepository(
         await _signInManager.SignInAsync(user,false);
         return true;
     }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ResendEmailConfirmationAsync(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Resending email confirmation for email: {Email}", resendEmailConfirmationVM.Email);
+
+        var validationResult = await _generalRepository.ValidateRequest(_resendEmailConfirmationVMValidator, resendEmailConfirmationVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for resending email confirmation: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for resending email confirmation");
 
 
 
