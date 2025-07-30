@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using System.Buffers.Text;
 using System.Net;
 using System.Text;
 using Web.Entites.Consts;
@@ -19,7 +20,6 @@ public class AuthRepository(
     IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
     GeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
-    IUrlHelper _urlHelper,
     IHttpContextAccessor _httpContextAccessor) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
@@ -159,7 +159,7 @@ public class AuthRepository(
         var confirmationLink = $"{baseUrl}/Auths/ConfirmEmail?userId={user.Id}&token={encodedToken}";
         await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailBody(user.UserName!, confirmationLink!));
     }
-    private string GetEmailBody(string userName,string confirmationLink)=>
+    private static string GetEmailBody(string userName,string confirmationLink)=>
         $@"
     <h2>Hello {userName},</h2>
     <p>Thank you for registering on our website.</p>
