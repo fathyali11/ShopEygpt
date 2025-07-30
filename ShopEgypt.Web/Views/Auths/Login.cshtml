@@ -10,7 +10,8 @@
                 <div class="card col-lg-4 mx-auto">
                     <div class="card-body px-5 py-5">
                         <h3 class="card-title text-start mb-3">Login</h3>
-                        <form>
+                        <form asp-action="Login" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
                             <div class="form-group">
                                 <label asp-for="UserName"></label>
                                 <input asp-for="UserName" class="form-control p_input">
@@ -37,6 +38,9 @@
                                 <button class="btn btn-google col">
                                     <i class="mdi mdi-google-plus"></i> Google plus
                                 </button>
+                                <a asp-action="ResendEmailConfirmation" asp-controller="Auths" class="btn btn-facebook col me-2">
+                                    <i class="mdi mdi-email-check"></i> Confirm Email
+                                </a>
                             </div>
                             <p class="sign-up">Don't have an Account?<a asp-action="Register" asp-controller="Auths"> Sign Up</a></p>
                         </form>
