@@ -91,4 +91,21 @@ public class AuthsController(IAuthRepository _authRepository,
             },
              success => View("SuccesfulResendEmailConfirmation"));
     }
+
+    [HttpGet]
+    public IActionResult ForgotPassword() => View();
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordVM forgotPasswordVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ForgetPasswordAsync(forgotPasswordVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ForgotPasswordError");
+            },
+             success => View("ForgotPasswordSuccess"));
+    }
 }

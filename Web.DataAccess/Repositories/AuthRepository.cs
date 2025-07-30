@@ -18,6 +18,7 @@ public class AuthRepository(
     SignInManager<ApplicationUser> _signInManager,
     IValidator<ConfirmEmailVM> _confirmEmailVMValidator,
     IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
+    IValidator<ForgotPasswordVM> _forgetPasswordVMValidator,
     GeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
     IHttpContextAccessor _httpContextAccessor) : IAuthRepository
@@ -143,6 +144,34 @@ public class AuthRepository(
         return true;
     }
 
+
+    public async Task<OneOf<List<ValidationError>, bool>> ForgetPasswordAsync(ForgotPasswordVM forgetPasswordVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Processing forget password request for email: {Email}", forgetPasswordVM.Email);
+
+        var validationResult = await _generalRepository.ValidateRequest(_forgetPasswordVMValidator, forgetPasswordVM);
+        if (validationResult is not null)
+        {
+            _logger.LogWarning("Validation failed for forget password: {Errors}", validationResult);
+            return validationResult;
+        }
+        _logger.LogInformation("Validation passed for forget password");
+
+        var user = await _userManager.FindByEmailAsync(forgetPasswordVM.Email);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with email: {Email}", forgetPasswordVM.Email);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
+
+        await SendForgotPasswordEmailAsync(user);
+        _logger.LogInformation("Forget password email sent successfully to: {Email}", forgetPasswordVM.Email);
+        return true;
+    }
+
+    public async Task<OneOf<List<ValidationError>, bool>> ResetPasswordAsync(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Resetting password for user ID: {UserId}", resetPasswordVM.UserId);
 
 
 
