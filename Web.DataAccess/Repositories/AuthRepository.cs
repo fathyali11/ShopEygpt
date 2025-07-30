@@ -48,16 +48,8 @@ public class AuthRepository(
 
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var encodedToken = WebUtility.UrlEncode(token);
+        await SendEmailConfirmationAsync(user);
 
-        var confirmationLink = _urlHelper.Action(
-            action: "ConfirmEmail",
-            controller: "Auths",
-            values: new { userId = user.Id, token = encodedToken },
-            protocol: _httpContextAccessor.HttpContext?.Request.Scheme
-        );
-        await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailBody(user.UserName!,confirmationLink!));
         return true;
     }
     public async Task<OneOf<List<ValidationError>,bool>> LoginAsync(LoginVM request, CancellationToken cancellationToken = default)
@@ -151,7 +143,19 @@ public class AuthRepository(
 
 
 
+    private async Task SendEmailConfirmationAsync(ApplicationUser user)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebUtility.UrlEncode(token);
 
+        var confirmationLink = _urlHelper.Action(
+            action: "ConfirmEmail",
+            controller: "Auths",
+            values: new { userId = user.Id, token = encodedToken },
+            protocol: _httpContextAccessor.HttpContext?.Request.Scheme
+        );
+        await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailBody(user.UserName!, confirmationLink!));
+    }
     private string GetEmailBody(string userName,string confirmationLink)=>
         $@"
     <h2>Hello {userName},</h2>
