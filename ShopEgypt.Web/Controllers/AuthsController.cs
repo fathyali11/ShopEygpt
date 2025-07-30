@@ -72,4 +72,23 @@ public class AuthsController(IAuthRepository _authRepository,
             },
              success => View("ConfirmEmailSuccess"));
     }
+    [HttpGet]
+    public IActionResult ResendEmailConfirmation()
+    {
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken)
+    {
+        var result = await _authRepository.ResendEmailConfirmationAsync(resendEmailConfirmationVM, cancellationToken);
+
+        return result.Match<IActionResult>(
+            errors =>
+            {
+                var error = errors.FirstOrDefault();
+                return View("ConfirmEmailError");
+            },
+             success => View("ConfirmEmailSuccess"));
+    }
 }
