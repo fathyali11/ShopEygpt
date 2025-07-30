@@ -135,7 +135,17 @@ public class AuthRepository(
         }
         _logger.LogInformation("Validation passed for resending email confirmation");
 
+        var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.Email);
+        if (user is null)
+        {
+            _logger.LogWarning("User not found with email: {Email}", resendEmailConfirmationVM.Email);
+            return new List<ValidationError> { new ValidationError("NotFound", "User is not found") };
+        }
 
+        await SendEmailConfirmationAsync(user);
+        _logger.LogInformation("Email confirmation resent successfully to: {Email}", resendEmailConfirmationVM.Email);
+        return true;
+    }
 
 
 
