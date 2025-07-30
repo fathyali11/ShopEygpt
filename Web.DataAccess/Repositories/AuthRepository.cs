@@ -60,7 +60,11 @@ public class AuthRepository(
             _logger.LogWarning("User not found with username: {Username}", request.UserName);
             return new List<ValidationError> { new("NotFound", "User not found") };
         }
-
+        if(!user.EmailConfirmed)
+        {
+            _logger.LogInformation("User with email {Email} not confirmed",user.Email);
+            return new List<ValidationError> { new("NotConfirmed", "This email not confirmed") };
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isPasswordValid)
         {
