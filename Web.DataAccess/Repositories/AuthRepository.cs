@@ -150,14 +150,13 @@ public class AuthRepository(
     private async Task SendEmailConfirmationAsync(ApplicationUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var encodedToken = WebUtility.UrlEncode(token);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        var confirmationLink = _urlHelper.Action(
-            action: "ConfirmEmail",
-            controller: "Auths",
-            values: new { userId = user.Id, token = encodedToken },
-            protocol: _httpContextAccessor.HttpContext?.Request.Scheme
-        );
+        _logger.LogInformation($"Sending decoded token: {encodedToken}");
+        var request = _httpContextAccessor.HttpContext?.Request;
+        var baseUrl = $"{request?.Scheme}://{request?.Host}";
+
+        var confirmationLink = $"{baseUrl}/Auths/ConfirmEmail?userId={user.Id}&token={encodedToken}";
         await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailBody(user.UserName!, confirmationLink!));
     }
     private string GetEmailBody(string userName,string confirmationLink)=>
