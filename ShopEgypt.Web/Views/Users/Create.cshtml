@@ -1,0 +1,70 @@
+﻿@model RegisterVM
+@{
+    Layout = "_AdminLayout";
+}
+
+<div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+        <div class="row w-100">
+            <div class="content-wrapper full-page-wrapper d-flex align-items-center auth login-bg">
+                <div class="card col-lg-4 mx-auto">
+                    <div class="card-body px-5 py-5">
+                        <h3 class="card-title text-start mb-3">Register</h3>
+                        <form asp-action="Create" asp-controller="Users">
+                            <div class="form-group">
+                                <label asp-for="FirstName"></label>
+                                <input asp-for="FirstName" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="LastName"></label>
+                                <input asp-for="LastName"  class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UserName"></label>
+                                <input asp-for="UserName"  class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email"  class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Role"></label>
+                                <select class="form-control p_input">
+                                    <option value="">--Select Role--</option>
+                                    <option value="@UserRoles.Admin">@UserRoles.Admin</option>
+                                    <option value="@UserRoles.Customer">@UserRoles.Customer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" type="password" class="form-control p_input">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ConfirmPassword"></label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control p_input">
+                            </div>
+                            
+                            <div class="text-center d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-block enter-btn">Create</button>
+                            </div>
+                            <div class="d-flex">
+                                <button class="btn btn-facebook col me-2">
+                                    <i class="mdi mdi-facebook"></i> Facebook
+                                </button>
+                                <button class="btn btn-google col">
+                                    <i class="mdi mdi-google-plus"></i> Google plus
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- row ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+@section Scripts{
+
+}
