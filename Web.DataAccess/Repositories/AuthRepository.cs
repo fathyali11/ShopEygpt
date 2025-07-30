@@ -115,4 +115,26 @@ public class AuthRepository(
         return true;
     }
 
+
+
+
+
+
+
+
+    private string GetEmailBody(string userName,string confirmationLink)=>
+        $@"
+    <h2>Hello {userName},</h2>
+    <p>Thank you for registering on our website.</p>
+    <p>Please confirm your email by clicking the link below:</p>
+    <a href='{confirmationLink}' style='
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        background-color: #28a745;
+        text-decoration: none;
+        border-radius: 5px;'>Confirm Email</a>
+    <p>If you did not create this account, you can safely ignore this email.</p>
+    <br/>
+    <p>Thanks,<br/>The Team</p>";
 }
