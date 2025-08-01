@@ -89,7 +89,7 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
+        public async Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken=default)
         {
             var cacheKey = CategoryCacheKeys.AllCategories;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
@@ -98,7 +98,7 @@ namespace Web.DataAccess.Repositories
                 .ProjectToType<Category>()
                 .ToListAsync(cancellationToken)
                 ,cancellationToken:cancellationToken);
-            return response;
+            return  PaginatedList<Category>.Create(response,pageNumber,PaginationConstants.DefaultPageSize);
         }
         public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)
         {

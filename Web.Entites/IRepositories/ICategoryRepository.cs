@@ -15,7 +15,7 @@ namespace Web.Entites.IRepositories
         Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id);
 
 
-        Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default);
+        Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken = default);
         Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll, CancellationToken cancellationToken = default);
         Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
         
