@@ -6,6 +6,28 @@ public class AuthsController(IAuthRepository _authRepository,
     SignInManager<ApplicationUser> _signInManager) : Controller
 {
     [HttpGet]
+    public IActionResult ExternalLogin(string provider, string returnUrl)
+    {
+        var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Auths", new { returnUrl });
+        var result = _authRepository.ExternalLogin(provider, redirectUrl);
+        return result;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ExternalLoginCallback(string? returnUrl, string? remoteError)
+    {
+
+        var result = await _authRepository.ExternalLoginCallbackAsync(returnUrl, remoteError);
+        return result.Match<IActionResult>(
+            error =>
+            {
+                ModelState.AddModelError(string.Empty, "Failed to login");
+                return RedirectToAction(nameof(Login));
+            },
+            success => RedirectToAction(nameof(Index), "Home"));
+    }
+
+    [HttpGet]
     public IActionResult Register() => View();
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using OneOf;
 using Web.Entites.ViewModels;
 using Web.Entites.ViewModels.UsersVMs;
@@ -15,4 +17,8 @@ public interface IAuthRepository
 
     Task<OneOf<List<ValidationError>, bool>> ForgetPasswordAsync(ForgotPasswordVM forgetPasswordVM, CancellationToken cancellationToken = default);
     Task<OneOf<List<ValidationError>, bool>> ResetPasswordAsync(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken = default);
+
+    ChallengeResult ExternalLogin(string provider, string redirectUrl);
+    Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError);
+
 }
