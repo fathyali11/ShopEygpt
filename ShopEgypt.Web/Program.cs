@@ -1,5 +1,7 @@
 using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
 using Stripe;
@@ -52,13 +54,33 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 	.AddEntityFrameworkStores<ApplicationDbContext>()
 	.AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options =>
-	{
-		options.LoginPath = "/Auths/Login";
-		options.LogoutPath = "/Auths/Logout";
-		options.AccessDeniedPath = "/Auths/AccessDenied";
-		options.ExpireTimeSpan = TimeSpan.FromDays(2);
-	});
+builder.Services.AddOptions<GoogleSettings>()
+	.Bind(builder.Configuration.GetSection(nameof(GoogleSettings)))
+	.ValidateOnStart();
+
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "Cookies"; 
+})
+.AddCookie("Cookies")
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    var googleSettings = builder.Configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>();
+    options.ClientId = googleSettings!.ClientId;
+    options.ClientSecret = googleSettings.ClientSecret;
+});
+
+
+builder.Services.Configure<CookieAuthenticationOptions>("Cookies",options =>
+{
+	options.LoginPath = "/Auths/Login";
+	options.LogoutPath = "/Auths/Logout";
+	options.AccessDeniedPath = "/Auths/AccessDenied";
+	options.ExpireTimeSpan = TimeSpan.FromDays(2);
+});
 
 
 builder.Services.AddDistributedMemoryCache();

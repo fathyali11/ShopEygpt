@@ -3,11 +3,13 @@ using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OneOf;
 using System.Buffers.Text;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using Web.Entites.Consts;
 using Web.Entites.ViewModels.UsersVMs;
@@ -146,7 +148,6 @@ public class AuthRepository(
         return true;
     }
 
-
     public async Task<OneOf<List<ValidationError>, bool>> ForgetPasswordAsync(ForgotPasswordVM forgetPasswordVM, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Processing forget password request for email: {Email}", forgetPasswordVM.Email);
@@ -205,6 +206,63 @@ public class AuthRepository(
         return true;
     }
 
+
+
+
+    public ChallengeResult ExternalLogin(string provider, string redirectUrl)
+    {
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        return new ChallengeResult(provider, properties);
+    }
+
+    public async Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError)
+    {
+        returnUrl ??= "/";
+
+        if (remoteError != null)
+        {
+            return false;
+        }
+
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+            return null as ExternalLoginInfo;
+
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+        if (signInResult.Succeeded)
+        {
+            return true;
+        }
+
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (email != null)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName)!,
+                    LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)!,
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(user);
+            }
+
+            await _userManager.AddLoginAsync(user, info);
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return true;
+        }
+        return null as ExternalLoginInfo;
+    }
+    
 
     private async Task SendEmailConfirmationAsync(ApplicationUser user)
     {
