@@ -111,7 +111,7 @@ namespace Web.DataAccess.Repositories
                     .AsNoTracking()
                     .ProjectToType<CategoryInHomeVM>();
 
-                    if (isAll)
+                    if (!isAll)
                         query = query.Take(4);
 
                     return await query.ToListAsync(cancellationToken);

@@ -10,12 +10,12 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
         var response = await _categoryRepository.GetAllCategoriesAsync(pageNumber,cancellationToken);
         return View(response);
     }
-    //[HttpGet]
-    //public async Task<IActionResult> LoadLimitedCategoryInHome()
-    //{
-    //    var response = await _categoryRepository.GetAllCategoriesAsync(1,1);
-    //    return PartialView("_CategoriesHomePartial", response);
-    //}
+    [HttpGet]
+    public async Task<IActionResult> LoadLimitedCategoryInHome()
+    {
+        var response = await _categoryRepository.GetAllCategoriesInHomeAsync(false);
+        return PartialView("_CategoriesHomePartial", response);
+    }
     [HttpGet]
     public async Task<IActionResult> GetAllCategoriesInHome(CancellationToken cancellationToken)
     {
