@@ -6,9 +6,9 @@ namespace ShopEgypt.Web.Controllers;
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int pageNumber)
     {
-        var response=await _productRepositoy.GetAllProductsAdminAsync();
+        var response=await _productRepositoy.GetAllProductsAdminAsync(pageNumber);
         return View(response);
     }
     [HttpGet]

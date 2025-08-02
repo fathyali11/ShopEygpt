@@ -8,7 +8,7 @@ namespace Web.Entites.IRepositories
     public interface IProductRepository
     {
         Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model, CancellationToken cancellationToken = default);
-        Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default);
+        Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(int pageNumber, CancellationToken cancellationToken = default);
         Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default);

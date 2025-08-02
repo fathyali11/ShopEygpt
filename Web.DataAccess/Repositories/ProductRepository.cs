@@ -63,14 +63,17 @@ namespace Web.DataAccess.Repositories
 
             return numberOfChanges>0?true:false;
         }
-        public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
+        public async Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(int pageNumber,CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsAdmin;
-            return await _hybridCache.GetOrCreateAsync(cacheKey,
+            var products= await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
                 .ProjectToType<ProductReponseForAdmin>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
+
+            return PaginatedList<ProductReponseForAdmin>.Create(products, pageNumber, PaginationConstants.DefaultPageSize);
+
         }
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
