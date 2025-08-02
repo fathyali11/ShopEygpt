@@ -156,7 +156,7 @@ namespace Web.DataAccess.Repositories
             
             return response!;
         }
-        public async Task<List<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy, CancellationToken cancellationToken = default)
+        public async Task<PaginatedList<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy,int pageNumber, CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsSortedBy;
 
@@ -175,7 +175,7 @@ namespace Web.DataAccess.Repositories
                     .ToListAsync(cancellationToken);
             }, cancellationToken: cancellationToken);
 
-            return response!;
+            return PaginatedList<DiscoverProductVM>.Create(response, pageNumber, 6);
         }
 
         public async Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
