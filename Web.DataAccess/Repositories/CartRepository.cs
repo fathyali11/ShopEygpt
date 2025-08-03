@@ -12,41 +12,51 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
             .Include(x => x.CartItems)
             .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
 
-        if (cart == null)
+        if (cart is null)
         {
-            cart = new Cart { UserId = userId,TotalPrice=0.0m, CartItems = [] };
-            await _context.AddAsync(cart, cancellationToken);
+            cart = new Cart
+            {
+                UserId = userId,
+                TotalPrice = 0.0m,
+                CartItems = []
+            };
+            await _context.Carts.AddAsync(cart, cancellationToken);
         }
 
-        var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.ProductId == addCartItemVM.ProductId, cancellationToken);
+        var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == addCartItemVM.ProductId);
 
         if (cartItem is not null)
         {
-            cartItem.Count++;
-            cart.TotalPrice+=addCartItemVM.Price;
+            cartItem.Count += addCartItemVM.Count;
         }
         else
         {
-            cart.CartItems.Add(new CartItem 
-            { 
+            cart.CartItems.Add(new CartItem
+            {
                 ProductId = addCartItemVM.ProductId,
-                Price=addCartItemVM.Price, 
-                ProductName=addCartItemVM.ProductName
-                ,Count = 1, 
-                ImageName = addCartItemVM.ImageName ?? string.Empty 
+                ProductName = addCartItemVM.ProductName,
+                ImageName = addCartItemVM.ImageName ?? string.Empty,
+                Price = addCartItemVM.Price,
+                Count = addCartItemVM.Count
             });
-            cart.TotalPrice+=addCartItemVM.Price;
         }
+
+        cart.TotalPrice = cart.CartItems.Sum(ci => ci.TotalPrice);
+
         await _context.SaveChangesAsync(cancellationToken);
     }
+
 
     public async Task<int> GetCartItemCountAsync(string userId, CancellationToken cancellationToken = default)
     {
         var cart = await _context.Carts
             .Include(x => x.CartItems)
             .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-        return cart?.CartItems.Sum(x => x.CartId) ?? 0;
+
+        if (cart is null)
+            return 0;
+
+        return cart.CartItems?.Count ?? 0;
     }
 
     public async Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default)
@@ -54,14 +64,16 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
         var cart = await _context.Carts
             .Include(x => x.CartItems)
             .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-        cart!.TotalPrice = cart.CartItems.Sum(x => x.TotalPrice);
+        if(cart is null)
+            return new Cart
+            {
+                UserId = userId,
+                CartItems = []
+            };
+        cart.TotalPrice = cart.CartItems.Sum(x => x.TotalPrice);
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("total price of cart: {TotalPrice}", cart.TotalPrice);
-        return cart ?? new Cart
-        {
-            UserId = userId,
-            CartItems = []
-        };
+        return cart;
     }
     public async Task<(int,decimal)> IncreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
