@@ -1,4 +1,5 @@
-﻿@model List<CategoryInHomeVM>
+﻿@model PaginatedList<CategoryInHomeVM>
+
 @{
     ViewData["Title"] = "Categories";
     Layout = "_HomeLayout";
@@ -7,7 +8,7 @@
 <section class="categories overflow-hidden mt-lg-5">
     <div class="container">
         <div class="row g-3 open-up" data-aos="zoom-out">
-            @foreach (var category in Model)
+            @foreach (var category in Model.Items)
             {
                 <div class="col-6 col-md-4 col-lg-3 mb-4">
                     <div class="cat-item image-zoom-effect">
@@ -29,6 +30,68 @@
                     </div>
                 </div>
             }
+        </div>
+
+        <!-- ✅ Pagination Section -->
+        @{
+            var totalPages = Model.TotalPages;
+            var currentPage = Model.PageIndex;
+
+            int maxVisiblePages = 5;
+
+            int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+            int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages)
+            {
+                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+            }
+        }
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link page-link-ajax" asp-action="GetAllCategoriesInHome" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        if (i == Model.PageIndex)
+                        {
+                            <li class="page-item active"><span class="page-link">@i</span></li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link page-link-ajax" asp-action="GetAllCategoriesInHome" asp-route-pageNumber="@i">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link page-link-ajax" asp-action="GetAllCategoriesInHome" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    }
+                </ul>
+            </nav>
+        }
+
+        <div class="btn-center">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
         </div>
     </div>
 </section>

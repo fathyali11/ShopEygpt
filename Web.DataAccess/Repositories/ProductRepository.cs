@@ -63,14 +63,17 @@ namespace Web.DataAccess.Repositories
 
             return numberOfChanges>0?true:false;
         }
-        public async Task<List<ProductReponseForAdmin>> GetAllProductsAdminAsync(CancellationToken cancellationToken = default)
+        public async Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(int pageNumber,CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsAdmin;
-            return await _hybridCache.GetOrCreateAsync(cacheKey,
+            var products= await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ => await _context.Products
                 .ProjectToType<ProductReponseForAdmin>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
+
+            return PaginatedList<ProductReponseForAdmin>.Create(products, pageNumber, PaginationConstants.DefaultPageSize);
+
         }
         public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
         {
@@ -153,7 +156,7 @@ namespace Web.DataAccess.Repositories
             
             return response!;
         }
-        public async Task<List<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy, CancellationToken cancellationToken = default)
+        public async Task<PaginatedList<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy,int pageNumber, CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsSortedBy;
 
@@ -172,7 +175,7 @@ namespace Web.DataAccess.Repositories
                     .ToListAsync(cancellationToken);
             }, cancellationToken: cancellationToken);
 
-            return response!;
+            return PaginatedList<DiscoverProductVM>.Create(response, pageNumber, 6);
         }
 
         public async Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)

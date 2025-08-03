@@ -89,7 +89,7 @@ namespace Web.DataAccess.Repositories
             return true;
         }
 
-        public async Task<List<Category>> GetAllCategoriesAsync(CancellationToken cancellationToken=default)
+        public async Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken=default)
         {
             var cacheKey = CategoryCacheKeys.AllCategories;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
@@ -98,20 +98,20 @@ namespace Web.DataAccess.Repositories
                 .ProjectToType<Category>()
                 .ToListAsync(cancellationToken)
                 ,cancellationToken:cancellationToken);
-            return response;
+            return  PaginatedList<Category>.Create(response,pageNumber,PaginationConstants.DefaultPageSize);
         }
-        public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)
+        public async Task<OneOf<PaginatedList<CategoryInHomeVM>,List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll,int pageNumber,CancellationToken cancellationToken=default)
         {
             var cacheKey = isAll?CategoryCacheKeys.AllCategoriesInHome: CategoryCacheKeys.LimitedCategoriesInHome;
             
-            return await _hybridCache.GetOrCreateAsync(cacheKey,
+            var response= await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ =>
                 {
                     var query =_context.Categories
                     .AsNoTracking()
                     .ProjectToType<CategoryInHomeVM>();
 
-                    if (isAll)
+                    if (!isAll)
                         query = query.Take(4);
 
                     return await query.ToListAsync(cancellationToken);
@@ -120,6 +120,10 @@ namespace Web.DataAccess.Repositories
                 ,
                 cancellationToken: cancellationToken
                 );
+
+            return isAll ?
+                PaginatedList<CategoryInHomeVM>.Create(response, pageNumber, 8) :
+                response;
 
         }
         public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default)

@@ -6,9 +6,9 @@ namespace ShopEgypt.Web.Controllers;
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int pageNumber)
     {
-        var response=await _productRepositoy.GetAllProductsAdminAsync();
+        var response=await _productRepositoy.GetAllProductsAdminAsync(pageNumber);
         return View(response);
     }
     [HttpGet]
@@ -30,9 +30,9 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         return PartialView("_BestSellersPartial", bestSellers);
     }
     [HttpGet]
-    public async Task<IActionResult> AllProductsBasedOnSort(string sortedBy,CancellationToken cancellationToken)
+    public async Task<IActionResult> AllProductsBasedOnSort(string sortedBy,int pageNumber,CancellationToken cancellationToken)
     {
-        var products = await _productRepositoy.GetAllProductsSortedByAsync(sortedBy,cancellationToken);
+        var products = await _productRepositoy.GetAllProductsSortedByAsync(sortedBy,pageNumber,cancellationToken);
         return View(products);
     }
     [HttpGet]

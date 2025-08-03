@@ -5,22 +5,22 @@ namespace ShopEgypt.Web.Controllers;
 public class CategoryController(ICategoryRepository _categoryRepository) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int pageNumber, CancellationToken cancellationToken)
     {
-        var response = await _categoryRepository.GetAllCategoriesAsync();
+        var response = await _categoryRepository.GetAllCategoriesAsync(pageNumber,cancellationToken);
         return View(response);
     }
     [HttpGet]
     public async Task<IActionResult> LoadLimitedCategoryInHome()
     {
-        var response = await _categoryRepository.GetAllCategoriesAsync();
-        return PartialView("_CategoriesHomePartial", response);
+        var response = await _categoryRepository.GetAllCategoriesInHomeAsync(false,1);
+        return PartialView("_CategoriesHomePartial", response.AsT1);
     }
     [HttpGet]
-    public async Task<IActionResult> GetAllCategoriesInHome(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllCategoriesInHome(int pageNumber,CancellationToken cancellationToken)
     {
-        var categories = await _categoryRepository.GetAllCategoriesInHomeAsync(true, cancellationToken);
-        return View(categories);
+        var categories = await _categoryRepository.GetAllCategoriesInHomeAsync(true,pageNumber, cancellationToken);
+        return View(categories.AsT0);
     }
     [HttpGet]
     public async Task<IActionResult> LoadCategorySelectedList(CancellationToken cancellationToken)
