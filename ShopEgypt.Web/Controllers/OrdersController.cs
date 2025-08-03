@@ -16,7 +16,7 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
         var sessionService = new SessionService();
         var session = await sessionService.GetAsync(sessionId);
 
-        if(session.PaymentStatus==PaymentStatus.Paid)
+        if(string.Equals(session.PaymentStatus , PaymentStatus.Paid,StringComparison.OrdinalIgnoreCase))
         {
             var order = await _orderRepository.CreateOrderAsync(userId!, session.PaymentIntentId, session.Id,cancellationToken);
             return View(order);
