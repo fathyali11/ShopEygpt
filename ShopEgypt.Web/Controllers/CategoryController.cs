@@ -13,14 +13,14 @@ public class CategoryController(ICategoryRepository _categoryRepository) : Contr
     [HttpGet]
     public async Task<IActionResult> LoadLimitedCategoryInHome()
     {
-        var response = await _categoryRepository.GetAllCategoriesInHomeAsync(false);
-        return PartialView("_CategoriesHomePartial", response);
+        var response = await _categoryRepository.GetAllCategoriesInHomeAsync(false,1);
+        return PartialView("_CategoriesHomePartial", response.AsT1);
     }
     [HttpGet]
-    public async Task<IActionResult> GetAllCategoriesInHome(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllCategoriesInHome(int pageNumber,CancellationToken cancellationToken)
     {
-        var categories = await _categoryRepository.GetAllCategoriesInHomeAsync(true, cancellationToken);
-        return View(categories);
+        var categories = await _categoryRepository.GetAllCategoriesInHomeAsync(true,pageNumber, cancellationToken);
+        return View(categories.AsT0);
     }
     [HttpGet]
     public async Task<IActionResult> LoadCategorySelectedList(CancellationToken cancellationToken)
