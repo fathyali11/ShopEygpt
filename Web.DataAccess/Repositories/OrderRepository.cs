@@ -1,9 +1,25 @@
 ﻿
+using Mapster;
+using Web.Entites.Consts;
+
 namespace Web.DataAccess.Repositories;
-public class OrderRepository : IOrderRepository
+public class OrderRepository(ApplicationDbContext _context) : IOrderRepository
 {
-    public Task<Order> CreateOrderAsync(string userId, string PaymentIntentId, string sessionId)
+    public async Task<Order?> CreateOrderAsync(string userId, string PaymentIntentId, string sessionId,CancellationToken cancellationToken=default)
     {
-        throw new NotImplementedException();
+        var cart = await _context.Carts.
+            Include(x=>x.CartItems).
+            FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+        if (cart == null)
+            return null;
+
+        var order=cart.Adapt<Order>();
+        order.UserId = userId;
+        order.PaymentIntentId=PaymentIntentId;
+        order.StripeSessionId=sessionId;
+        order.Status =OrderStatus.Paid;
+
+        return order;
+
     }
 }
