@@ -1,6 +1,7 @@
 ﻿@model Order
 @{
     ViewData["Title"] = "Order Success";
+    Layout = "_OrderLayout";
 }
 
 <section class="container mt-5">
@@ -18,6 +19,7 @@
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
+                <th>Image</th> 
                 <th>Product</th>
                 <th>Qty</th>
                 <th>Unit Price</th>
@@ -28,6 +30,12 @@
             @foreach (var item in Model.OrderItems)
             {
                 <tr>
+                    <td>
+                        <img src="~/Images/Products/@item.ImageName"
+                             alt="@item.ProductName"
+                             width="80" height="80"
+                             style="object-fit: cover; border-radius: 5px;" />
+                    </td>
                     <td>@item.ProductName</td>
                     <td>@item.Quantity</td>
                     <td>$@item.UnitPrice</td>
