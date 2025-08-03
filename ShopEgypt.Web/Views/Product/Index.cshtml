@@ -61,6 +61,20 @@
             </tbody>
         </table>
         <!-- ✅ Pagination Section -->
+        @{
+            var totalPages = Model.TotalPages;
+            var currentPage = Model.PageIndex;
+
+            int maxVisiblePages = 5;
+
+            int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+            int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages)
+            {
+                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+            }
+        }
         @if (Model.TotalPages > 1)
         {
             <nav aria-label="Pagination" class="mt-4">
@@ -68,28 +82,24 @@
                     @if (Model.HasPreviousPage)
                     {
                         <li class="page-item">
-                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                            <a class="page-link page-link-ajax" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
                         </li>
                     }
                     else
                     {
-                        <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
-                        </li>
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
                     }
 
-                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    @for (int i = startPage; i <= endPage; i++)
                     {
                         if (i == Model.PageIndex)
                         {
-                            <li class="page-item active">
-                                <span class="page-link">@i</span>
-                            </li>
+                            <li class="page-item active"><span class="page-link">@i</span></li>
                         }
                         else
                         {
                             <li class="page-item">
-                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                                <a class="page-link page-link-ajax" asp-action="Index" asp-route-pageNumber="@i">@i</a>
                             </li>
                         }
                     }
@@ -97,14 +107,12 @@
                     @if (Model.HasNextPage)
                     {
                         <li class="page-item">
-                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+                            <a class="page-link page-link-ajax" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
                         </li>
                     }
                     else
                     {
-                        <li class="page-item disabled">
-                            <span class="page-link">Next</span>
-                        </li>
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
                     }
                 </ul>
             </nav>
