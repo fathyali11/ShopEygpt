@@ -16,7 +16,7 @@ namespace Web.Entites.IRepositories
 
 
         Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken = default);
-        Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll, CancellationToken cancellationToken = default);
+        Task<OneOf<PaginatedList<CategoryInHomeVM>, List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll, int pageNumber, CancellationToken cancellationToken = default);
         Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
         
     }

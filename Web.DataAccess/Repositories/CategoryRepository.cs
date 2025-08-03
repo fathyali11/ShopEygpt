@@ -100,11 +100,11 @@ namespace Web.DataAccess.Repositories
                 ,cancellationToken:cancellationToken);
             return  PaginatedList<Category>.Create(response,pageNumber,PaginationConstants.DefaultPageSize);
         }
-        public async Task<List<CategoryInHomeVM>> GetAllCategoriesInHomeAsync(bool isAll,CancellationToken cancellationToken=default)
+        public async Task<OneOf<PaginatedList<CategoryInHomeVM>,List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll,int pageNumber,CancellationToken cancellationToken=default)
         {
             var cacheKey = isAll?CategoryCacheKeys.AllCategoriesInHome: CategoryCacheKeys.LimitedCategoriesInHome;
             
-            return await _hybridCache.GetOrCreateAsync(cacheKey,
+            var response= await _hybridCache.GetOrCreateAsync(cacheKey,
                 async _ =>
                 {
                     var query =_context.Categories
@@ -120,6 +120,10 @@ namespace Web.DataAccess.Repositories
                 ,
                 cancellationToken: cancellationToken
                 );
+
+            return isAll ?
+                PaginatedList<CategoryInHomeVM>.Create(response, pageNumber, 8) :
+                response;
 
         }
         public async Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default)
