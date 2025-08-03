@@ -39,7 +39,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 	options =>options.UseSqlServer(connectionString)
 	);
 
-builder.Services.Configure<StripeData>(builder.Configuration.GetSection("StripeData"));
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeData"));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 {
@@ -56,6 +56,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
 
 builder.Services.AddOptions<GoogleSettings>()
 	.Bind(builder.Configuration.GetSection(nameof(GoogleSettings)))
+	.ValidateOnStart();
+
+builder.Services.AddOptions<StripeSettings>()
+	.Bind(builder.Configuration.GetSection(nameof(StripeSettings)))
 	.ValidateOnStart();
 
 

@@ -12,6 +12,9 @@ internal class ProductConfiguration: IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(c => c.ImageName)
+            .HasMaxLength(100);
+
         builder.Property(p => p.Description)
             .HasMaxLength(500);
 

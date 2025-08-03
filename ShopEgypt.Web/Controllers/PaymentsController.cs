@@ -1,10 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ShopEgypt.Web.Controllers;
-public class PaymentsController : Controller
+[Authorize]
+public class PaymentsController(IPaymentRepository _paymentRepository) : Controller
 {
-    public IActionResult Index()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Checkout()
     {
-        return View();
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var sessionUrl = await _paymentRepository.CreateCheckoutSessionAsync(userId!);
+
+        if (string.IsNullOrEmpty(sessionUrl))
+            return RedirectToAction("Index", "Cart");
+
+        return Redirect(sessionUrl);
     }
 }
