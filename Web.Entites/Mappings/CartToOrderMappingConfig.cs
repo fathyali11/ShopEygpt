@@ -7,10 +7,12 @@ public class CartToOrderMappingConfig : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<Cart, Order>()
+            .Ignore(dest => dest.Id)
             .Map(dest => dest.TotalPrice, src => src.TotalPrice)
             .Map(dest => dest.OrderItems, src => src.CartItems.Adapt<List<OrderItem>>());
 
         config.NewConfig<CartItem, OrderItem>()
+            .Ignore(dest => dest.Id)
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest.ProductName, src => src.ProductName)
             .Map(dest => dest.ImageName, src => src.ImageName)
