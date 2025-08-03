@@ -19,6 +19,9 @@ public class OrderRepository(ApplicationDbContext _context) : IOrderRepository
         order.StripeSessionId=sessionId;
         order.Status =OrderStatus.Paid;
 
+        await _context.Orders.AddAsync(order,cancellationToken);
+        _context.Carts.Remove(cart);
+        await _context.SaveChangesAsync(cancellationToken);
         return order;
 
     }
