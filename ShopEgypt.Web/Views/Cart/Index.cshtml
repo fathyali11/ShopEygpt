@@ -69,10 +69,10 @@
                 <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
                 <div class="col">TOTAL PRICE</div>
                 <div id="total-price" class="col text-right">&euro; @Model.TotalPrice</div>
-            </div>
-            <form asp-action="Checkout" asp-controller="Payment" method="post">
+                </div>
+                <form asp-action="Checkout" asp-controller="Payments" method="post">
                 <button type="submit" class="btn btn-success">Proceed to Checkout</button>
-            </form>
+                </form>
 
         </div>
     </div>
