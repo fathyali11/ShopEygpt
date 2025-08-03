@@ -32,8 +32,8 @@ public class PaymentRepository(ApplicationDbContext _context,
         }).ToList();
 
         var request = _httpContextAccessor.HttpContext!.Request;
-        var successUrl = $"{request.Scheme}://{request.Host}/Order/Success?session_id={{CHECKOUT_SESSION_ID}}";
-        var cancelUrl = $"{request.Scheme}://{request.Host}/Order/Failed";
+        var successUrl = $"{request.Scheme}://{request.Host}/Orders/Success?session_id={{CHECKOUT_SESSION_ID}}";
+        var cancelUrl = $"{request.Scheme}://{request.Host}/Orders/Failed";
 
         var options = new SessionCreateOptions
         {
