@@ -1,0 +1,102 @@
+﻿@model PaginatedList<OrderResponseVM>
+
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["Head"] = "Order Management";
+    ViewData["PageTitle"] = "Orders";
+    Layout = "_AdminLayout";
+}
+
+<div class="content mt-5 main-content">
+    <section id="orders">
+        <h3>Orders</h3>
+
+        <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">Order ID</th>
+                    <th class="text-center align-middle">User ID</th>
+                    <th class="text-center align-middle">Status</th>
+                    <th class="text-center align-middle">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Items)
+                {
+                    <tr>
+                        <td class="text-center align-middle">@order.Id</td>
+                        <td class="text-center align-middle">@order.UserId</td>
+                        <td class="text-center align-middle">@order.Status</td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a class="btn btn-info btn-sm" asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id">View</a>
+                                <a class="btn btn-danger btn-sm" asp-action="Cancel" asp-controller="Orders" asp-route-id="@order.Id">Cancel</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- ✅ Pagination Section -->
+        @{
+            var totalPages = Model.TotalPages;
+            var currentPage = Model.PageIndex;
+            int maxVisiblePages = 5;
+            int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+            int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages)
+            {
+                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+            }
+        }
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        if (i == Model.PageIndex)
+                        {
+                            <li class="page-item active"><span class="page-link">@i</span></li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    }
+                </ul>
+            </nav>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+}

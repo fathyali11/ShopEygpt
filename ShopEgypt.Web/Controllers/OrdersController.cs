@@ -8,6 +8,15 @@ namespace ShopEgypt.Web.Controllers;
 public class OrdersController(IOrderRepository _orderRepository) : Controller
 {
     [HttpGet]
+    public async Task<IActionResult> Index(int pageNumber, CancellationToken cancellationToken)
+    {
+        var response=await _orderRepository.GetAllOrdersAsync(pageNumber,cancellationToken);
+        return View(response);
+    }
+
+
+
+    [HttpGet]
     public async Task<IActionResult> Success(CancellationToken cancellationToken)
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
