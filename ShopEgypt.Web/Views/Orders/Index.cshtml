@@ -30,7 +30,23 @@
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
                                 <a class="btn btn-info btn-sm" asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id">View</a>
-                                <a class="btn btn-danger btn-sm" asp-action="Cancel" asp-controller="Orders" asp-route-id="@order.Id">Cancel</a>
+                                @if (order.Status == OrderStatus.Cancelled)
+                                {
+                                    <span class="btn btn-secondary btn-sm disabled">
+                                        <i class="mdi mdi-cancel"></i> Cancelled
+                                    </span>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-outline-danger btn-sm"
+                                       asp-action="Cancel"
+                                       asp-controller="Orders"
+                                       asp-route-id="@order.Id">
+                                        <i class="mdi mdi-cancel"></i> Cancel Order
+                                    </a>
+                                }
+
+                                
                             </div>
                         </td>
                     </tr>

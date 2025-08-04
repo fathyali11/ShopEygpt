@@ -13,7 +13,12 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
         var response=await _orderRepository.GetAllOrdersAsync(pageNumber,cancellationToken);
         return View(response);
     }
-
+    [HttpGet]
+    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
+    {
+        var response = await _orderRepository.GetOrderDetailsAsync(id, cancellationToken);
+        return View(response);
+    }
 
 
     [HttpGet]

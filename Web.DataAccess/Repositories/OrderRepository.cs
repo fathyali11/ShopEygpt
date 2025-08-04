@@ -45,7 +45,14 @@ public class OrderRepository(ApplicationDbContext _context,
         return order;
 
     }
+    public async Task<Order> GetOrderDetailsAsync(int id,CancellationToken cancellationToken=default)
+    {
+        var order=await _context.Orders
+            .Include(x=>x.OrderItems)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
+        return order!;
+    }
 
     private async Task RemoveCacheKeys(CancellationToken cancellationToken)
     {
