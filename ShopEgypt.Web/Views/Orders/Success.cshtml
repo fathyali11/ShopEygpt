@@ -1,0 +1,49 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Order Success";
+    Layout = "_OrderLayout";
+}
+
+<section class="container mt-5">
+    <h2 class="text-success">✅ Payment Successful!</h2>
+    <p>Your order was placed successfully.</p>
+
+    <h4>Order Summary</h4>
+    <ul>
+        <li><strong>Order ID:</strong> @Model.Id</li>
+        <li><strong>Order Date:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+        <li><strong>Total:</strong> $@Model.TotalPrice</li>
+    </ul>
+
+    <h5>Items:</h5>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Image</th> 
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>
+                        <img src="~/Images/Products/@item.ImageName"
+                             alt="@item.ProductName"
+                             width="80" height="80"
+                             style="object-fit: cover; border-radius: 5px;" />
+                    </td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>$@item.UnitPrice</td>
+                    <td>$@(item.UnitPrice* item.Quantity)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="/" class="btn btn-dark mt-3">🏠 Return to Home</a>
+</section>
