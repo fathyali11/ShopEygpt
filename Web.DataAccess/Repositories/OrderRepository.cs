@@ -1,12 +1,15 @@
 ﻿
 using Mapster;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
 using Web.Entites.Consts;
 using Web.Entites.ViewModels.OrderVMs;
 
 namespace Web.DataAccess.Repositories;
 public class OrderRepository(ApplicationDbContext _context,
-    HybridCache _hybridCache) : IOrderRepository
+    IPaymentRepository _paymentRepository,
+    HybridCache _hybridCache,
+    ILogger<OrderRepository>_logger) : IOrderRepository
 {
     public async Task<PaginatedList<OrderResponseVM>> GetAllOrdersAsync(int pageNumber,CancellationToken cancellationToken=default)
     {
@@ -54,6 +57,55 @@ public class OrderRepository(ApplicationDbContext _context,
         return order!;
     }
 
+    public async Task<bool> CancelOrderAsync(int id, CancellationToken cancellationToken=default)
+    {
+        _logger.LogInformation("we will get order with id = {id}", id);
+        var order = await _context.Orders.FindAsync(id);
+
+        if(order is null || string.Equals(order.Status,OrderStatus.Cancelled,StringComparison.OrdinalIgnoreCase))
+            return false;
+
+        _logger.LogInformation($"Cancel Order: {order.Status}");
+
+        var isRefunded = await _paymentRepository.RefundPaymentAsync(order.PaymentIntentId, cancellationToken);
+
+        if(!isRefunded) return false;
+
+        _logger.LogInformation("refund money to customer");
+        order.Status=OrderStatus.Cancelled;
+        await _context.SaveChangesAsync(cancellationToken);
+        await RemoveCacheKeys(cancellationToken);
+
+        return true;
+    }
+    public async Task<bool> DeleteOrderAsync(int id, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("we will get order with id = {id}", id);
+
+        var order = await _context.Orders.FindAsync(id);
+
+
+        if (order is null || string.Equals(order.Status, OrderStatus.Deleted, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogInformation("order with id = {id} is already deleted",id);
+            return false;
+        }
+
+        var isRefunded = true;
+
+        if (string.Equals(order.Status,OrderStatus.Paid,StringComparison.OrdinalIgnoreCase))
+            isRefunded = await _paymentRepository.RefundPaymentAsync(order.PaymentIntentId, cancellationToken);
+
+
+        if (!isRefunded)
+            return false;
+
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync(cancellationToken);
+        await RemoveCacheKeys(cancellationToken);
+
+        return true;
+    }
     private async Task RemoveCacheKeys(CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveAsync(OrderCacheKeys.AllOrders, cancellationToken);

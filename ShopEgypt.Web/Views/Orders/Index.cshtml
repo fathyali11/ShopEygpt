@@ -26,10 +26,30 @@
                     <tr>
                         <td class="text-center align-middle">@order.Id</td>
                         <td class="text-center align-middle">@order.UserId</td>
-                        <td class="text-center align-middle">@order.Status</td>
+                        <td class="text-center align-middle">
+                            @if (order.Status == OrderStatus.Paid)
+                            {
+                                <span class="text-success fw-bold">@order.Status</span>
+                            }
+                            else if (order.Status == OrderStatus.Cancelled)
+                            {
+                                <span class="text-danger fw-bold">@order.Status</span>
+                            }
+                            else
+                            {
+                                <span class="text-warning fw-bold">@order.Status</span>
+                            }
+                        </td>
+
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
-                                <a class="btn btn-info btn-sm" asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id">View</a>
+
+                                <!-- View Button -->
+                                <a class="btn btn-primary btn-sm" asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id">
+                                    <i class="mdi mdi-eye-outline me-1"></i> View
+                                </a>
+
+                                <!-- Cancel Button -->
                                 @if (order.Status == OrderStatus.Cancelled)
                                 {
                                     <span class="btn btn-secondary btn-sm disabled">
@@ -38,17 +58,19 @@
                                 }
                                 else
                                 {
-                                    <a class="btn btn-outline-danger btn-sm"
-                                       asp-action="Cancel"
-                                       asp-controller="Orders"
-                                       asp-route-id="@order.Id">
-                                        <i class="mdi mdi-cancel"></i> Cancel Order
+                                    <a href="#" id="cancel-order-btn" data-order-id="@order.Id" class="btn btn-warning btn-sm">
+                                        <i class="mdi mdi-close-circle-outline me-1"></i> Cancel
                                     </a>
                                 }
 
-                                
+                                <!-- Delete Button -->
+                                <a href="#" id="delete-order-btn" data-order-id="@order.Id" class="btn btn-danger btn-sm">
+                                    <i class="mdi mdi-delete-outline me-1"></i> Delete
+                                </a>
+
                             </div>
                         </td>
+
                     </tr>
                 }
             </tbody>
@@ -110,9 +132,11 @@
                 </ul>
             </nav>
         }
-    </section>
+</section>
 </div>
 
 @section Scripts {
     @Html.AntiForgeryToken()
+    <script src="~/orders/js/cancelorder.js" asp-append-version="true"></script>
+    <script src="~/orders/js/deleteorder.js" asp-append-version="true"></script>
 }
