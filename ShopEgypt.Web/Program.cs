@@ -115,12 +115,12 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 var app = builder.Build();
 
-using(var scope=app.Services.CreateScope())
-{
-	var dbContext= scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-	if(dbContext.Database.GetPendingMigrations().Any())
-		await dbContext.Database.MigrateAsync();
-}
+//using(var scope=app.Services.CreateScope())
+//{
+//	var dbContext= scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//	if(dbContext.Database.GetPendingMigrations().Any())
+//		await dbContext.Database.MigrateAsync();
+//}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
