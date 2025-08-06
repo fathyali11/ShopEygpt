@@ -14,7 +14,22 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item bg-dark text-light border-secondary"><strong>Order ID:</strong> @Model.Id</li>
                 <li class="list-group-item bg-dark text-light border-secondary"><strong>User ID:</strong> @Model.UserId</li>
-                <li class="list-group-item bg-dark text-light border-secondary"><strong>Status:</strong> @Model.Status</li>
+                <li class="list-group-item bg-dark text-light border-secondary">
+                    <strong>Status:</strong>
+                    @if (Model.Status == OrderStatus.Paid)
+                    {
+                        <span class="text-success fw-bold">@Model.Status</span>
+                    }
+                    else if (Model.Status == OrderStatus.Cancelled)
+                    {
+                        <span class="text-danger fw-bold">@Model.Status</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning fw-bold">@Model.Status</span>
+                    }
+                </li>
+
                 <li class="list-group-item bg-dark text-light border-secondary"><strong>Created At:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
                 <li class="list-group-item bg-dark text-light border-secondary"><strong>Total Price:</strong> $@Model.TotalPrice</li>
                 <li class="list-group-item bg-dark text-light border-secondary"><strong>Stripe Session ID:</strong> @Model.StripeSessionId</li>
