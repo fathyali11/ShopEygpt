@@ -39,7 +39,7 @@
                                 <span class="count bg-success"></span>
                             </div>
                             <div class="profile-name">
-                                <h5 class="mb-0 font-weight-normal">Henry Klein</h5>
+                                <h5 class="mb-0 font-weight-normal">@User.Identity!.Name</h5>
                                 <span>Gold Member</span>
                             </div>
                         </div>
@@ -163,18 +163,7 @@
                                     </div>
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-dark rounded-circle">
-                                            <i class="mdi mdi-layers text-danger"></i>
-                                        </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <p class="preview-subject ellipsis mb-1">Software Testing</p>
-                                    </div>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <p class="p-3 mb-0 text-center">See all projects</p>
+                                
                             </div>
                         </li>
                         
@@ -182,36 +171,27 @@
                             <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
                                 <div class="navbar-profile">
                                     <img class="img-xs rounded-circle" src="~/Admin/assets/images/faces/face15.jpg" alt="">
-                                    <p class="mb-0 d-none d-sm-block navbar-profile-name">Henry Klein</p>
+                                    <p class="mb-0 d-none d-sm-block navbar-profile-name">@User.Identity!.Name</p>
                                     <i class="mdi mdi-menu-down d-none d-sm-block"></i>
                                 </div>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                                 <h6 class="p-3 mb-0">Profile</h6>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-dark rounded-circle">
-                                            <i class="mdi mdi-cog text-success"></i>
+                                <form method="post" asp-action="Logout" asp-controller="Auths">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item preview-item" style="all: unset; cursor: pointer;">
+                                        <div class="preview-thumbnail">
+                                            <div class="preview-icon bg-dark rounded-circle">
+                                                <i class="mdi mdi-logout text-danger"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <p class="preview-subject mb-1">Settings</p>
-                                    </div>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item preview-item">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-dark rounded-circle">
-                                            <i class="mdi mdi-logout text-danger"></i>
+                                        <div class="preview-item-content">
+                                            <p class="preview-subject mb-1">Log out</p>
                                         </div>
-                                    </div>
-                                    <div class="preview-item-content">
-                                        <p class="preview-subject mb-1">Log out</p>
-                                    </div>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <p class="p-3 mb-0 text-center">Advanced settings</p>
+                                    </button>
+                                </form>
+
+
                             </div>
                         </li>
                     </ul>
