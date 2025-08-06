@@ -4,9 +4,45 @@ using System.Security.Claims;
 
 namespace ShopEgypt.Web.Controllers;
 
-[Authorize]
 public class OrdersController(IOrderRepository _orderRepository) : Controller
 {
+    [Authorize(Roles =UserRoles.Admin)]
+    [HttpGet]
+    public async Task<IActionResult> Index(int pageNumber, CancellationToken cancellationToken)
+    {
+        var response=await _orderRepository.GetAllOrdersAsync(pageNumber,cancellationToken);
+        return View(response);
+    }
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpGet]
+    public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
+    {
+        var response = await _orderRepository.GetOrderDetailsAsync(id, cancellationToken);
+        return View(response);
+    }
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Cancel(int id, CancellationToken cancellationToken)
+    {
+        var response = await _orderRepository.CancelOrderAsync(id, cancellationToken);
+        return response ?
+            Json(new { Success = true, message = "Order Cancelled Successfull" }) :
+            Json(new { Success = false, message = "Order Not Cancelled" });
+
+    }
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        var response = await _orderRepository.DeleteOrderAsync(id, cancellationToken);
+        return response ?
+            Json(new { Success = true, message = "Order Deleted Successfull" }) :
+            Json(new { Success = false, message = "Order Not Deleted" });
+
+    }
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [HttpGet]
     public async Task<IActionResult> Success(CancellationToken cancellationToken)
     {
@@ -24,6 +60,7 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
 
         return View("Failed");
     }
+    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
     [HttpGet]
     public IActionResult Failed()
     {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Stripe;
 using Stripe.Checkout;
 using Web.Entites.Consts;
 
@@ -46,5 +47,25 @@ public class PaymentRepository(ApplicationDbContext _context,
         var service = new SessionService();
         var session = await service.CreateAsync(options);
         return session.Url;
+    }
+
+    public async Task<bool> RefundPaymentAsync(string paymentIntentId,CancellationToken cancellationToken=default)
+    {
+        try
+        {
+            var options = new RefundCreateOptions
+            {
+                PaymentIntent = paymentIntentId
+            };
+
+            var service = new RefundService();
+            Refund refund = await service.CreateAsync(options, cancellationToken: cancellationToken);
+            return string.Equals(refund.Status, RefundStatus.succeeded,StringComparison.OrdinalIgnoreCase);
+
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

@@ -1,0 +1,84 @@
+﻿@model Web.Entites.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-light"><i class="mdi mdi-receipt-outline me-2"></i>Order Details</h2>
+
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-light">Summary</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>Order ID:</strong> @Model.Id</li>
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>User ID:</strong> @Model.UserId</li>
+                <li class="list-group-item bg-dark text-light border-secondary">
+                    <strong>Status:</strong>
+                    @if (Model.Status == OrderStatus.Paid)
+                    {
+                        <span class="text-success fw-bold">@Model.Status</span>
+                    }
+                    else if (Model.Status == OrderStatus.Cancelled)
+                    {
+                        <span class="text-danger fw-bold">@Model.Status</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning fw-bold">@Model.Status</span>
+                    }
+                </li>
+
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>Created At:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>Total Price:</strong> $@Model.TotalPrice</li>
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>Stripe Session ID:</strong> @Model.StripeSessionId</li>
+                <li class="list-group-item bg-dark text-light border-secondary"><strong>Payment Intent ID:</strong> @Model.PaymentIntentId</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card bg-dark border-0 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-light">Order Items</h5>
+            <table class="table table-dark table-bordered table-hover text-light">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Product Name</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageName))
+                                {
+                                    <img src="~/Images/Products/@item.ImageName" width="60" height="60" class="rounded shadow-sm" />
+                                }
+                                else
+                                {
+                                    <span>No Image</span>
+                                }
+                            </td>
+                            <td>@item.ProductName</td>
+                            <td>$@item.UnitPrice.ToString("F2")</td>
+                            <td>@item.Quantity</td>
+                            <td>$@((item.UnitPrice* item.Quantity).ToString("F2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Index" asp-controller="Orders" class="btn btn-outline-light">
+            <i class="mdi mdi-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+</div>

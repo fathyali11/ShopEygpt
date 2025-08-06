@@ -1,0 +1,142 @@
+﻿@model PaginatedList<OrderResponseVM>
+
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["Head"] = "Order Management";
+    ViewData["PageTitle"] = "Orders";
+    Layout = "_AdminLayout";
+}
+
+<div class="content mt-5 main-content">
+    <section id="orders">
+        <h3>Orders</h3>
+
+        <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">Order ID</th>
+                    <th class="text-center align-middle">User ID</th>
+                    <th class="text-center align-middle">Status</th>
+                    <th class="text-center align-middle">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Items)
+                {
+                    <tr>
+                        <td class="text-center align-middle">@order.Id</td>
+                        <td class="text-center align-middle">@order.UserId</td>
+                        <td class="text-center align-middle">
+                            @if (order.Status == OrderStatus.Paid)
+                            {
+                                <span class="text-success fw-bold">@order.Status</span>
+                            }
+                            else if (order.Status == OrderStatus.Cancelled)
+                            {
+                                <span class="text-danger fw-bold">@order.Status</span>
+                            }
+                            else
+                            {
+                                <span class="text-warning fw-bold">@order.Status</span>
+                            }
+                        </td>
+
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <!-- View Button -->
+                                <a class="btn btn-primary btn-sm" asp-action="Details" asp-controller="Orders" asp-route-id="@order.Id">
+                                    <i class="mdi mdi-eye-outline me-1"></i> View
+                                </a>
+
+                                <!-- Cancel Button -->
+                                @if (order.Status == OrderStatus.Cancelled)
+                                {
+                                    <span class="btn btn-secondary btn-sm disabled">
+                                        <i class="mdi mdi-cancel"></i> Cancelled
+                                    </span>
+                                }
+                                else
+                                {
+                                    <a href="#" id="cancel-order-btn" data-order-id="@order.Id" class="btn btn-warning btn-sm">
+                                        <i class="mdi mdi-close-circle-outline me-1"></i> Cancel
+                                    </a>
+                                }
+
+                                <!-- Delete Button -->
+                                <a href="#" id="delete-order-btn" data-order-id="@order.Id" class="btn btn-danger btn-sm">
+                                    <i class="mdi mdi-delete-outline me-1"></i> Delete
+                                </a>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- ✅ Pagination Section -->
+        @{
+            var totalPages = Model.TotalPages;
+            var currentPage = Model.PageIndex;
+            int maxVisiblePages = 5;
+            int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+            int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages)
+            {
+                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+            }
+        }
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        if (i == Model.PageIndex)
+                        {
+                            <li class="page-item active"><span class="page-link">@i</span></li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    }
+                </ul>
+            </nav>
+        }
+</section>
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/orders/js/cancelorder.js" asp-append-version="true"></script>
+    <script src="~/orders/js/deleteorder.js" asp-append-version="true"></script>
+}
