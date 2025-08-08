@@ -20,80 +20,107 @@
             <div class="row">
                 @foreach (var item in Model.Items)
                 {
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="banner-item image-zoom-effect">
-                            <div class="image-holder">
+                    <div class="col-md-4 col-sm-6 mb-4 d-flex">
+                        <div class="card shadow-sm w-100 h-100 border-0">
+                            <div class="position-relative">
                                 <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id">
                                     <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid">
                                 </a>
+
+                                <a href="#" class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow-sm btn-wishlist"
+                                   data-product-id="@item.Id"
+                                   data-product-name="@item.Name"
+                                   data-image-name="@item.ImageName"
+                                   data-price="@item.Price"
+                                   style="width: 40px; height: 40px;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
                             </div>
-                            <div class="banner-content py-3">
-                                <h5 class="element-title text-uppercase">
-                                    <a href="#" class="item-anchor">@item.Name</a>
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-uppercase text-truncate" title="@item.Name">
+                                    <a href="#" class="text-dark text-decoration-none">@item.Name</a>
                                 </h5>
-                                <p>@item.Description</p>
-                                <div class="btn-left">
-                                    <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                <p class="card-text text-muted text-truncate" title="@item.Description">@item.Description</p>
+
+                                <div class="mt-auto">
+                                    <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id"
+                                       class="btn btn-outline-dark btn-sm w-100 text-uppercase mb-2">
+                                        Discover Now
+                                    </a>
+
+                                    <a href="#" class="text-decoration-none btn btn-primary btn-sm w-100 add-to-cart"
+                                       data-product-id="@item.Id"
+                                       data-product-name="@item.Name"
+                                       data-image-name="@item.ImageName"
+                                       data-price="@item.Price"
+                                       data-count="1"
+                                       data-after="Add to cart">
+                                        <span>Add to Cart</span>
+                                    </a>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 }
             </div>
-
-            <!-- ✅ Pagination Section -->
-            @if (Model.TotalPages > 1)
-            {
-                <nav aria-label="Product Pagination" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        @if (Model.HasPreviousPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" asp-action="AllProductsBasedOnSort"
-                                   asp-route-pageNumber="@(Model.PageIndex - 1)"
-                                   asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">Previous</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                        }
-
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            if (i == Model.PageIndex)
-                            {
-                                <li class="page-item active"><span class="page-link">@i</span></li>
-                            }
-                            else
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" asp-action="AllProductsBasedOnSort"
-                                       asp-route-pageNumber="@i"
-                                       asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">@i</a>
-                                </li>
-                            }
-                        }
-
-                        @if (Model.HasNextPage)
-                        {
-                            <li class="page-item">
-                                <a class="page-link" asp-action="AllProductsBasedOnSort"
-                                   asp-route-pageNumber="@(Model.PageIndex + 1)"
-                                   asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">Next</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item disabled"><span class="page-link">Next</span></li>
-                        }
-                    </ul>
-                </nav>
-            }
-
-            <div class="btn-center">
-                <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
-            </div>
         }
+
+        <!-- ✅ Pagination Section -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Product Pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="AllProductsBasedOnSort"
+                               asp-route-pageNumber="@(Model.PageIndex - 1)"
+                               asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">Previous</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (i == Model.PageIndex)
+                        {
+                            <li class="page-item active"><span class="page-link">@i</span></li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="AllProductsBasedOnSort"
+                                   asp-route-pageNumber="@i"
+                                   asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="AllProductsBasedOnSort"
+                               asp-route-pageNumber="@(Model.PageIndex + 1)"
+                               asp-route-sortedBy="@ViewContext.HttpContext.Request.Query["sortedBy"]">Next</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    }
+                </ul>
+            </nav>
+        }
+
+        <div class="btn-center">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+        </div>
     </div>
 </section>
