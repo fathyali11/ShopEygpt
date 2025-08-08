@@ -27,16 +27,21 @@
                                     <img src="~/Images/Products/@item.ImageName" alt="product" class="img-fluid">
                                 </a>
 
-                                <a href="#" class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow-sm btn-wishlist"
+                                <a href="#" class="btn btn-light toggle-wishlist position-absolute top-0 end-0 m-2 rounded-circle shadow-sm btn-wishlist
+                                   @(item.IsInWishlist ? "text-danger" : "text-muted")"
                                    data-product-id="@item.Id"
                                    data-product-name="@item.Name"
                                    data-image-name="@item.ImageName"
                                    data-price="@item.Price"
+                                   data-is-in-wishlist="@item.IsInWishlist"
                                    style="width: 40px; height: 40px;">
-                                    <svg width="20" height="20" viewBox="0 0 24 24">
-                                        <use xlink:href="#heart"></use>
-                                    </svg>
+                                    @(
+                                          item.IsInWishlist
+                                          ? Html.Raw("<i class='bi wishlist-icon bi-heart-fill text-danger'></i>")
+                                          : Html.Raw("<i class='bi wishlist-icon bi-heart'></i>")
+                                     )
                                 </a>
+
                             </div>
 
                             <div class="card-body d-flex flex-column">

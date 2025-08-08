@@ -8,14 +8,17 @@
                 <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id">
                     <img src="~/Images/Products/@item.ImageName" alt="product" class="product-image img-fluid">
                 </a>
-                <a href="#" class="btn-icon btn-wishlist"
+                <a href="#" class="btn-icon btn-wishlist toggle-wishlist"
                    data-product-id="@item.Id"
                    data-product-name="@item.Name"
                    data-image-name="@item.ImageName"
                    data-price="@item.Price">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <use xlink:href="#heart"></use>
-                    </svg>
+                    @(
+                        item.IsInWishlist
+                        ? Html.Raw("<i class='bi wishlist-icon bi-heart-fill text-danger'></i>")
+                        : Html.Raw("<i class='bi wishlist-icon bi-heart'></i>")
+                    )
+
                 </a>
                 <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Web.Entites.ViewModels.ProductVMs;
 
 namespace ShopEgypt.Web.Controllers;
@@ -14,25 +15,29 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     [HttpGet]
     public async Task<IActionResult> LoadDiscover(CancellationToken cancellationToken)
     {
-        var discovers = await _productRepositoy.GetDiscoverProductsAsync(cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null;
+        var discovers = await _productRepositoy.GetDiscoverProductsAsync(userId,cancellationToken);
         return PartialView("_DiscoverPartial", discovers);
     }
     [HttpGet]
     public async Task<IActionResult> LoadNewArrivals(CancellationToken cancellationToken)
     {
-        var newArrivals=await _productRepositoy.GetNewArrivalProductsAsync(cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null;
+        var newArrivals=await _productRepositoy.GetNewArrivalProductsAsync(userId,cancellationToken);
         return PartialView("_NewArrivalPartial", newArrivals);
     }
     [HttpGet]
     public async Task<IActionResult> LoadBestSellers(CancellationToken cancellationToken)
     {
-        var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null;
+        var bestSellers = await _productRepositoy.GetBestSellingProductsAsync(userId,cancellationToken);
         return PartialView("_BestSellersPartial", bestSellers);
     }
     [HttpGet]
     public async Task<IActionResult> AllProductsBasedOnSort(string sortedBy,int pageNumber,CancellationToken cancellationToken)
     {
-        var products = await _productRepositoy.GetAllProductsSortedByAsync(sortedBy,pageNumber,cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? null;
+        var products = await _productRepositoy.GetAllProductsSortedByAsync(userId,sortedBy,pageNumber,cancellationToken);
         return View(products);
     }
     [HttpGet]
