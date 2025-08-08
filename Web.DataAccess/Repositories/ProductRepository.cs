@@ -10,7 +10,8 @@ namespace Web.DataAccess.Repositories
     public class ProductRepository(ApplicationDbContext context,
         GeneralRepository _generalRepository,
         IValidator<CreateProductVM> _createProductValidator,
-        HybridCache _hybridCache) : IProductRepository
+        HybridCache _hybridCache,
+        IWishlistRepository _wishlistRepository) : IProductRepository
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -112,7 +113,7 @@ namespace Web.DataAccess.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
             return response!;
         }
-        public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(string userId, CancellationToken cancellationToken = default)
         {
             var cacheKey =ProductCacheKeys.NewArrivalProducts;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
@@ -128,10 +129,27 @@ namespace Web.DataAccess.Repositories
                 cancellationToken:cancellationToken
                 );
 
-            
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var wishlist = await _wishlistRepository.GetWishlistItems(userId, cancellationToken);
+                if (wishlist is not null)
+                {
+                    response = response.Select(x => new NewArrivalProductsVM(
+                    x.Id,
+                    x.Name,
+                    x.ImageName,
+                    x.Price,
+                    wishlist.Items.Any(w => w.Id == x.Id)))
+                    .ToList();
+                }
+
+
+            }
+
+
             return response!;
         }
-        public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(string userId, CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.BestSellingProducts;
 
@@ -143,9 +161,27 @@ namespace Web.DataAccess.Repositories
                 .ProjectToType<BestSellingProductVM>()
                 .ToListAsync(cancellationToken),
                 cancellationToken: cancellationToken);
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var wishlist = await _wishlistRepository.GetWishlistItems(userId, cancellationToken);
+                if (wishlist is not null)
+                {
+                    response = response.Select(x => new BestSellingProductVM(
+                    x.Id,
+                    x.Name,
+                    x.ImageName,
+                    x.Price,
+                    wishlist.Items.Any(w => w.ProductId == x.Id)))
+                    .ToList();
+                }
+
+
+            }
+
             return response!;
         }
-        public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(string userId,CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.DiscoverProducts;
             var response = await _hybridCache.GetOrCreateAsync(cacheKey,
@@ -153,10 +189,26 @@ namespace Web.DataAccess.Repositories
                 .AsNoTracking()
                 .ProjectToType<DiscoverProductVM>()
                 .ToListAsync(cancellationToken), cancellationToken: cancellationToken);
-            
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var wishlist = await _wishlistRepository.GetWishlistItems(userId, cancellationToken);
+                if (wishlist is not null)
+                {
+                    response = response.Select(x => new DiscoverProductVM(
+                    x.Id,
+                    x.Name,
+                    x.Description,
+                    x.ImageName,
+                    x.CategoryName,
+                    x.Price,
+                    wishlist.Items.Any(w => w.ProductId == x.Id)))
+                    .ToList();
+                }
+            }
+
             return response!;
         }
-        public async Task<PaginatedList<DiscoverProductVM>> GetAllProductsSortedByAsync(string sortedBy,int pageNumber, CancellationToken cancellationToken = default)
+        public async Task<PaginatedList<DiscoverProductVM>> GetAllProductsSortedByAsync(string userId,string sortedBy,int pageNumber, CancellationToken cancellationToken = default)
         {
             var cacheKey = ProductCacheKeys.AllProductsSortedBy;
 
@@ -174,6 +226,28 @@ namespace Web.DataAccess.Repositories
                     .ProjectToType<DiscoverProductVM>()
                     .ToListAsync(cancellationToken);
             }, cancellationToken: cancellationToken);
+
+
+            if(!string.IsNullOrEmpty(userId))
+            {
+                var wishlist = await _wishlistRepository.GetWishlistItems(userId, cancellationToken);
+                if(wishlist is not null)
+                {
+                    response = response.Select(x => new DiscoverProductVM(
+                    x.Id,
+                    x.Name,
+                    x.Description,
+                    x.ImageName,
+                    x.CategoryName,
+                    x.Price,
+                    wishlist.Items.Any(w => w.ProductId == x.Id)))
+                    .ToList();
+                }
+                
+                
+            }
+
+
 
             return PaginatedList<DiscoverProductVM>.Create(response, pageNumber, 6);
         }

@@ -12,6 +12,17 @@
                     <div class="image-holder">
                         <img src="/images/Products/@Model.ImageName" alt="collection" class="product-image img-fluid">
                     </div>
+                    <a href="#" class="btn-icon btn-wishlist toggle-wishlist"
+                       data-product-id="@Model.Id"
+                       data-product-name="@Model.Name"
+                       data-image-name="@Model.ImageName"
+                       data-price="@Model.Price">
+                        @(
+                             Model.IsInWishlist
+                             ? Html.Raw("<i class='bi wishlist-icon bi-heart-fill text-danger'></i>")
+                             : Html.Raw("<i class='bi wishlist-icon bi-heart'></i>")
+                             )
+                    </a>
                 </div>
                 <div class="col-md-6 column-container bg-white">
                     <div class="collection-content p-5 m-0 m-md-5">
