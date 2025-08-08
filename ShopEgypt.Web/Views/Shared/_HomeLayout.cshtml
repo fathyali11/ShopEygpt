@@ -255,7 +255,7 @@
                     <ul class="list-unstyled d-flex align-items-center m-0">
 
                         <li class="d-none d-lg-block">
-                            <a href="#" class="text-uppercase mx-3 d-flex align-items-center gap-1" aria-label="Wishlist">
+                            <a asp-action="Index" asp-controller="Wishlists" class="text-uppercase mx-3 d-flex align-items-center gap-1" aria-label="Wishlist">
                                 <i class="bi bi-heart fs-5"></i>
                                 <span>Wishlist</span>  
                                 @if (User.Identity!.IsAuthenticated)

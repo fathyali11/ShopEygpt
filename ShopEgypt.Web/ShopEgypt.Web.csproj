@@ -8,12 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Cart\OrderConfirmation.cshtml" />
     <Content Remove="Views\_ShoppingCartDetails.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Cart\OrderConfirmation.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,14 +43,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\Images\Categories\" />
     <Folder Include="wwwroot\Images\Products\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Views\Cart\OrderConfirmation.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Cart\OrderConfirmation.cshtml" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 using Web.Entites.Consts;
+using Web.Entites.ViewModels.CartItemVMs;
 using Web.Entites.ViewModels.WishlistVMs;
 
 namespace Web.DataAccess.Repositories;
@@ -67,12 +68,26 @@ public class WishlistRepository(ApplicationDbContext _context,
 
     public async Task<int> GetWishlistItemCountAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var wishlist = await _context.Wishlist
-            .Include(x => x.WishlistItems)
-            .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-
-        if(wishlist == null) return 0;
-
-        return wishlist.WishlistItems.Count;
+        return await _context.WishlistItems
+            .Where(wi => wi.Wishlist.UserId == userId)
+            .CountAsync(cancellationToken);
     }
+
+    public async Task<int> DeleteWishlistItemAsync(string userId,DeleteWishlistItem deleteWishlistItem, CancellationToken cancellationToken = default)
+    {
+        var result= await _context.WishlistItems
+            .Where(x => x.Id == deleteWishlistItem.ItemId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if (result == 0)
+            return -1;
+
+        await _hybridCache.RemoveAsync($"{WishlistCacheKeys.WishlistItems}_{userId}");
+
+        return await _context.WishlistItems
+            .Where(x=>x.WishlistId==deleteWishlistItem.WishlistId)
+            .CountAsync(cancellationToken);
+    }
+
+
 }
