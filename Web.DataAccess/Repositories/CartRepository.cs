@@ -1,15 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
+using Web.Entites.Consts;
 using Web.Entites.ViewModels.CartItemVMs;
+using Web.Entites.ViewModels.CartVMs;
 
 namespace Web.DataAccess.Repositories;
 
-public class CartRepository(ApplicationDbContext context,ILogger<CartRepository> _logger) : ICartRepository
+public class CartRepository(ApplicationDbContext context,
+    ILogger<CartRepository> _logger,
+    HybridCache _hybridCache) : ICartRepository
 {
     private readonly ApplicationDbContext _context = context;
     public async Task AddToCartAsync(string userId, AddCartItemVM addCartItemVM, CancellationToken cancellationToken = default)
     {
         var cart = await _context.Carts
-            .Include(x => x.CartItems)
             .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
 
         if (cart is null)
@@ -21,114 +25,135 @@ public class CartRepository(ApplicationDbContext context,ILogger<CartRepository>
                 CartItems = []
             };
             await _context.Carts.AddAsync(cart, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == addCartItemVM.ProductId);
+        var cartItem = await _context.CartItems
+            .Where(x => x.Cart.Id == cart.Id && x.ProductId == addCartItemVM.ProductId)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (cartItem is not null)
         {
             cartItem.Count += addCartItemVM.Count;
+            cart.TotalPrice += cartItem.TotalPrice;
         }
         else
         {
-            cart.CartItems.Add(new CartItem
+            var newItem = new CartItem
             {
                 ProductId = addCartItemVM.ProductId,
                 ProductName = addCartItemVM.ProductName,
                 ImageName = addCartItemVM.ImageName ?? string.Empty,
                 Price = addCartItemVM.Price,
                 Count = addCartItemVM.Count
-            });
+            };
+            cart.CartItems.Add(newItem);
+            cart.TotalPrice += newItem.TotalPrice;
         }
-
-        cart.TotalPrice = cart.CartItems.Sum(ci => ci.TotalPrice);
-
         await _context.SaveChangesAsync(cancellationToken);
+        await RemoveCacheKeysAsync(userId, cancellationToken);
     }
 
 
     public async Task<int> GetCartItemCountAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var cart = await _context.Carts
-            .Include(x => x.CartItems)
-            .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-
-        if (cart is null)
-            return 0;
-
-        return cart.CartItems?.Count ?? 0;
+        var cacheKey=$"{CartCacheKeys.CartItemCount}_{userId}";
+        var count = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ => await _context.CartItems.
+            Where(x => x.Cart.UserId == userId)
+            .CountAsync(cancellationToken), cancellationToken: cancellationToken);
+        return count;
     }
 
-    public async Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<CartResponse> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var cart = await _context.Carts
-            .Include(x => x.CartItems)
-            .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-        if(cart is null)
-            return new Cart
+        var cacheKey = $"{CartCacheKeys.CartItems}_{userId}";
+        var response=await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.Carts
+            .Select(x => new CartResponse
             {
-                UserId = userId,
-                CartItems = []
-            };
-        cart.TotalPrice = cart.CartItems.Sum(x => x.TotalPrice);
-        await _context.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("total price of cart: {TotalPrice}", cart.TotalPrice);
-        return cart;
+                Id= x.Id,
+                UserId= x.UserId,
+                TotalPrice= x.TotalPrice,
+                Items= x.CartItems.ToList()
+            }).FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken),cancellationToken:cancellationToken);
+
+        return response is not null ? response :
+            new CartResponse { UserId = userId, Items = [] };
     }
-    public async Task<(int,decimal)> IncreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<(int,decimal)> IncreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
-        var cart=await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
+            .Where(ci => ci.Id == cartItemVM.cartItemId)
+            .Select(ci => new { Item = ci, Cart = ci.Cart })
+            .FirstOrDefaultAsync(cancellationToken);
+
         if (cartItem is not null)
         {
-            cartItem.Count++;
-            cart!.TotalPrice += cartItem.Price;
-            _logger.LogInformation("Cart item count increased to {Count}", cartItem.Count);
-            _logger.LogInformation("Cart total price updated to {TotalPrice}", cart.TotalPrice);
+            cartItem.Item.Count++;
+            cartItem.Cart!.TotalPrice += cartItem.Item.Price;
+            _logger.LogInformation("Cart item count increased to {Count}", cartItem.Item.Count);
+            _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
             await _context.SaveChangesAsync(cancellationToken);
-            return (cartItem.Count,cart!.TotalPrice);
+            await RemoveCacheKeysAsync(userId, cancellationToken);
+            return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
         }
+        await RemoveCacheKeysAsync(userId, cancellationToken);
         return (0,0.0m);
     }
-    public async Task<(int, decimal)> DecreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<(int, decimal)> DecreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
-        var cart = await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
+            .Select(x => new
+            {
+                Item = x,
+                Cart = x.Cart,
+            }).FirstOrDefaultAsync(x=>x.Item.Id==cartItemVM.cartItemId);
         if (cartItem is not null)
         {
-            if (cartItem.Count > 1)
+            if (cartItem.Item.Count > 1)
             {
-                cartItem.Count--;
-                cart!.TotalPrice -= cartItem.Price;
-                _logger.LogInformation("Cart item count decreased to {Count}", cartItem.Count);
-                _logger.LogInformation("Cart total price updated to {TotalPrice}", cart.TotalPrice);
+                cartItem.Item.Count--;
+                cartItem.Cart!.TotalPrice -= cartItem.Item.Price;
+                _logger.LogInformation("Cart item count decreased to {Count}", cartItem.Item.Count);
+                _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
                 await _context.SaveChangesAsync(cancellationToken);
-                return (cartItem.Count,cart!.TotalPrice);
+                await RemoveCacheKeysAsync(userId, cancellationToken);
+                return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
             }
             else
             {
-                _context.CartItems.Remove(cartItem);
+                _context.CartItems.Remove(cartItem.Item);
                 await _context.SaveChangesAsync(cancellationToken);
+                await RemoveCacheKeysAsync(userId, cancellationToken);
                 return (0, 0.0m); 
             }
         }
+        await RemoveCacheKeysAsync(userId, cancellationToken);
         return (0, 0.0m);
     }
 
-    public async Task<decimal> DeleteCartItemAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<decimal> DeleteCartItemAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var cartItem = await _context.CartItems
-            .FirstOrDefaultAsync(x => x.Id == cartItemVM.cartItemId, cancellationToken);
-        var cart = await _context.Carts.FindAsync(cartItemVM.cartId, cancellationToken);
+            .Where(ci => ci.Id == cartItemVM.cartItemId)
+            .Select(ci => new { Item = ci, Cart = ci.Cart })
+            .FirstOrDefaultAsync(cancellationToken);
         if (cartItem is not null)
         {
-            _context.CartItems.Remove(cartItem);
-            cart!.TotalPrice -= cartItem.TotalPrice;
+            _context.CartItems.Remove(cartItem.Item);
+            cartItem.Cart!.TotalPrice -= cartItem.Item.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);
-            return cart.TotalPrice;
+            await RemoveCacheKeysAsync(userId, cancellationToken);
+            return cartItem.Cart.TotalPrice;
         }
+        await RemoveCacheKeysAsync(userId, cancellationToken);
         return 0.0m;
+    }
+
+    private async Task RemoveCacheKeysAsync(string userId,CancellationToken cancellationToken = default)
+    {
+        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItemCount}_{userId}", cancellationToken);
+        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItems}_{userId}", cancellationToken);
     }
 }

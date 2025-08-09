@@ -39,21 +39,24 @@ public class CartController(ICartRepository _cartRepository) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Increase(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var (count, totalPrice) = await _cartRepository.IncreaseAsync(cartItemVM, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var (count, totalPrice) = await _cartRepository.IncreaseAsync(userId!,cartItemVM, cancellationToken);
         return Json(new { count, totalPrice });
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Decrease(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var (count, totalPrice) = await _cartRepository.DecreaseAsync(cartItemVM, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var (count, totalPrice) = await _cartRepository.DecreaseAsync(userId!, cartItemVM, cancellationToken);
         return Json(new { count, totalPrice });
     }
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var totalPrice=await _cartRepository.DeleteCartItemAsync(cartItemVM, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var totalPrice=await _cartRepository.DeleteCartItemAsync(userId!,cartItemVM, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return Json(new { success = true, message = "The product was deleted successfully!",totalPrice });
         else
