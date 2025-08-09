@@ -1,5 +1,6 @@
 ﻿using Web.Entites.Models;
 using Web.Entites.ViewModels.CartItemVMs;
+using Web.Entites.ViewModels.CartVMs;
 
 namespace Web.Entites.IRepositories
 {
@@ -7,9 +8,9 @@ namespace Web.Entites.IRepositories
     {
         Task AddToCartAsync(string userId, AddCartItemVM addCartItemVM, CancellationToken cancellationToken = default);
         Task<int> GetCartItemCountAsync(string userId, CancellationToken cancellationToken = default);
-        Task<Cart> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default);
-        Task<(int, decimal)> IncreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
-        Task<(int, decimal)> DecreaseAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
-        Task<decimal> DeleteCartItemAsync(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
+        Task<CartResponse> GetCartItemsAsync(string userId, CancellationToken cancellationToken = default);
+        Task<(int, decimal)> IncreaseAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
+        Task<(int, decimal)> DecreaseAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
+        Task<decimal> DeleteCartItemAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
     }
 }

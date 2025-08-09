@@ -1,4 +1,4 @@
-﻿@model Cart
+﻿@model CartResponse
 @{
     Layout = "_CartLayout";
 }
@@ -9,16 +9,16 @@
                 <div class="row">
                     <div class="col"><h4><b>Shopping Cart</b></h4></div>
                     <div class="col align-self-center text-right text-muted">
-                        @if(Model.CartItems.Any())
+                        @if (Model.Items.Any())
                         {
-                            <span>@Model.CartItems.Count() items</span>
+                            <span>@Model.Items.Count() items</span>
                         }
                     </div>
                 </div>
             </div>
-            @if(Model.CartItems.Any())
+            @if (Model.Items.Any())
             {
-                @foreach (var item in Model.CartItems)
+                @foreach (var item in Model.Items)
                 {
                     <div class="row border-top border-bottom">
                         <div class="row main align-items-center">
@@ -55,27 +55,27 @@
                 </a>
             </div>
         </div>
-        <div class="col-md-4 summary">
-            <div><h5><b>Summary</b></h5></div>
-            <hr>
-            <div class="row">
-                <div class="col" style="padding-left:0;">
-                    @if (Model.CartItems.Any())
-                    {
-                        <span>ITEMS @Model.CartItems.Count()</span>
-                    }
-                </div>
 
-                <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
-                <div class="col">TOTAL PRICE</div>
-                <div id="total-price" class="col text-right">&euro; @Model.TotalPrice</div>
-                </div>
-                <form asp-action="Checkout" asp-controller="Payments" method="post">
-                <button type="submit" class="btn btn-success">Proceed to Checkout</button>
-                </form>
+       @if(Model.Items.Any())
+        {
+            <div class="col-md-4 summary">
+                <div><h5><b>Summary</b></h5></div>
+                <hr>
+                <div class="row">
+                    <div class="col" style="padding-left:0;">
+                        <span>ITEMS @Model.Items.Count()</span>
+                    </div>
 
-        </div>
-    </div>
+                    <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                        <div class="col">TOTAL PRICE</div>
+                        <div id="total-price" class="col text-right">&euro; @Model.TotalPrice</div>
+                    </div>
+                    <form asp-action="Checkout" asp-controller="Payments" method="post">
+                        <button type="submit" class="btn btn-success">Proceed to Checkout</button>
+                    </form>
+                </div>
+            </div>
+        }
     </div>
 </div>
 @section Scripts {
