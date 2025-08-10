@@ -8,7 +8,7 @@ using Web.DataAccess.Data;
 
 #nullable disable
 
-namespace ShopEgypt.Web.Migrations
+namespace Web.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
