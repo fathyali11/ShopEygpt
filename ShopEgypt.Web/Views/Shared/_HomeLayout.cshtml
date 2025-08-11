@@ -166,77 +166,11 @@
                 </button>
             </form>
 
-            <h5 class="cat-list-title">Browse Categories</h5>
-
-            <ul class="cat-list">
-                <li class="cat-list-item">
-                    <a href="#" title="Jackets">Jackets</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="T-shirts">T-shirts</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Handbags">Handbags</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Accessories">Accessories</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Cosmetics">Cosmetics</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Dresses">Dresses</a>
-                </li>
-                <li class="cat-list-item">
-                    <a href="#" title="Jumpsuits">Jumpsuits</a>
-                </li>
-            </ul>
+           
 
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart">
-        <div class="offcanvas-header justify-content-center">
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div class="order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">Your cart</span>
-                    <span class="badge bg-primary rounded-pill">3</span>
-                </h4>
-                <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Growers cider</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$12</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Fresh grapes</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$8</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Heinz tomato ketchup</h6>
-                            <small class="text-body-secondary">Brief description</small>
-                        </div>
-                        <span class="text-body-secondary">$5</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total (USD)</span>
-                        <strong>$20</strong>
-                    </li>
-                </ul>
-
-                <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to Checkout</button>
-            </div>
-        </div>
-    </div>
 
     <nav class="navbar navbar-expand-lg bg-light text-uppercase fs-6 p-3 border-bottom align-items-center"
          role="navigation" aria-label="Main Navigation">
@@ -254,10 +188,11 @@
                 <div class="col-3 col-lg-auto">
                     <ul class="list-unstyled d-flex align-items-center m-0">
 
+                        <!-- Wishlist (large only) -->
                         <li class="d-none d-lg-block">
                             <a asp-action="Index" asp-controller="Wishlists" class="text-uppercase mx-3 d-flex align-items-center gap-1" aria-label="Wishlist">
                                 <i class="bi bi-heart fs-5"></i>
-                                <span>Wishlist</span>  
+                                <span>Wishlist</span>
                                 @if (User.Identity!.IsAuthenticated)
                                 {
                                     <span id="wishlist-count-id" class="wishlist-count ms-1">(0)</span>
@@ -265,6 +200,7 @@
                             </a>
                         </li>
 
+                        <!-- Cart (large only) -->
                         <li class="d-none d-lg-block">
                             <a asp-action="Index" asp-controller="Cart"
                                class="text-uppercase mx-3 d-flex align-items-center gap-1 position-relative"
@@ -283,23 +219,38 @@
                             </a>
                         </li>
 
-                        <li class="d-lg-none mx-2">
-                            <a href="index.html" aria-label="Wishlist">
+                        <!-- Wishlist (small only) -->
+                        <li class="d-lg-none mx-2 position-relative">
+                            <a asp-action="Index" asp-controller="Wishlists" aria-label="Wishlist">
                                 <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
                                     <use xlink:href="#heart"></use>
                                 </svg>
+                                @if (User.Identity!.IsAuthenticated)
+                                {
+                                    <span id="wishlist-count-id" class="wishlist-count position-absolute top-0 start-100 translate-middle ms-1">(0)</span>
+                                }
                             </a>
                         </li>
 
-                        <li class="d-lg-none mx-2">
-                            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                        <!-- Cart (small only) -->
+                        <li class="d-lg-none mx-2 position-relative">
+                            <a asp-action="Index" asp-controller="Cart" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                aria-label="View your cart" aria-controls="offcanvasCart">
                                 <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
                                     <use xlink:href="#cart"></use>
                                 </svg>
+                                @if (User.Identity!.IsAuthenticated)
+                                {
+                                    <span id="cart-count"
+                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        0
+                                        <span class="visually-hidden">items in cart</span>
+                                    </span>
+                                }
                             </a>
                         </li>
 
+                        <!-- Search (all screens) -->
                         <li class="mx-2">
                             <a href="#search" class="search-button" aria-label="Search">
                                 <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
@@ -309,7 +260,6 @@
                         </li>
                     </ul>
                 </div>
-
                 <div class="col-3 col-lg-auto">
                     <ul class="list-unstyled d-flex align-items-center m-0">
 
@@ -317,14 +267,25 @@
                         {
                             @if (User.IsInRole(UserRoles.Admin))
                             {
+                                <!-- Admin Panel (large) -->
                                 <li class="d-none d-lg-block">
                                     <a asp-controller="Product" asp-action="Index"
                                        class="btn btn-outline-primary text-uppercase mx-3">
                                         Admin Panel
                                     </a>
                                 </li>
+
+                                <!-- Admin Panel (small) -->
+                                <li class="d-lg-none mx-2">
+                                    <a asp-controller="Product" asp-action="Index" aria-label="Admin Panel">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                            <use xlink:href="#settings"></use>
+                                        </svg>
+                                    </a>
+                                </li>
                             }
 
+                            <!-- Logout (large) -->
                             <li class="d-none d-lg-block">
                                 <form asp-action="Logout" asp-controller="Auths" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
@@ -334,27 +295,66 @@
                                 </form>
                             </li>
 
+                            <!-- Logout (small) -->
+                            <li class="d-lg-none mx-2">
+                                <form asp-action="Logout" asp-controller="Auths" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-link p-0" style="text-decoration: none;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                            <use xlink:href="#logout"></use>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </li>
+
+                            <!-- User Name (large) -->
                             <li class="d-none d-lg-block">
                                 <span class="text-uppercase mx-3">
+                                    @User.Identity.Name
+                                </span>
+                            </li>
+
+                            <!-- User Name (small) -->
+                            <li class="d-lg-none mx-2">
+                                <span class="text-uppercase">
                                     @User.Identity.Name
                                 </span>
                             </li>
                         }
                         else
                         {
+                            <!-- Sign Up (large) -->
                             <li class="d-none d-lg-block">
                                 <a asp-action="Register" asp-controller="Auths" class="text-uppercase mx-3">
                                     Sign Up
                                 </a>
                             </li>
 
+                            <!-- Sign Up (small) -->
+                            <li class="d-lg-none mx-2">
+                                <a asp-action="Register" asp-controller="Auths" aria-label="Sign Up">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                        <use xlink:href="#user-plus"></use>
+                                    </svg>
+                                </a>
+                            </li>
+
+                            <!-- Login (large) -->
                             <li class="d-none d-lg-block">
                                 <a asp-action="Login" asp-controller="Auths" class="text-uppercase mx-3">
                                     Login
                                 </a>
                             </li>
-                        }
 
+                            <!-- Login (small) -->
+                            <li class="d-lg-none mx-2">
+                                <a asp-action="Login" asp-controller="Auths" aria-label="Login">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                                        <use xlink:href="#login"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
 
