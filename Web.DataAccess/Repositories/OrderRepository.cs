@@ -44,7 +44,7 @@ public class OrderRepository(ApplicationDbContext _context,
         await _context.Orders.AddAsync(order,cancellationToken);
         _context.Carts.Remove(cart);
         await _context.SaveChangesAsync(cancellationToken);
-        await RemoveCacheKeys(cancellationToken);
+        await RemoveCacheKeys(userId, cancellationToken);
         return order;
 
     }
@@ -57,7 +57,7 @@ public class OrderRepository(ApplicationDbContext _context,
         return order!;
     }
 
-    public async Task<bool> CancelOrderAsync(int id, CancellationToken cancellationToken=default)
+    public async Task<bool> CancelOrderAsync(string userId, int id, CancellationToken cancellationToken=default)
     {
         _logger.LogInformation("we will get order with id = {id}", id);
         var order = await _context.Orders.FindAsync(id);
@@ -74,11 +74,11 @@ public class OrderRepository(ApplicationDbContext _context,
         _logger.LogInformation("refund money to customer");
         order.Status=OrderStatus.Cancelled;
         await _context.SaveChangesAsync(cancellationToken);
-        await RemoveCacheKeys(cancellationToken);
+        await RemoveCacheKeys(userId, cancellationToken);
 
         return true;
     }
-    public async Task<bool> DeleteOrderAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteOrderAsync(string userId, int id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("we will get order with id = {id}", id);
 
@@ -102,12 +102,14 @@ public class OrderRepository(ApplicationDbContext _context,
 
         _context.Orders.Remove(order);
         await _context.SaveChangesAsync(cancellationToken);
-        await RemoveCacheKeys(cancellationToken);
+        await RemoveCacheKeys(userId,cancellationToken);
 
         return true;
     }
-    private async Task RemoveCacheKeys(CancellationToken cancellationToken)
+    private async Task RemoveCacheKeys(string userId,CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveAsync(OrderCacheKeys.AllOrders, cancellationToken);
+        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItemCount}_{userId}", cancellationToken);
+        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItems}_{userId}", cancellationToken);
     }
 }
