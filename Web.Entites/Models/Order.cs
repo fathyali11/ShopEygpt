@@ -11,5 +11,6 @@ public class Order
     public decimal TotalPrice { get; set; }
     public string Status { get; set; } =string.Empty;
 
+    public ApplicationUser User { get; set; } = default!;
     public ICollection<OrderItem> OrderItems { get; set; } = [];
 }

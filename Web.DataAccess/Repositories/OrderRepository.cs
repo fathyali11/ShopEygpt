@@ -20,6 +20,7 @@ public class OrderRepository(ApplicationDbContext _context,
             .Select(x => new OrderResponseVM(
                 x.Id,
                 x.UserId,
+                x.User.UserName!,
                 x.Status
                 ))
             .ToListAsync(cancellationToken),cancellationToken:cancellationToken);
