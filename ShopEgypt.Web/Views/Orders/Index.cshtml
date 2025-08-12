@@ -16,6 +16,7 @@
                 <tr>
                     <th class="text-center align-middle">Order ID</th>
                     <th class="text-center align-middle">User ID</th>
+                    <th class="text-center align-middle">User Name</th>
                     <th class="text-center align-middle">Status</th>
                     <th class="text-center align-middle">Actions</th>
                 </tr>
@@ -26,6 +27,7 @@
                     <tr>
                         <td class="text-center align-middle">@order.Id</td>
                         <td class="text-center align-middle">@order.UserId</td>
+                        <td class="text-center align-middle">@order.UserName</td>
                         <td class="text-center align-middle">
                             @if (order.Status == OrderStatus.Paid)
                             {
