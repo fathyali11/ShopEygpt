@@ -3,8 +3,10 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Serilog;
 using Stripe;
+using System.Threading.RateLimiting;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
 using Web.Entites.ModelsValidation.ProductValidations;
@@ -38,6 +40,18 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(
 	options =>options.UseSqlServer(connectionString)
 	);
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("login", opt =>
+    {
+        opt.PermitLimit = 5; 
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+});
+
 
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeData"));
 

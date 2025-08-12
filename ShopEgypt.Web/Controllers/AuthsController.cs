@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace ShopEgypt.Web.Controllers;
@@ -51,6 +52,7 @@ public class AuthsController(IAuthRepository _authRepository,
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
+    [EnableRateLimiting("login")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginVM loginVM, string? returnUrl = null, CancellationToken cancellationToken = default)
