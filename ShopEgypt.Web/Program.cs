@@ -66,17 +66,19 @@ builder.Services.AddOptions<StripeSettings>()
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "Cookies"; 
+	options.DefaultScheme = "Cookies";
+	options.DefaultChallengeScheme = "Cookies";
 })
 .AddCookie("Cookies")
 .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
 {
-    var googleSettings = builder.Configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>();
-    options.ClientId = googleSettings!.ClientId;
-    options.ClientSecret = googleSettings.ClientSecret;
+	var googleSettings = builder.Configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>();
+	options.ClientId = googleSettings!.ClientId;
+	options.ClientSecret = googleSettings.ClientSecret;
 });
 
+var stripeSettings=builder.Configuration.GetSection(nameof(StripeSettings)).Get<StripeSettings>();
+StripeConfiguration.ApiKey = stripeSettings!.Secretkey;
 
 builder.Services.Configure<CookieAuthenticationOptions>("Cookies",options =>
 {
@@ -116,25 +118,29 @@ builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 
 var app = builder.Build();
 
-//using(var scope=app.Services.CreateScope())
-//{
-//	var dbContext= scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//	if(dbContext.Database.GetPendingMigrations().Any())
-//		await dbContext.Database.MigrateAsync();
-//}
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+	if (dbContext.Database.GetPendingMigrations().Any())
+		await dbContext.Database.MigrateAsync();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+	if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+		await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
+    if (!await roleManager.RoleExistsAsync(UserRoles.Customer))
+        await roleManager.CreateAsync(new IdentityRole(UserRoles.Customer));
+}
+
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
-
+app.UseRouting();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
-app.UseRouting();
-StripeConfiguration.ApiKey = builder.Configuration.GetSection("StripeData:Secretkey").Get<string>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();

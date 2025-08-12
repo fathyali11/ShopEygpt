@@ -73,7 +73,7 @@ public class WishlistRepository(ApplicationDbContext _context,
             );
 
 
-        return wishlist!;
+        return wishlist is not null ? wishlist : new WishlistResponse(0, []);
 
     }
 

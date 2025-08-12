@@ -20,12 +20,13 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
         var response = await _orderRepository.GetOrderDetailsAsync(id, cancellationToken);
         return View(response);
     }
-    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Cancel(int id, CancellationToken cancellationToken)
     {
-        var response = await _orderRepository.CancelOrderAsync(id, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _orderRepository.CancelOrderAsync(userId!, id, cancellationToken);
         return response ?
             Json(new { Success = true, message = "Order Cancelled Successfull" }) :
             Json(new { Success = false, message = "Order Not Cancelled" });
@@ -36,13 +37,14 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
-        var response = await _orderRepository.DeleteOrderAsync(id, cancellationToken);
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _orderRepository.DeleteOrderAsync(userId!,id, cancellationToken);
         return response ?
             Json(new { Success = true, message = "Order Deleted Successfull" }) :
             Json(new { Success = false, message = "Order Not Deleted" });
 
     }
-    [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.Customer}")]
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> Success(CancellationToken cancellationToken)
     {

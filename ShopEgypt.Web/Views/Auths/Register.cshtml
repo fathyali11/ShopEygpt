@@ -1,6 +1,7 @@
 ﻿@model RegisterVM
 @{
 	Layout = "_RegisterLayout";
+    ViewData["Title"]="Register"
 }
 <div class="container-scroller">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
@@ -38,17 +39,23 @@
                             <div class="text-center d-grid gap-2">
                                 <button type="submit" class="btn btn-primary btn-block enter-btn">Register</button>
                             </div>
-                            <div class="d-flex">
-                                <button class="btn btn-facebook col me-2">
-                                    <i class="mdi mdi-facebook"></i> Facebook
-                                </button>
-                                <a asp-controller="Auths" asp-action="ExternalLogin" asp-route-provider="Google" asp-route-returnUrl="/" class="btn btn-google col me-2">
+                            <div class="d-flex flex-column justify-content-center align-items-stretch gap-2 w-100">
+                                
+                                <a asp-controller="Auths"
+                                   asp-action="ExternalLogin"
+                                   asp-route-provider="Google"
+                                   asp-route-returnUrl="/"
+                                   class="btn btn-google w-100">
                                     <i class="mdi mdi-google-plus"></i> Google plus
                                 </a>
-                                <a asp-action="ResendEmailConfirmation" asp-controller="Auths" class="btn btn-facebook col me-2">
+                                <a asp-action="ResendEmailConfirmation"
+                                   asp-controller="Auths"
+                                   class="btn btn-facebook w-100">
                                     <i class="mdi mdi-email-check"></i> Confirm Email
                                 </a>
                             </div>
+
+
                             <p class="sign-up text-center">Already have an Account?<a asp-action="Login" asp-controller="Auths"> Login</a></p>
                             <a asp-controller="Home" asp-action="Index" asp-route-provider="Google" class="btn btn-dark d-flex justify-content-center align-items-center col m-2">
                                 <i class="mdi mdi-home"></i> Home
