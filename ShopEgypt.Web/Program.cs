@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using Stripe;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
 using Web.Entites.ModelsValidation.ProductValidations;
@@ -76,6 +77,8 @@ builder.Services.AddAuthentication(options =>
 	options.ClientSecret = googleSettings.ClientSecret;
 });
 
+var stripeSettings=builder.Configuration.GetSection(nameof(StripeSettings)).Get<StripeSettings>();
+StripeConfiguration.ApiKey = stripeSettings!.Secretkey;
 
 builder.Services.Configure<CookieAuthenticationOptions>("Cookies",options =>
 {
