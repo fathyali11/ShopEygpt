@@ -6,4 +6,5 @@ public class RatingNumbers
     public const int AddToWishlist = 3;
     public const int ViewItem = 1;
     public const int RemoveFromCart = 0;
+    public const int RemoveFromWishlist = 1;
 }
