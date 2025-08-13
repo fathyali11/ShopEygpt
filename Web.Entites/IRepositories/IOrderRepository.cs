@@ -1,7 +1,4 @@
-﻿using Web.Entites.Models;
-using Web.Entites.ViewModels.OrderVMs;
-
-namespace Web.Entites.IRepositories;
+﻿namespace Web.Entites.IRepositories;
 public interface IOrderRepository
 {
     Task<PaginatedList<OrderResponseVM>> GetAllOrdersAsync(int pageNumber, CancellationToken cancellationToken = default);

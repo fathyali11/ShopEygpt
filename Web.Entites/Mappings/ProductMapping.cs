@@ -1,8 +1,4 @@
-﻿using Mapster;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.ProductVMs;
-namespace Web.Entites.Mappings;
-
+﻿namespace Web.Entites.Mappings;
 public class ProductMapping:IRegister
 {
     public void Register(TypeAdapterConfig config)

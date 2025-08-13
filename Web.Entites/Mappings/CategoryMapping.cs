@@ -1,7 +1,4 @@
-﻿using Mapster;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.CategoryVMs;
-namespace Web.Entites.Mappings;
+﻿namespace Web.Entites.Mappings;
 public class CategoryMapping : IRegister
 {
     public void Register(TypeAdapterConfig config)

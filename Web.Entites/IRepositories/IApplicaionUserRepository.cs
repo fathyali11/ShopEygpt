@@ -1,15 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Web.Entites.Models;
-
-namespace Web.Entites.IRepositories
+﻿namespace Web.Entites.IRepositories;
+public interface IApplicaionUserRepository
 {
-    public interface IApplicaionUserRepository
-    {
-        void Update(ApplicationUser user);
-    }
+    void Update(ApplicationUser user);
 }

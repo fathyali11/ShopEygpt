@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Consts;
-
 public static class OrderStatus
 {
     public const string Pending = nameof(Pending);

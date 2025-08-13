@@ -1,6 +1,4 @@
-﻿using Web.Entites.Models;
-
-namespace Web.Entites.ViewModels.CartVMs;
+﻿namespace Web.Entites.ViewModels.CartVMs;
 public class CartResponse
 {
     public int Id { get; set; }

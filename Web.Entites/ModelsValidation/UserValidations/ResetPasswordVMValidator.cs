@@ -1,8 +1,4 @@
-﻿using FluentValidation;
-using Web.Entites.ViewModels.UsersVMs;
-
-namespace Web.Entites.ModelsValidation.UserValidations;
-
+﻿namespace Web.Entites.ModelsValidation.UserValidations;
 public class ResetPasswordVMValidator : AbstractValidator<ResetPasswordVM>
 {
     public ResetPasswordVMValidator()

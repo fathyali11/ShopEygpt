@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-namespace Web.Entites.ModelsValidation;
+﻿namespace Web.Entites.ModelsValidation;
 public static class ImageSignatureValidator
 {
     private static readonly Dictionary<string, byte[]> _imageSignatures = new()

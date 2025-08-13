@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-public record EditCategoryVM
+﻿public record EditCategoryVM
 (
     int Id,
     [Required(ErrorMessage = "Category name is required.")]

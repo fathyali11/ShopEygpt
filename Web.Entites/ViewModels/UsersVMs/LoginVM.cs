@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Web.Entites.ViewModels.UsersVMs;
-
+﻿namespace Web.Entites.ViewModels.UsersVMs;
 public record LoginVM(
     [Required]
     string UserName,

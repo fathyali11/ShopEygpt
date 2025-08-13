@@ -1,18 +1,24 @@
-﻿using System.ComponentModel;
+﻿namespace Web.Entites.ViewModels.UsersVMs;
+public record RegisterVM
+{
+    [Required]
+    public string FirstName { get; init; } = string.Empty;
 
-namespace Web.Entites.ViewModels.UsersVMs;
-public record RegisterVM(
     [Required]
-    string FirstName,
+    public string LastName { get; init; } = string.Empty;
+
     [Required]
-    string LastName,
-    [Required]
-    string UserName,
+    public string UserName { get; init; } = string.Empty;
+
     [EmailAddress]
-    string Email,
-    string ?Role,
+    public string Email { get; init; } = string.Empty;
+
+    public string? Role { get; init; }
+
     [PasswordPropertyText]
-    string Password,
+    public string Password { get; init; } = string.Empty;
+
+    [Compare(nameof(Password),ErrorMessage ="password and confirm password must be equal")]
     [PasswordPropertyText]
-    string ConfirmPassword
-    );
+    public string ConfirmPassword { get; init; }=string.Empty;
+}

@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Consts;
-
 public static class CartCacheKeys
 {
     public const string CartItemCount = nameof(CartItemCount);

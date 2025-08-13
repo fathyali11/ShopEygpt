@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
-
-namespace Web.Entites.ViewModels.ProductVMs;
-
+﻿namespace Web.Entites.ViewModels.ProductVMs;
 public class EditProductVM
 {
     public int Id { get; set; }
