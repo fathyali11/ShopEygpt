@@ -103,6 +103,7 @@ public class AuthsController(IAuthRepository _authRepository,
     {
         return View();
     }
+    [EnableRateLimiting("resendEmailConfirmation")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken)

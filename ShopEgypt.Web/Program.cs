@@ -3,10 +3,11 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Serilog;
 using Stripe;
 using System.Threading.RateLimiting;
+using WearUp.Web;
 using Web.Entites.Mappings;
 using Web.Entites.ModelsValidation.CategoryValidations;
 using Web.Entites.ModelsValidation.ProductValidations;
@@ -43,28 +44,79 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("login", opt =>
+    options.AddPolicy("login", context =>
     {
-        opt.PermitLimit = 5; 
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
-    options.AddFixedWindowLimiter("register", opt =>
-    {
-        opt.PermitLimit = 3;
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "userName"),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 2,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0,
+            });
     });
 
-    options.AddFixedWindowLimiter("forgotPassword", opt =>
+    options.AddPolicy("register", context =>
     {
-        opt.PermitLimit = 3;
-        opt.Window = TimeSpan.FromMinutes(5);
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey:RatelimitingHelpers.GetPartitionKey(context,"userName"),
+            factory:_=>new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }
+            );
     });
+
+    options.AddPolicy("forgotPassword", context =>
+    {
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "email"),
+            factory:_=> new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 2,
+                Window = TimeSpan.FromMinutes(5),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0,
+            }
+            );
+    });
+
+    options.AddPolicy("resendEmailConfirmation", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "email"),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 2,                     
+                Window = TimeSpan.FromMinutes(15),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        var actionName = context.HttpContext.GetEndpoint()?
+                            .Metadata
+                            .GetMetadata<ControllerActionDescriptor>()?
+                            .ActionName;
+
+        int retryAfterSeconds = actionName?.ToLower() switch
+        {
+            "login" => 60,          
+            "register" => 60,
+            "forgotpassword" => 300,
+            "resendemailconfirmation" => 900,
+            _ => 60
+        };
+
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.Redirect($"/Home/TooManyRequests?retryAfterSeconds={retryAfterSeconds}");
+        await Task.CompletedTask;
+
+    };
 });
 
 
@@ -166,7 +218,10 @@ if (!app.Environment.IsDevelopment())
 	app.UseExceptionHandler("/Home/Error");
 	app.UseHsts();
 }
+
 app.UseRouting();
+app.UseRateLimiter();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
@@ -178,3 +233,5 @@ app.MapControllerRoute(
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
