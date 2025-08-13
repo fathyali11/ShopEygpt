@@ -1,194 +1,20 @@
+using WearUp.Web.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
-
-Log.Logger = new LoggerConfiguration()
-      .ReadFrom.Configuration(builder.Configuration)
-      .CreateLogger();
-builder.Host.UseSerilog();
-
-builder.Services.AddHybridCache();
-
-builder.Services.AddOptions<EmailSettings>()
-            .Bind(builder.Configuration.GetSection(nameof(EmailSettings)))
-            .ValidateOnStart();
-
-TypeAdapterConfig.GlobalSettings.Scan(typeof(CategoryMapping).Assembly);
-
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(
-	options =>options.UseSqlServer(connectionString)
-	);
-
-builder.Services.AddRateLimiter(options =>
-{
-    options.AddPolicy("login", context =>
-    {
-        return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "userName"),
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 2,
-                Window = TimeSpan.FromMinutes(1),
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 0,
-            });
-    });
-
-    options.AddPolicy("register", context =>
-    {
-        return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey:RatelimitingHelpers.GetPartitionKey(context,"userName"),
-            factory:_=>new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 3,
-                Window = TimeSpan.FromMinutes(1),
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 0
-            }
-            );
-    });
-
-    options.AddPolicy("forgotPassword", context =>
-    {
-        return RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "email"),
-            factory:_=> new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 2,
-                Window = TimeSpan.FromMinutes(5),
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 0,
-            }
-            );
-    });
-
-    options.AddPolicy("resendEmailConfirmation", context =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: RatelimitingHelpers.GetPartitionKey(context, "email"),
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 2,                     
-                Window = TimeSpan.FromMinutes(15),
-                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                QueueLimit = 0
-            }));
-
-    options.OnRejected = async (context, cancellationToken) =>
-    {
-        var actionName = context.HttpContext.GetEndpoint()?
-                            .Metadata
-                            .GetMetadata<ControllerActionDescriptor>()?
-                            .ActionName;
-
-        int retryAfterSeconds = actionName?.ToLower() switch
-        {
-            "login" => 60,          
-            "register" => 60,
-            "forgotpassword" => 300,
-            "resendemailconfirmation" => 900,
-            _ => 60
-        };
-
-        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-        context.HttpContext.Response.Redirect($"/Home/TooManyRequests?retryAfterSeconds={retryAfterSeconds}");
-        await Task.CompletedTask;
-
-    };
-});
-
-
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeData"));
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
-{
-	op.Lockout.MaxFailedAccessAttempts=3;
-	op.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(2);
-	op.Password.RequiredUniqueChars = 0;
-	op.Password.RequireNonAlphanumeric = false;
-	op.Password.RequireUppercase = false;
-	op.Password.RequireDigit = false;
-	op.Password.RequireLowercase = false;
-})
-	.AddEntityFrameworkStores<ApplicationDbContext>()
-	.AddDefaultTokenProviders();
-
-builder.Services.AddOptions<GoogleSettings>()
-	.Bind(builder.Configuration.GetSection(nameof(GoogleSettings)))
-	.ValidateOnStart();
-
-builder.Services.AddOptions<StripeSettings>()
-	.Bind(builder.Configuration.GetSection(nameof(StripeSettings)))
-	.ValidateOnStart();
-
-
-
-builder.Services.AddAuthentication(options =>
-{
-	options.DefaultScheme = "Cookies";
-	options.DefaultChallengeScheme = "Cookies";
-})
-.AddCookie("Cookies")
-.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-{
-	var googleSettings = builder.Configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>();
-	options.ClientId = googleSettings!.ClientId;
-	options.ClientSecret = googleSettings.ClientSecret;
-});
-
-var stripeSettings=builder.Configuration.GetSection(nameof(StripeSettings)).Get<StripeSettings>();
-StripeConfiguration.ApiKey = stripeSettings!.Secretkey;
-
-builder.Services.Configure<CookieAuthenticationOptions>("Cookies",options =>
-{
-	options.LoginPath = "/Auths/Login";
-	options.LogoutPath = "/Auths/Logout";
-	options.AccessDeniedPath = "/Auths/AccessDenied";
-	options.ExpireTimeSpan = TimeSpan.FromDays(2);
-});
-
-
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-builder.Services.AddHttpContextAccessor();
-
-
-builder.Services.AddScoped<IValidator<CreateCategoryVM>, CreateCategoryVMValidator>();
-builder.Services.AddScoped<IValidator<EditCategoryVM>, EditCategoryVMValidator>();
-
-
-builder.Services.AddScoped<IValidator<CreateProductVM>, CreateProductVMValidator>();
-
-
-builder.Services.AddScoped<IValidator<ConfirmEmailVM>, ConfirmEmailVMValidator>();
-builder.Services.AddScoped<IValidator<ResendEmailConfirmationVM>, ResendEmailConfirmationVMValidator>();
-builder.Services.AddScoped<IValidator<ForgotPasswordVM>, ForgotPasswordVMValidator>();
-builder.Services.AddScoped<IValidator<ResetPasswordVM>, ResetPasswordVMValidator>();
-
-builder.Services.AddScoped<GeneralRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<IEmailRepository, EmailRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
+builder = DependencyInjection.ConfigureServices(builder);
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-	if (dbContext.Database.GetPendingMigrations().Any())
-		await dbContext.Database.MigrateAsync();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    if (dbContext.Database.GetPendingMigrations().Any())
+        await dbContext.Database.MigrateAsync();
+    
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-	if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
-		await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+    if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+        await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
 
     if (!await roleManager.RoleExistsAsync(UserRoles.Customer))
         await roleManager.CreateAsync(new IdentityRole(UserRoles.Customer));
@@ -196,13 +22,12 @@ using (var scope = app.Services.CreateScope())
 
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Home/Error");
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
 app.UseRouting();
 app.UseRateLimiter();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseSession();
@@ -210,9 +35,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-
