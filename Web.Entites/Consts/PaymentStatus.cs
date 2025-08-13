@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Consts;
-
 public static class PaymentStatus
 {
     public const string Paid = nameof(Paid);

@@ -1,10 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
-using System.Linq;
-using Web.Entites.Consts;
-using Web.Entites.ViewModels.CartItemVMs;
-using Web.Entites.ViewModels.WishlistVMs;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class WishlistRepository(ApplicationDbContext _context,
     HybridCache _hybridCache) : IWishlistRepository
 {

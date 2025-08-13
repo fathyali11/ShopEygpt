@@ -1,18 +1,31 @@
 ﻿global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc;
-global using System.Diagnostics;
-global using Microsoft.AspNetCore.Identity.UI.Services;
-
-
-
-
-
-
-
-
-
+global using FluentValidation;
+global using Mapster;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Authentication.Google;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Mvc.Controllers;
+global using Serilog;
+global using Stripe;
+global using System.Threading.RateLimiting;
+global using WearUp.Web;
+global using Web.Entites.Mappings;
+global using Web.Entites.ModelsValidation.CategoryValidations;
+global using Web.Entites.ModelsValidation.ProductValidations;
+global using Web.Entites.ModelsValidation.UserValidations;
+global using Web.Entites.ViewModels.ProductVMs;
+global using Web.Entites.ViewModels.UsersVMs;
 global using Web.DataAccess.Data;
 global using Web.Entites.Models;
 global using Web.Entites.IRepositories;
 global using Web.DataAccess.Repositories;
 global using Web.Entites.Consts;
+global using Microsoft.AspNetCore.RateLimiting;
+global using Microsoft.AspNetCore.Authorization;
+global using System.Security.Claims;
+global using Web.Entites.ViewModels.CartItemVMs;
+global using Stripe.Checkout;
+global using System.Threading.Tasks;
+global using Web.Entites.ViewModels.WishlistVMs;
+global using WearUp.Web.Infrastructure;

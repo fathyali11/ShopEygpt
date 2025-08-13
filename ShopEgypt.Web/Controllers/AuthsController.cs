@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using Web.Entites.ViewModels.UsersVMs;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 public class AuthsController(IAuthRepository _authRepository,
     SignInManager<ApplicationUser> _signInManager) : Controller
 {

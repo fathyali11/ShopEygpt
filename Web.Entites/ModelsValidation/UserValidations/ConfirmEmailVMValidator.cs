@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using Web.Entites.ViewModels.UsersVMs;
-
-namespace Web.Entites.ModelsValidation.UserValidations;
+﻿namespace Web.Entites.ModelsValidation.UserValidations;
 public class ConfirmEmailVMValidator:AbstractValidator<ConfirmEmailVM>
 {
     public ConfirmEmailVMValidator()

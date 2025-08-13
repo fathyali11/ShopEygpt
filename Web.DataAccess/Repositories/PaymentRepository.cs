@@ -1,9 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Stripe;
-using Stripe.Checkout;
-using Web.Entites.Consts;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class PaymentRepository(ApplicationDbContext _context,
     IOptions<StripeSettings> options,
     IHttpContextAccessor _httpContextAccessor):IPaymentRepository

@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using Web.Entites.ViewModels.ProductVMs;
-
-namespace Web.Entites.ModelsValidation.ProductValidations;
+﻿namespace Web.Entites.ModelsValidation.ProductValidations;
 public class CreateProductVMValidator:AbstractValidator<CreateProductVM>
 {
     public CreateProductVMValidator()

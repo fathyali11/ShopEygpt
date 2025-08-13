@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Consts;
-
 public static class ProductCacheKeys
 {
     public const string AllProductsInCategory = nameof(AllProductsInCategory);

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Runtime.CompilerServices;
-using Web.Entites.ViewModels.UsersVMs;
-
-namespace ShopEgypt.Web.Controllers
+﻿namespace WearUp.Web.Controllers
 {
     [Authorize(Roles =$"{UserRoles.Admin},{UserRoles.Customer}")]
     public class UsersController(IAuthRepository _authRepository) : Controller

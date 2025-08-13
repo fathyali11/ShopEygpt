@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Web.DataAccess.Data.EntitiesConfigurations;
-
+﻿namespace Web.DataAccess.Data.EntitiesConfigurations;
 internal class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)

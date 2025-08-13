@@ -1,6 +1,4 @@
-﻿using Web.Entites.ViewModels.WishlistVMs;
-
-namespace Web.Entites.IRepositories;
+﻿namespace Web.Entites.IRepositories;
 public interface IWishlistRepository
 {
     Task<bool> ToggelWishlistItemAsync(string userId, AddWishlistItem addWishlistItem, CancellationToken cancellationToken = default);

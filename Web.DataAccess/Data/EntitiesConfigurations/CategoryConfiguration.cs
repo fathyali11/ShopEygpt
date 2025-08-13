@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Web.DataAccess.Data.EntitiesConfigurations;
-
+﻿namespace Web.DataAccess.Data.EntitiesConfigurations;
 internal class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)

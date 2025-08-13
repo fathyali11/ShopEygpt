@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 [Authorize]
 public class PaymentsController(IPaymentRepository _paymentRepository) : Controller
 {

@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.ViewModels.UsersVMs;
-
 public record ResetPasswordVM(
     [Required(ErrorMessage = "Password is required")]
     [DataType(DataType.Password)]

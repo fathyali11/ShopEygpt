@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Consts;
-
 public class PaginatedList<T>(List<T> items, int count, int pageIndex, int pageSize)
 {
     public List<T> Items { get; private set; } = items;

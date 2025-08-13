@@ -1,7 +1,4 @@
-﻿using Mapster;
-using Web.Entites.Models;
-
-namespace Web.Entites.Mappings;
+﻿namespace Web.Entites.Mappings;
 public class CartToOrderMappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)

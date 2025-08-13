@@ -1,5 +1,4 @@
 ﻿namespace Web.Entites.Models;
-
 public class Wishlist
 {
     public int Id { get; set; }

@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace Web.Entites.ModelsValidation.CategoryValidations;
+﻿namespace Web.Entites.ModelsValidation.CategoryValidations;
 public class CreateCategoryVMValidator:AbstractValidator<CreateCategoryVM>
 {
     public CreateCategoryVMValidator()

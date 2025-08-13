@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-
-namespace Web.Entites.ViewModels.ProductVMs;
-
+﻿namespace Web.Entites.ViewModels.ProductVMs;
 public record CreateProductVM(
     [Required(ErrorMessage = "Product name is required.")]
     [StringLength(50, ErrorMessage = "Product name must be at most 50 characters.")]

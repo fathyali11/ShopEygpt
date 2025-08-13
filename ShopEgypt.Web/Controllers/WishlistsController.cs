@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Web.Entites.ViewModels.CartItemVMs;
-using Web.Entites.ViewModels.WishlistVMs;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 [Authorize]
 public class WishlistsController(IWishlistRepository _wishlistRepository) : Controller
 {
@@ -41,12 +36,10 @@ public class WishlistsController(IWishlistRepository _wishlistRepository) : Cont
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var wishlistItemsCount=await _wishlistRepository.DeleteWishlistItemAsync(userId,deleteWishlistItem, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-        {
             if(wishlistItemsCount != -1)
                 return Json(new { success = true, message = "The product was deleted successfully!", wishlistItemsCount });
             else
                 return Json(new { success = false, message = "The product was not deleted." });
-        }
         else
             return RedirectToAction("Index", "Home");
 

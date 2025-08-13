@@ -1,20 +1,4 @@
-﻿using FluentValidation;
-using Mapster;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
-using OneOf;
-using System.Buffers.Text;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using Web.Entites.Consts;
-using Web.Entites.ViewModels.UsersVMs;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class AuthRepository(
     ILogger<AuthRepository> _logger,
     UserManager<ApplicationUser>_userManager,
