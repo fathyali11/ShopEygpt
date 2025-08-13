@@ -28,3 +28,4 @@ global using Web.Entites.ViewModels.CartItemVMs;
 global using Stripe.Checkout;
 global using System.Threading.Tasks;
 global using Web.Entites.ViewModels.WishlistVMs;
+global using WearUp.Web.Infrastructure;
