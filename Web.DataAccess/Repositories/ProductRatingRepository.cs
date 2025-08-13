@@ -18,7 +18,19 @@ public class ProductRatingRepository(ApplicationDbContext _context) : IProductRa
         }, cancellationToken);
         var added=await _context.SaveChangesAsync(cancellationToken);
         if(added==0)
+    public async Task<bool> UpdateRatingsForPurchaseAsync(string userId, List<int> productIds, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(userId) || productIds == null || productIds.Count == 0)
             return false;
-        return true;
+
+        var affectedRows = await _context.ProductRatings
+            .Where(r => r.UserId == userId && productIds.Contains(r.ProductId))
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(r => r.Rating, RatingNumbers.BuyItem)
+                .SetProperty(r => r.UpdatedAt, DateTime.UtcNow),
+                cancellationToken);
+
+        return affectedRows > 0;
     }
+
 }
