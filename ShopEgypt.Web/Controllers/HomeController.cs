@@ -6,4 +6,10 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult TooManyRequests([FromQuery]int retryAfterSeconds)
+    {
+        return View(retryAfterSeconds);
+    }
+
 }
