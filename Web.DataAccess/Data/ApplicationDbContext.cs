@@ -14,4 +14,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Order> Orders { get; set; }
     public DbSet<Wishlist> Wishlist { get; set; }
     public DbSet<WishlistItem> WishlistItems { get; set; }
+    public DbSet<ProductRating> ProductRatings { get; set; }
 }
