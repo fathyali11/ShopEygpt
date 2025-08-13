@@ -1,0 +1,66 @@
+﻿@model int
+
+<!DOCTYPE html>
+@{
+    Layout = null;
+}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Too Many Requests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #dc3545;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .retry-info {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Too Many Requests</h1>
+        <p>You have sent too many requests. Please try again later.</p>
+        <p class="retry-info">You can try again after @Model seconds.</p>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

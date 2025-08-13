@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace ShopEgypt.Web.Controllers;
@@ -29,6 +31,7 @@ public class AuthsController(IAuthRepository _authRepository,
 
     [HttpGet]
     public IActionResult Register() => View();
+    [EnableRateLimiting("register")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterVM registerVM,CancellationToken cancellationToken)
@@ -51,6 +54,7 @@ public class AuthsController(IAuthRepository _authRepository,
         ViewData["ReturnUrl"] = returnUrl;
         return View();
     }
+    [EnableRateLimiting("login")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginVM loginVM, string? returnUrl = null, CancellationToken cancellationToken = default)
@@ -99,6 +103,7 @@ public class AuthsController(IAuthRepository _authRepository,
     {
         return View();
     }
+    [EnableRateLimiting("resendEmailConfirmation")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM, CancellationToken cancellationToken)
@@ -116,6 +121,7 @@ public class AuthsController(IAuthRepository _authRepository,
 
     [HttpGet]
     public IActionResult ForgotPassword() => View();
+    [EnableRateLimiting("forgotPassword")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordVM forgotPasswordVM, CancellationToken cancellationToken)
