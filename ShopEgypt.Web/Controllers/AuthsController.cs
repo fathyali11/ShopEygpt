@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Web.Entites.ViewModels.UsersVMs;
 
 namespace ShopEgypt.Web.Controllers;
@@ -30,6 +31,7 @@ public class AuthsController(IAuthRepository _authRepository,
 
     [HttpGet]
     public IActionResult Register() => View();
+    [EnableRateLimiting("register")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterVM registerVM,CancellationToken cancellationToken)
@@ -118,6 +120,7 @@ public class AuthsController(IAuthRepository _authRepository,
 
     [HttpGet]
     public IActionResult ForgotPassword() => View();
+    [EnableRateLimiting("forgotPassword")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordVM forgotPasswordVM, CancellationToken cancellationToken)
