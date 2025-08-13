@@ -1,8 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using Web.Entites.ViewModels.ProductVMs;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {

@@ -1,4 +1,4 @@
-namespace ShopEgypt.Web.Controllers;
+namespace WearUp.Web.Controllers;
 public class HomeController : Controller
 {
     public IActionResult Index()

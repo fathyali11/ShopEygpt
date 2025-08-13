@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Stripe.Checkout;
-using System.Security.Claims;
-
-namespace ShopEgypt.Web.Controllers;
-
+﻿namespace WearUp.Web.Controllers;
 public class OrdersController(IOrderRepository _orderRepository) : Controller
 {
     [Authorize(Roles =UserRoles.Admin)]

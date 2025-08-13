@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Web.Entites.ViewModels.CartItemVMs;
-
-namespace ShopEgypt.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 
 [Authorize]
 public class CartController(ICartRepository _cartRepository) : Controller

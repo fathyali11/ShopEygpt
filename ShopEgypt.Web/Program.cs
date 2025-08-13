@@ -1,21 +1,3 @@
-using FluentValidation;
-using Mapster;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Serilog;
-using Stripe;
-using System.Threading.RateLimiting;
-using WearUp.Web;
-using Web.Entites.Mappings;
-using Web.Entites.ModelsValidation.CategoryValidations;
-using Web.Entites.ModelsValidation.ProductValidations;
-using Web.Entites.ModelsValidation.UserValidations;
-using Web.Entites.ViewModels.ProductVMs;
-using Web.Entites.ViewModels.UsersVMs;
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
@@ -32,7 +14,6 @@ builder.Services.AddOptions<EmailSettings>()
 TypeAdapterConfig.GlobalSettings.Scan(typeof(CategoryMapping).Assembly);
 
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 

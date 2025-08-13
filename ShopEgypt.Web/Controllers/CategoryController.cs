@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace ShopEgypt.Web.Controllers;
-
+﻿namespace WearUp.Web.Controllers;
 public class CategoryController(ICategoryRepository _categoryRepository) : Controller
 {
     [HttpGet]
