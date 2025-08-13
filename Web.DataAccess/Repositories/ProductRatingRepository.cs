@@ -2,22 +2,34 @@
 namespace Web.DataAccess.Repositories;
 public class ProductRatingRepository(ApplicationDbContext _context) : IProductRatingRepository
 {
-    public async Task<bool> AddRatingAsync(string userId, int productId, int rating, CancellationToken cancellationToken = default)
+    public async Task AddOrUpdateRatingAsync(string userId, int productId, int rating, CancellationToken cancellationToken = default)
     {
-        if (rating < 0 || rating > 5)
-            return false;
+        var existing = await _context.ProductRatings
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.ProductId == productId && r.UserId == userId, cancellationToken);
 
-        if(userId is null)
-            return false;
-
-        await _context.ProductRatings.AddAsync(new ProductRating
+        if (existing is null)
         {
-            UserId = userId,
-            Rating = rating,
-            ProductId = productId
-        }, cancellationToken);
-        var added=await _context.SaveChangesAsync(cancellationToken);
-        if(added==0)
+            await _context.ProductRatings.AddAsync(new ProductRating
+            {
+                UserId = userId,
+                ProductId = productId,
+                Rating = rating
+            }, cancellationToken);
+        }
+        else
+        {
+            await _context.ProductRatings
+                .Where(r => r.ProductId == productId && r.UserId == userId)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(r => r.Rating, rating)
+                    .SetProperty(r => r.UpdatedAt, DateTime.UtcNow),
+                    cancellationToken);
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<bool> UpdateRatingsForPurchaseAsync(string userId, List<int> productIds, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(userId) || productIds == null || productIds.Count == 0)
