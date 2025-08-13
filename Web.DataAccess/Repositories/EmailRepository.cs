@@ -1,10 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
-using MimeKit;
-using Web.Entites.Consts;
-
-namespace Web.DataAccess.Repositories;
-
+﻿namespace Web.DataAccess.Repositories;
 public class EmailRepository(IOptions<EmailSettings> options) : IEmailRepository
 {
 

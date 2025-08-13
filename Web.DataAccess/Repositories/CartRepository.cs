@@ -1,11 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Logging;
-using Web.Entites.Consts;
-using Web.Entites.ViewModels.CartItemVMs;
-using Web.Entites.ViewModels.CartVMs;
-
-namespace Web.DataAccess.Repositories;
-
+﻿namespace Web.DataAccess.Repositories;
 public class CartRepository(ApplicationDbContext context,
     ILogger<CartRepository> _logger,
     HybridCache _hybridCache) : ICartRepository
