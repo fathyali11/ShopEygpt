@@ -1,5 +1,9 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using Hangfire;
+using Web.Entites.ViewModels.WishlistVMs;
+
+namespace Web.DataAccess.Repositories;
 public class WishlistRepository(ApplicationDbContext _context,
+    IProductRatingRepository _productRatingRepository,
     HybridCache _hybridCache) : IWishlistRepository
 {
     public async Task<bool> ToggelWishlistItemAsync(string userId, AddWishlistItem addWishlistItem, CancellationToken cancellationToken = default)
@@ -23,6 +27,9 @@ public class WishlistRepository(ApplicationDbContext _context,
                 .Where(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId)
                 .ExecuteDeleteAsync(cancellationToken);
             await RemoveCacheKeys(userId, cancellationToken);
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                    repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
+
             return false;
         }
         else
@@ -38,6 +45,8 @@ public class WishlistRepository(ApplicationDbContext _context,
 
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeys(userId, cancellationToken);
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                    repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.AddToWishlist, CancellationToken.None));
             return true;
         }
 
@@ -92,6 +101,8 @@ public class WishlistRepository(ApplicationDbContext _context,
             return -1;
 
         await RemoveCacheKeys(userId, cancellationToken);
+        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ItemId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);
     }

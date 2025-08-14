@@ -1,6 +1,10 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using Hangfire;
+using Web.Entites.ViewModels.WishlistVMs;
+
+namespace Web.DataAccess.Repositories;
 public class OrderRepository(ApplicationDbContext _context,
     IPaymentRepository _paymentRepository,
+    IProductRatingRepository _productRatingRepository,
     HybridCache _hybridCache,
     ILogger<OrderRepository>_logger) : IOrderRepository
 {
@@ -28,17 +32,20 @@ public class OrderRepository(ApplicationDbContext _context,
             FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
         if (cart == null)
             return null;
-
+        var productIds=cart.CartItems.Select(x=>x.ProductId).ToList();
         var order=cart.Adapt<Order>();
         order.UserId = userId;
         order.PaymentIntentId=PaymentIntentId;
         order.StripeSessionId=sessionId;
         order.Status =OrderStatus.Paid;
-
         await _context.Orders.AddAsync(order,cancellationToken);
         _context.Carts.Remove(cart);
         await _context.SaveChangesAsync(cancellationToken);
         await RemoveCacheKeys(userId, cancellationToken);
+
+        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        repo.UpdateRatingsForPurchaseAsync(userId, productIds, cancellationToken));
+
         return order;
 
     }
