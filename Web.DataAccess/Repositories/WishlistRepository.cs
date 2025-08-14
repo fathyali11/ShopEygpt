@@ -1,9 +1,7 @@
 ﻿using Hangfire;
-using Web.Entites.ViewModels.WishlistVMs;
 
 namespace Web.DataAccess.Repositories;
 public class WishlistRepository(ApplicationDbContext _context,
-    IProductRatingRepository _productRatingRepository,
     HybridCache _hybridCache) : IWishlistRepository
 {
     public async Task<bool> ToggelWishlistItemAsync(string userId, AddWishlistItem addWishlistItem, CancellationToken cancellationToken = default)
@@ -94,7 +92,7 @@ public class WishlistRepository(ApplicationDbContext _context,
     public async Task<int> DeleteWishlistItemAsync(string userId,DeleteWishlistItem deleteWishlistItem, CancellationToken cancellationToken = default)
     {
         var result= await _context.WishlistItems
-            .Where(x => x.Id == deleteWishlistItem.ItemId)
+            .Where(x => x.ProductId == deleteWishlistItem.ProductId)
             .ExecuteDeleteAsync(cancellationToken);
 
         if (result == 0)
@@ -102,7 +100,7 @@ public class WishlistRepository(ApplicationDbContext _context,
 
         await RemoveCacheKeys(userId, cancellationToken);
         BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
-        repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ItemId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
+        repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);
     }
