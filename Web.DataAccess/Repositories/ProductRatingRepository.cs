@@ -19,6 +19,17 @@ public class ProductRatingRepository(ApplicationDbContext _context) : IProductRa
         }
         else
         {
+            if(rating==RatingNumbers.RemoveFromWishlist)
+            {
+                var isInCart = await _context.CartItems.AsNoTracking()
+                .AnyAsync(x => x.ProductId == productId && x.Cart.UserId == userId, cancellationToken);
+
+                if (isInCart)
+                    return;
+            }
+            
+
+
             await _context.ProductRatings
                 .Where(r => r.ProductId == productId && r.UserId == userId)
                 .ExecuteUpdateAsync(setters => setters
