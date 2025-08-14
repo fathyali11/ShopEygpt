@@ -2,11 +2,11 @@
     $(document).on('click', '.delete', function (e) {
         e.preventDefault();
 
-        const itemId = $(this).data('item-id');
+        const productId = $(this).data('product-id');
         const wishlistId = $(this).data('wishlist-id');
         const token = $('input[name="__RequestVerificationToken"]').val();
 
-        console.log(`Item ID: ${itemId}, Wishlist ID: ${wishlistId}`);
+        console.log(`Product ID: ${productId}, Wishlist ID: ${wishlistId}`);
         console.log(`CSRF Token: ${token}`);
 
         Swal.fire({
@@ -28,7 +28,7 @@
                     },
                     data: {
                         WishlistId: wishlistId,
-                        ItemId: itemId
+                        ProductId: productId
                     },
                     success: function (response) {
                         if (response.success) {
