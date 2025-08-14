@@ -24,6 +24,7 @@ public static class DependencyInjection
 
     private static void ConfigureHangfire(WebApplicationBuilder builder)
     {
+        builder.Services.AddHangfireServer();
         builder.Services.AddHangfire(config =>
             config.UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
     }
