@@ -1,3 +1,5 @@
+using Hangfire;
+
 namespace WearUp.Web.Infrastructure;
 public static class DependencyInjection
 {
@@ -16,10 +18,15 @@ public static class DependencyInjection
         ConfigureSession(builder);
         ConfigureValidators(builder);
         ConfigureRepositories(builder);
-        
+        ConfigureHangfire(builder);
         return builder;
     }
 
+    private static void ConfigureHangfire(WebApplicationBuilder builder)
+    {
+        builder.Services.AddHangfire(config =>
+            config.UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+    }
     private static void ConfigureSerilog(WebApplicationBuilder builder)
     {
         Log.Logger = new LoggerConfiguration()

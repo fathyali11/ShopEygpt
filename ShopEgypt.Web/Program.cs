@@ -1,3 +1,5 @@
+using Hangfire;
+
 var builder = WebApplication.CreateBuilder(args);
 builder = DependencyInjection.ConfigureServices(builder);
 
@@ -12,6 +14,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseHangfireDashboard("/hangfire");
 app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
