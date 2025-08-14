@@ -1,10 +1,7 @@
 ﻿using Hangfire;
-using Web.Entites.ViewModels.CartItemVMs;
-using Web.Entites.ViewModels.WishlistVMs;
 
 namespace Web.DataAccess.Repositories;
 public class CartRepository(ApplicationDbContext context,
-    IProductRatingRepository _productRatingRepository,
     ILogger<CartRepository> _logger,
     HybridCache _hybridCache) : ICartRepository
 {
@@ -128,6 +125,9 @@ public class CartRepository(ApplicationDbContext context,
                 _context.CartItems.Remove(cartItem.Item);
                 await _context.SaveChangesAsync(cancellationToken);
                 await RemoveCacheKeysAsync(userId, cancellationToken);
+                BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+
                 return (0, 0.0m); 
             }
         }
@@ -148,14 +148,14 @@ public class CartRepository(ApplicationDbContext context,
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeysAsync(userId, cancellationToken);
             BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
-              repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.AddToCart, cancellationToken));
+              repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
 
             return cartItem.Cart.TotalPrice;
         }
         await RemoveCacheKeysAsync(userId, cancellationToken);
         BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
-              repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.AddToCart, cancellationToken));
+              repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
         return 0.0m;
     }

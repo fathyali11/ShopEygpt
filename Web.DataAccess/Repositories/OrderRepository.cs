@@ -1,10 +1,8 @@
 ﻿using Hangfire;
-using Web.Entites.ViewModels.WishlistVMs;
 
 namespace Web.DataAccess.Repositories;
 public class OrderRepository(ApplicationDbContext _context,
     IPaymentRepository _paymentRepository,
-    IProductRatingRepository _productRatingRepository,
     HybridCache _hybridCache,
     ILogger<OrderRepository>_logger) : IOrderRepository
 {
