@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using Hangfire;
+
+namespace Web.DataAccess.Repositories;
 public class CartRepository(ApplicationDbContext context,
     ILogger<CartRepository> _logger,
     HybridCache _hybridCache) : ICartRepository
@@ -18,6 +20,7 @@ public class CartRepository(ApplicationDbContext context,
                 CartItems = []
             };
             await _context.Carts.AddAsync(cart, cancellationToken);
+           
             await _context.SaveChangesAsync(cancellationToken);
         }
 
@@ -44,6 +47,9 @@ public class CartRepository(ApplicationDbContext context,
             cart.TotalPrice += newItem.TotalPrice;
         }
         await _context.SaveChangesAsync(cancellationToken);
+        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        repo.AddOrUpdateRatingAsync(userId, addCartItemVM.ProductId, RatingNumbers.AddToCart, cancellationToken));
+
         await RemoveCacheKeysAsync(userId, cancellationToken);
     }
 
@@ -119,6 +125,9 @@ public class CartRepository(ApplicationDbContext context,
                 _context.CartItems.Remove(cartItem.Item);
                 await _context.SaveChangesAsync(cancellationToken);
                 await RemoveCacheKeysAsync(userId, cancellationToken);
+                BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+
                 return (0, 0.0m); 
             }
         }
@@ -138,9 +147,16 @@ public class CartRepository(ApplicationDbContext context,
             cartItem.Cart!.TotalPrice -= cartItem.Item.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeysAsync(userId, cancellationToken);
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+              repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+
+
             return cartItem.Cart.TotalPrice;
         }
         await RemoveCacheKeysAsync(userId, cancellationToken);
+        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+              repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+
         return 0.0m;
     }
 

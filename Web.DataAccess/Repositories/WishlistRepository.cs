@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using Hangfire;
+
+namespace Web.DataAccess.Repositories;
 public class WishlistRepository(ApplicationDbContext _context,
     HybridCache _hybridCache) : IWishlistRepository
 {
@@ -23,6 +25,9 @@ public class WishlistRepository(ApplicationDbContext _context,
                 .Where(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId)
                 .ExecuteDeleteAsync(cancellationToken);
             await RemoveCacheKeys(userId, cancellationToken);
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                    repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
+
             return false;
         }
         else
@@ -38,6 +43,8 @@ public class WishlistRepository(ApplicationDbContext _context,
 
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeys(userId, cancellationToken);
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                    repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.AddToWishlist, CancellationToken.None));
             return true;
         }
 
@@ -85,13 +92,15 @@ public class WishlistRepository(ApplicationDbContext _context,
     public async Task<int> DeleteWishlistItemAsync(string userId,DeleteWishlistItem deleteWishlistItem, CancellationToken cancellationToken = default)
     {
         var result= await _context.WishlistItems
-            .Where(x => x.Id == deleteWishlistItem.ItemId)
+            .Where(x => x.ProductId == deleteWishlistItem.ProductId)
             .ExecuteDeleteAsync(cancellationToken);
 
         if (result == 0)
             return -1;
 
         await RemoveCacheKeys(userId, cancellationToken);
+        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);
     }
