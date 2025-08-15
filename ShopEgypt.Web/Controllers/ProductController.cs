@@ -36,10 +36,12 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         var products = await _productRepositoy.GetAllProductsSortedByAsync(userId,sortedBy,pageNumber,cancellationToken);
         return View(products);
     }
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> Discover(int id, CancellationToken cancellationToken)
     {
-        var product = await _productRepositoy.GetDiscoverProductByIdAsync(id, cancellationToken);
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var product = await _productRepositoy.GetDiscoverProductByIdAsync(userId!,id, cancellationToken);
         return View(product);
     }
     [HttpGet]

@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using Hangfire;
+
+namespace Web.DataAccess.Repositories;
 public class ProductRepository(ApplicationDbContext context,
     GeneralRepository _generalRepository,
     IValidator<CreateProductVM> _createProductValidator,
@@ -87,13 +89,20 @@ public class ProductRepository(ApplicationDbContext context,
 
 
 
-    public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(string userId,int id, CancellationToken cancellationToken = default)
     {
         var response=await _context.Products
             .AsNoTracking()
             .Where(x=>x.Id==id)
             .ProjectToType<DiscoverProductVM>()
             .FirstOrDefaultAsync(cancellationToken);
+        if(!string.IsNullOrEmpty(userId))
+        {
+            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+            repo.AddOrUpdateRatingAsync(userId, id, RatingNumbers.ViewItem, cancellationToken));
+        }
+        
+
         return response!;
     }
     public async Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default)
