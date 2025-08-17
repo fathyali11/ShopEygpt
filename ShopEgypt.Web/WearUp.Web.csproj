@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="logs\" />
+    <Folder Include="wwwroot\logs\" />
     <Folder Include="wwwroot\mlmodels\" />
   </ItemGroup>
 
