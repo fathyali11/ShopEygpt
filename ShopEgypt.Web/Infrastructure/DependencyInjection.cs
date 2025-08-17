@@ -228,6 +228,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
         builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
         builder.Services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
+        builder.Services.AddScoped<IRecommendationRepository, RecommendationRepository>();
         builder.Services.AddScoped<IProductRecommenderRepository, ProductRecommenderRepository>();
     }
 }

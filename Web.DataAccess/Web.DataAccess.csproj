@@ -24,6 +24,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.7.0" />
+    <PackageReference Include="Microsoft.ML" Version="4.0.2" />
+    <PackageReference Include="Microsoft.ML.Recommender" Version="0.22.2" />
     <PackageReference Include="OneOf" Version="3.0.271" />
     <PackageReference Include="Stripe.net" Version="48.4.0" />
   </ItemGroup>
