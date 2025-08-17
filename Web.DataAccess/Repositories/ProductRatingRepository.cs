@@ -56,4 +56,12 @@ public class ProductRatingRepository(ApplicationDbContext _context) : IProductRa
         return affectedRows > 0;
     }
 
+    public async Task<IEnumerable<ProductRating>> GetAllProductRatingsAsync(CancellationToken cancellationToken=default)
+    {
+        var ratings = await _context.ProductRatings
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return ratings is not null ? ratings : [];
+    }
 }
