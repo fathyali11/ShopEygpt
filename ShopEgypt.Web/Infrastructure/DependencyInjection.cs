@@ -54,6 +54,10 @@ public static class DependencyInjection
         builder.Services.AddOptions<StripeSettings>()
             .Bind(builder.Configuration.GetSection(nameof(StripeSettings)))
             .ValidateOnStart();
+
+        builder.Services.AddOptions<CloudinarySettings>()
+            .Bind(builder.Configuration.GetSection(nameof(CloudinarySettings)))
+            .ValidateOnStart();
     }
 
     private static void ConfigureMappings()
@@ -230,5 +234,6 @@ public static class DependencyInjection
         builder.Services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
         builder.Services.AddScoped<IRecommendationRepository, RecommendationRepository>();
         builder.Services.AddScoped<IProductRecommenderRepository, ProductRecommenderRepository>();
+        builder.Services.AddScoped<CloudinaryRepository>();
     }
 }
