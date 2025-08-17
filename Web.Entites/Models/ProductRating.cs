@@ -6,4 +6,6 @@ public class ProductRating
     public int Rating { get; set; }
     public DateTime CreatedAt { get; set; }=DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+    public Product Product { get; set; } = default!;
+    public ApplicationUser User { get; set; } = default!;
 }

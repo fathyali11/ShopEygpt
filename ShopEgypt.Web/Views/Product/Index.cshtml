@@ -47,7 +47,7 @@
                                asp-action="Edit"
                                asp-route-id="@product.Id">Edit</a>
 
-                            <a href="#" class="btn btn-danger btn-sm delete-btn" data-product-id="@product.Id">Delete</a>
+                                <a href="#" data-controller-name="Product" class="btn btn-danger btn-sm delete-btn" data-id="@product.Id">Delete</a>
 
                             <a class="btn btn-info btn-sm"
                                asp-controller="Product"
@@ -125,5 +125,5 @@
 @section Scripts {
 
     @Html.AntiForgeryToken()
-    <script src="~/products/delete.js" asp-append-version="true"></script>
+    <script src="~/common/js/delete.js" asp-append-version="true"></script>
 }

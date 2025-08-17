@@ -12,4 +12,5 @@ public class Product
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public int TotalStock { get; set; } = 0;
     public int SoldCount { get; set; } = 0;
+    public ICollection<ProductRating> ProductRatings { get; set; } = [];
 }

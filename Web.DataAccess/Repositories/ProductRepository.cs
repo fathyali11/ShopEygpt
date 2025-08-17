@@ -5,7 +5,8 @@ public class ProductRepository(ApplicationDbContext context,
     GeneralRepository _generalRepository,
     IValidator<CreateProductVM> _createProductValidator,
     HybridCache _hybridCache,
-    IWishlistRepository _wishlistRepository) : IProductRepository
+    IWishlistRepository _wishlistRepository,
+    IRecommendationRepository _recommendationRepository) : IProductRepository
 {
     private readonly ApplicationDbContext _context = context;
 
@@ -252,7 +253,23 @@ public class ProductRepository(ApplicationDbContext context,
 
         return PaginatedList<DiscoverProductVM>.Create(response, pageNumber, 6);
     }
+    public async Task<List<DiscoverProductVM>> GetRecommendationsProducts(string userId,CancellationToken cancellationToken=default)
+    {
+        var recommendationsProductIdsAndScores=await _recommendationRepository.GetTopRecommendationsAsync(userId, cancellationToken);
+        string cacheKey = $"{ProductCacheKeys.RecommendationsFullProducts}_{userId}";
 
+        var products=await _hybridCache.GetOrCreateAsync(cacheKey,
+           async _=> await _context.Products
+            .AsNoTracking()
+            .Where(x => recommendationsProductIdsAndScores.Select(x => x.productId).Contains(x.Id))
+            .ProjectToType<DiscoverProductVM>()
+            .ToListAsync(cancellationToken)
+            , tags: [$"{ProductCacheKeys.Recommendations}"]
+            ,cancellationToken:cancellationToken);
+
+        return products;
+
+    }
     public async Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{ProductCacheKeys.AllProductsInCategory}{categoryId}";
@@ -272,6 +289,7 @@ public class ProductRepository(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
         await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
         await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
+        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.Recommendations}"], cancellationToken);
     }
     
 }

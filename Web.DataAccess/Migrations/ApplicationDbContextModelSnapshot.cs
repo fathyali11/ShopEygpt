@@ -250,7 +250,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.CartItem", b =>
@@ -287,7 +287,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.Category", b =>
@@ -358,7 +358,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.OrderItem", b =>
@@ -395,7 +395,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItem", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.Product", b =>
@@ -468,7 +468,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasKey("ProductId", "UserId");
 
-                    b.ToTable("ProductRatings");
+                    b.ToTable("ProductRatings", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.Wishlist", b =>
@@ -488,7 +488,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlist", (string)null);
                 });
 
             modelBuilder.Entity("Web.Entites.Models.WishlistItem", b =>
@@ -522,7 +522,7 @@ namespace Web.DataAccess.Migrations
 
                     b.HasIndex("WishlistId");
 
-                    b.ToTable("WishlistItems");
+                    b.ToTable("WishlistItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

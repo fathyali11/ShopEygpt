@@ -15,4 +15,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Wishlist> Wishlist { get; set; }
     public DbSet<WishlistItem> WishlistItems { get; set; }
     public DbSet<ProductRating> ProductRatings { get; set; }
+    public DbSet<UserRecommendation> UserRecommendations { get; set; }
 }

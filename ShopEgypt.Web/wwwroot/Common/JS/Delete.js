@@ -6,7 +6,8 @@
 
         const token = $('input[name="__RequestVerificationToken"]').val();
 
-        console.log("Product ID:", itemId);
+        console.log("Item ID:", itemId);
+        console.log("Controller Name :", controllerName);
 
         console.log("CSRF Token:", token);
 

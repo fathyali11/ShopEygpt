@@ -47,6 +47,7 @@
     <Folder Include="logs\" />
     <Folder Include="wwwroot\Images\Categories\" />
     <Folder Include="wwwroot\Images\Products\" />
+    <Folder Include="wwwroot\mlmodels\" />
   </ItemGroup>
 
 </Project>
