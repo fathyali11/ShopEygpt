@@ -6,7 +6,8 @@ public class ProductRepository(ApplicationDbContext context,
     IValidator<CreateProductVM> _createProductValidator,
     HybridCache _hybridCache,
     IWishlistRepository _wishlistRepository,
-    IRecommendationRepository _recommendationRepository) : IProductRepository
+    IRecommendationRepository _recommendationRepository,
+    CloudinaryRepository _cloudinaryRepository) : IProductRepository
 {
     private readonly ApplicationDbContext _context = context;
 
@@ -20,7 +21,11 @@ public class ProductRepository(ApplicationDbContext context,
         if (existingProduct is not null)
             return new List<ValidationError> { new("Name", "Product with this name already exists") };
         var product = model.Adapt<Product>();
-        product.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile, SD.ImagePathProducts);
+        var imageUrl = await _cloudinaryRepository.UploadImageAsync(model.ImageFile);
+        if (imageUrl is null)
+            return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+
+        product.ImageName = imageUrl;
         await _context.Products.AddAsync(product, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         await RemoveKeys(cancellationToken);
@@ -36,8 +41,10 @@ public class ProductRepository(ApplicationDbContext context,
 
         if (model.ImageFile is not null)
         {
-            _generalRepository.DeleteImage(oldImageName, SD.ImagePathProducts);
-            productFromDb.ImageName = await _generalRepository.SaveImageAsync(model.ImageFile, SD.ImagePathProducts);
+            var imageUrl = await _cloudinaryRepository.UpdateImageAsync(oldImageName, model.ImageFile);
+            if (imageUrl is null)
+                return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+            productFromDb.ImageName = imageUrl;
         }
         else
             productFromDb.ImageName = oldImageName;
@@ -52,7 +59,9 @@ public class ProductRepository(ApplicationDbContext context,
         var productFromDb = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
         if (productFromDb is null)
             return false;
-        _generalRepository.DeleteImage(productFromDb!.ImageName, SD.ImagePathProducts);
+        var isDeleted = await _cloudinaryRepository.DeleteImageAsync(productFromDb.ImageName);
+        if (!isDeleted)
+            return false;
         _context.Products.Remove(productFromDb);
         var numberOfChanges=await _context.SaveChangesAsync(cancellationToken);
         await RemoveKeys(cancellationToken);

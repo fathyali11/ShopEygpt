@@ -6,7 +6,7 @@
         <div class="product-item image-zoom-effect link-effect">
             <div class="image-holder position-relative">
                 <a asp-action="Discover" asp-controller="Product" asp-route-id="@product.Id">
-                    <img src="~/Images/Products/@product.ImageName" alt="product" class="product-image img-fluid">
+                    <img src="@product.ImageName" alt="product" class="product-image img-fluid">
                 </a>
                 <a href="#" class="btn-icon btn-wishlist toggle-wishlist"
                    data-product-id="@product.Id"

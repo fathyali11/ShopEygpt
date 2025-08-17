@@ -62,21 +62,18 @@ public class CloudinaryRepository
         return null;
     }
 
-    private static string? GetPublicIdFromUrl(string imageUrl)
+    public static string? GetPublicIdFromUrl(string imageUrl)
     {
         try
         {
             var uri = new Uri(imageUrl);
-            var segments = uri.Segments;
-            var lastSegment = segments.Last();
-            var folder = segments[segments.Length - 2].TrimEnd('/');
-
-            var publicId = $"{folder}/{Path.GetFileNameWithoutExtension(lastSegment)}";
-            return publicId;
+            var filename = Path.GetFileNameWithoutExtension(uri.Segments.Last());
+            return filename;
         }
         catch
         {
             return null;
         }
     }
+
 }

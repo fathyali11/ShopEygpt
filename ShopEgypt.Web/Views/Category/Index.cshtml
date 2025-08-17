@@ -34,7 +34,7 @@
                         <td class="text-center align-middle">
                             @if (!string.IsNullOrEmpty(category.ImageName))
                             {
-                                <img src="~/Images/Categories/@category.ImageName" width="100px" height="100px" style="border-radius:3px;" alt="Product Image" class="product-image" />
+                                <img src="@category.ImageName" width="100px" height="100px" style="border-radius:3px;" alt="Product Image" class="product-image" />
                             }
                             else
                             {
