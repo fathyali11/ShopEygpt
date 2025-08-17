@@ -31,7 +31,7 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
-        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
         _logger.LogInformation("set user to customer role");
 
 
