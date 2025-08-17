@@ -264,7 +264,7 @@ public class ProductRepository(ApplicationDbContext context,
             .Where(x => recommendationsProductIdsAndScores.Select(x => x.productId).Contains(x.Id))
             .ProjectToType<DiscoverProductVM>()
             .ToListAsync(cancellationToken)
-            , tags: [$"{ProductCacheKeys.RecommendationsFullProducts}"]
+            , tags: [$"{ProductCacheKeys.Recommendations}"]
             ,cancellationToken:cancellationToken);
 
         return products;
@@ -289,7 +289,7 @@ public class ProductRepository(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
         await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
         await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
-        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.RecommendationsFullProducts}"], cancellationToken);
+        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.Recommendations}"], cancellationToken);
     }
     
 }
