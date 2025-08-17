@@ -8,5 +8,15 @@ internal class ProductRatingConfiguration : IEntityTypeConfiguration<ProductRati
 
         builder.Property(p => p.Rating)
             .IsRequired();
+
+        builder.HasOne(x=>x.Product)
+            .WithMany(x=>x.ProductRatings)
+            .HasForeignKey(x=>x.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x=>x.User)
+            .WithMany(x=>x.ProductRatings)
+            .HasForeignKey(x=>x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
