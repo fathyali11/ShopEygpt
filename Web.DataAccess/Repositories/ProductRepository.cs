@@ -320,6 +320,7 @@ public class ProductRepository(ApplicationDbContext context,
     {
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.RecommendationsTag}"], cancellationToken);
+        await _wishlistRepository.RemoveCacheKeys(cancellationToken);
     }
     
 }
