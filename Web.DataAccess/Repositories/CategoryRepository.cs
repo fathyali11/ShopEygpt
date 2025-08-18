@@ -6,7 +6,8 @@ public class CategoryRepository(ApplicationDbContext context,
     IValidator<CreateCategoryVM> _createCategoryValidator,
     IValidator<EditCategoryVM> _editCategoryValidator,
     HybridCache _hybridCache,
-    CloudinaryRepository _cloudinaryRepository) :ICategoryRepository
+    CloudinaryRepository _cloudinaryRepository,
+    IProductRepository _productRepository) :ICategoryRepository
 {
     private readonly ApplicationDbContext _context= context;
 
@@ -66,7 +67,6 @@ public class CategoryRepository(ApplicationDbContext context,
         category.UpdatedAt= DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
         await RemoveKeys(cancellationToken);
-        await RemoveProductCacheKeys(category.Id,cancellationToken);
         return true;
     }
     public async Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id)
@@ -96,8 +96,9 @@ public class CategoryRepository(ApplicationDbContext context,
             async _ =>
             await _context.Categories
             .ProjectToType<Category>()
-            .ToListAsync(cancellationToken)
-            ,cancellationToken:cancellationToken);
+            .ToListAsync(cancellationToken),
+            tags: [CategoryCacheKeys.CategoriesTag]
+            , cancellationToken:cancellationToken);
         return  PaginatedList<Category>.Create(response,pageNumber,PaginationConstants.DefaultPageSize);
     }
     public async Task<OneOf<PaginatedList<CategoryInHomeVM>,List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll,int pageNumber,CancellationToken cancellationToken=default)
@@ -116,8 +117,8 @@ public class CategoryRepository(ApplicationDbContext context,
 
                 return await query.ToListAsync(cancellationToken);
 
-            }
-            ,
+            },
+            tags: [CategoryCacheKeys.CategoriesTag],
             cancellationToken: cancellationToken
             );
 
@@ -137,6 +138,7 @@ public class CategoryRepository(ApplicationDbContext context,
                 Value = x.Id.ToString()
             })
             .ToListAsync(cancellationToken),
+            tags: [CategoryCacheKeys.CategoriesTag],
             cancellationToken:cancellationToken);
     }
     
@@ -148,15 +150,7 @@ public class CategoryRepository(ApplicationDbContext context,
         await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesInHome, cancellationToken);
         await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesSelectList, cancellationToken);
         await _hybridCache.RemoveAsync(CategoryCacheKeys.LimitedCategoriesInHome, cancellationToken);
+        await _productRepository.RemoveKeys(cancellationToken);
     }
 
-    private async Task RemoveProductCacheKeys(int categoryId,CancellationToken cancellationToken = default)
-    {
-        await _hybridCache.RemoveAsync($"{ProductCacheKeys.AllProductsInCategory}{categoryId}", cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
-    }
 }

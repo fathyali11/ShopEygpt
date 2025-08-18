@@ -316,7 +316,7 @@ public class ProductRepository(ApplicationDbContext context,
             cancellationToken: cancellationToken);
     }
    
-    private async Task RemoveKeys(CancellationToken cancellationToken = default)
+    public async Task RemoveKeys(CancellationToken cancellationToken = default)
     {
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.RecommendationsTag}"], cancellationToken);
