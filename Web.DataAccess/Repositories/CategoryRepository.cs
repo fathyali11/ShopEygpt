@@ -1,9 +1,12 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using System.Net.WebSockets;
+
+namespace Web.DataAccess.Repositories;
 public class CategoryRepository(ApplicationDbContext context,
     GeneralRepository _generalRepository,
     IValidator<CreateCategoryVM> _createCategoryValidator,
     IValidator<EditCategoryVM> _editCategoryValidator,
-    HybridCache _hybridCache) :ICategoryRepository
+    HybridCache _hybridCache,
+    CloudinaryRepository _cloudinaryRepository) :ICategoryRepository
 {
     private readonly ApplicationDbContext _context= context;
 
@@ -18,7 +21,10 @@ public class CategoryRepository(ApplicationDbContext context,
             return new List<ValidationError> { new("Duplicate Category", "Category with this name already exists") };
 
         var category = categoryVM.Adapt<Category>();
-        category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
+        var imageUrl= await _cloudinaryRepository.UploadImageAsync(categoryVM.Image);
+        if(imageUrl is null)
+            return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+        category.ImageName = imageUrl;
         await _context.Categories.AddAsync(category, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         await RemoveKeys(cancellationToken);
@@ -48,8 +54,10 @@ public class CategoryRepository(ApplicationDbContext context,
         categoryVM.Adapt(category);
         if (categoryVM.Image != null)
         {
-            _generalRepository.DeleteImage(categoryImageOldName, SD.ImagePathCategories);
-            category.ImageName = await _generalRepository.SaveImageAsync(categoryVM.Image, SD.ImagePathCategories);
+            var imageUrl=await _cloudinaryRepository.UpdateImageAsync(categoryImageOldName, categoryVM.Image);
+            if(imageUrl is null)
+                return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+            category.ImageName=imageUrl;
         }
         else
         {
@@ -71,7 +79,10 @@ public class CategoryRepository(ApplicationDbContext context,
         if (existingProducts)
             return new List<ValidationError> { new("Cannot Delete", "Category cannot be deleted as it has associated products") };
 
-        _generalRepository.DeleteImage(categoryFromDb.ImageName, SD.ImagePathCategories);
+        var isDeleted = await _cloudinaryRepository.DeleteImageAsync(categoryFromDb.ImageName);
+        if(!isDeleted)
+            return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+
         _context.Categories.Remove(categoryFromDb);
         await _context.SaveChangesAsync();
         await RemoveKeys();

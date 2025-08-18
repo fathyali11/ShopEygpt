@@ -11,8 +11,8 @@
     <div class="col-md-6 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Update Categoru</h4>
-                <form asp-action="Edit" enctype="multipart/form-data">
+                <h4 class="card-title">Update Category</h4>
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <input asp-for="Id" hidden />
                     <input asp-for="ExistImageUrl" hidden />
@@ -41,7 +41,7 @@
             <div class="card-body">
                 @if (!string.IsNullOrEmpty(Model.ExistImageUrl))
                 {
-                    <img id="previewImage" src="~/Images/Categories/@Model.ExistImageUrl" alt="Image Preview" style="max-width: 100%;" />
+                    <img id="previewImage" src="@Model.ExistImageUrl" alt="Image Preview" style="max-width: 100%;" />
                 }
                 else
                 {
