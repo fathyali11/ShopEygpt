@@ -135,7 +135,7 @@ public class CartRepository(ApplicationDbContext context,
                 return (0, 0.0m); 
             }
         }
-        await RemoveCacheKeysAsync(userId, cancellationToken);
+        await RemoveCacheKeysAsync( cancellationToken);
         return (0, 0.0m);
     }
 
