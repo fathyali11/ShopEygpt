@@ -5,12 +5,11 @@ public class RecommendationRepository(IProductRatingRepository _productRatingRep
 {
     public async Task<List<(int productId, float score)>> GetTopRecommendationsAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var ratings = await _productRatingRepository.GetAllProductRatingsAsync(cancellationToken);
-        if (!ratings.Any())
+        var allProducts = await _productRatingRepository.GetAllProductIdsForProductRatingsAsync(cancellationToken);
+        if (!allProducts.Any())
             return [];
 
-        var allProducts = ratings.Select(r => r.ProductId).Distinct();
-        var userProducts = ratings.Where(r => r.UserId == userId).Select(r => r.ProductId).ToHashSet();
+        var userProducts = await _productRatingRepository.GetAllProductIdsForProductRatingsForUserAsync(userId,cancellationToken);
 
         string cacheKey = $"{ProductCacheKeys.ProductIdsAndScore}_{userId}";
 

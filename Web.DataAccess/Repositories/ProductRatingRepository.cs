@@ -58,12 +58,14 @@ public class ProductRatingRepository(ApplicationDbContext _context
         return affectedRows > 0;
     }
 
-    public async Task<IEnumerable<ProductRating>> GetAllProductRatingsAsync(CancellationToken cancellationToken=default)
+    public async Task<IEnumerable<int>> GetAllProductIdsForProductRatingsAsync(CancellationToken cancellationToken=default)
     {
         var cacheKey = ProductRatingCacheKeys.AllRatings;
         var ratings = await _hybridCache.GetOrCreateAsync(cacheKey,
             async _=> await _context.ProductRatings
             .AsNoTracking()
+            .Select(x=>x.ProductId)
+            .Distinct()
             .ToListAsync(cancellationToken),
             tags: [ProductRatingCacheKeys.RatingsTag],
             cancellationToken:cancellationToken);
@@ -71,14 +73,14 @@ public class ProductRatingRepository(ApplicationDbContext _context
         return ratings is not null ? ratings : [];
     }
 
-    public async Task<IEnumerable<ProductRating>> GetAllProductRatingsForUserAsync(string userId,CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<int>> GetAllProductIdsForProductRatingsForUserAsync(string userId,CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{ProductRatingCacheKeys.AllRatings}_{userId}";
         var ratings = await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ => await _context.ProductRatings
             .AsNoTracking()
             .Where(x=>x.UserId==userId)
-            .Distinct()
+            .Select(x => x.ProductId)
             .ToListAsync(cancellationToken),
             tags: [ProductRatingCacheKeys.RatingsTag],
             cancellationToken: cancellationToken);
