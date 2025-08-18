@@ -1,6 +1,7 @@
 ﻿
 namespace Web.DataAccess.Repositories;
-public class ProductRatingRepository(ApplicationDbContext _context) : IProductRatingRepository
+public class ProductRatingRepository(ApplicationDbContext _context
+    ,HybridCache _hybridCache) : IProductRatingRepository
 {
     public async Task AddOrUpdateRatingAsync(string userId, int productId, int rating, CancellationToken cancellationToken = default)
     {
@@ -39,6 +40,7 @@ public class ProductRatingRepository(ApplicationDbContext _context) : IProductRa
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+        await RemoveKeys(cancellationToken);
     }
 
     public async Task<bool> UpdateRatingsForPurchaseAsync(string userId, List<int> productIds, CancellationToken cancellationToken = default)
@@ -52,16 +54,40 @@ public class ProductRatingRepository(ApplicationDbContext _context) : IProductRa
                 .SetProperty(r => r.Rating, RatingNumbers.BuyItem)
                 .SetProperty(r => r.UpdatedAt, DateTime.UtcNow),
                 cancellationToken);
-
+        await RemoveKeys(cancellationToken);
         return affectedRows > 0;
     }
 
     public async Task<IEnumerable<ProductRating>> GetAllProductRatingsAsync(CancellationToken cancellationToken=default)
     {
-        var ratings = await _context.ProductRatings
+        var cacheKey = ProductRatingCacheKeys.AllRatings;
+        var ratings = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.ProductRatings
             .AsNoTracking()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken),
+            tags: [ProductRatingCacheKeys.RatingsTag],
+            cancellationToken:cancellationToken);
 
         return ratings is not null ? ratings : [];
+    }
+
+    public async Task<IEnumerable<ProductRating>> GetAllProductRatingsForUserAsync(string userId,CancellationToken cancellationToken = default)
+    {
+        var cacheKey = $"{ProductRatingCacheKeys.AllRatings}_{userId}";
+        var ratings = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ => await _context.ProductRatings
+            .AsNoTracking()
+            .Where(x=>x.UserId==userId)
+            .Distinct()
+            .ToListAsync(cancellationToken),
+            tags: [ProductRatingCacheKeys.RatingsTag],
+            cancellationToken: cancellationToken);
+
+        return ratings is not null ? ratings : [];
+    }
+
+    private async Task RemoveKeys(CancellationToken cancellationToken)
+    {
+        await _hybridCache.RemoveByTagAsync(ProductRatingCacheKeys.RatingsTag, cancellationToken);
     }
 }
