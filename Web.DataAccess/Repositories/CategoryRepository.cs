@@ -1,6 +1,4 @@
-﻿using System.Net.WebSockets;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class CategoryRepository(ApplicationDbContext context,
     GeneralRepository _generalRepository,
     IValidator<CreateCategoryVM> _createCategoryValidator,
