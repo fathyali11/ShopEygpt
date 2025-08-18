@@ -50,7 +50,7 @@ public class CartRepository(ApplicationDbContext context,
         BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
         repo.AddOrUpdateRatingAsync(userId, addCartItemVM.ProductId, RatingNumbers.AddToCart, cancellationToken));
 
-        await RemoveCacheKeysAsync(userId, cancellationToken);
+        await RemoveCacheKeysAsync( cancellationToken);
     }
 
 
@@ -60,7 +60,9 @@ public class CartRepository(ApplicationDbContext context,
         var count = await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ => await _context.CartItems.
             Where(x => x.Cart.UserId == userId)
-            .CountAsync(cancellationToken), cancellationToken: cancellationToken);
+            .CountAsync(cancellationToken),
+            tags: [CartCacheKeys.CartsTag],
+            cancellationToken: cancellationToken);
         return count;
     }
 
@@ -75,7 +77,9 @@ public class CartRepository(ApplicationDbContext context,
                 UserId= x.UserId,
                 TotalPrice= x.TotalPrice,
                 Items= x.CartItems.ToList()
-            }).FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken),cancellationToken:cancellationToken);
+            }).FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken),
+            tags: [CartCacheKeys.CartsTag],
+            cancellationToken:cancellationToken);
 
         return response is not null ? response :
             new CartResponse { UserId = userId, Items = [] };
@@ -94,10 +98,10 @@ public class CartRepository(ApplicationDbContext context,
             _logger.LogInformation("Cart item count increased to {Count}", cartItem.Item.Count);
             _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
             await _context.SaveChangesAsync(cancellationToken);
-            await RemoveCacheKeysAsync(userId, cancellationToken);
+            await RemoveCacheKeysAsync(cancellationToken);
             return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
         }
-        await RemoveCacheKeysAsync(userId, cancellationToken);
+        await RemoveCacheKeysAsync(cancellationToken);
         return (0,0.0m);
     }
     public async Task<(int, decimal)> DecreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
@@ -117,14 +121,14 @@ public class CartRepository(ApplicationDbContext context,
                 _logger.LogInformation("Cart item count decreased to {Count}", cartItem.Item.Count);
                 _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
                 await _context.SaveChangesAsync(cancellationToken);
-                await RemoveCacheKeysAsync(userId, cancellationToken);
+                await RemoveCacheKeysAsync( cancellationToken);
                 return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
             }
             else
             {
                 _context.CartItems.Remove(cartItem.Item);
                 await _context.SaveChangesAsync(cancellationToken);
-                await RemoveCacheKeysAsync(userId, cancellationToken);
+                await RemoveCacheKeysAsync( cancellationToken);
                 BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
                 repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
@@ -146,23 +150,22 @@ public class CartRepository(ApplicationDbContext context,
             _context.CartItems.Remove(cartItem.Item);
             cartItem.Cart!.TotalPrice -= cartItem.Item.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);
-            await RemoveCacheKeysAsync(userId, cancellationToken);
+            await RemoveCacheKeysAsync(cancellationToken);
             BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
               repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
 
             return cartItem.Cart.TotalPrice;
         }
-        await RemoveCacheKeysAsync(userId, cancellationToken);
+        await RemoveCacheKeysAsync(cancellationToken);
         BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
               repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
         return 0.0m;
     }
 
-    private async Task RemoveCacheKeysAsync(string userId,CancellationToken cancellationToken = default)
+    public async Task RemoveCacheKeysAsync(CancellationToken cancellationToken = default)
     {
-        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItemCount}_{userId}", cancellationToken);
-        await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItems}_{userId}", cancellationToken);
+        await _hybridCache.RemoveByTagAsync(CartCacheKeys.CartsTag, cancellationToken);
     }
 }

@@ -6,6 +6,7 @@ public class ProductRepository(ApplicationDbContext context,
     IValidator<CreateProductVM> _createProductValidator,
     HybridCache _hybridCache,
     IWishlistRepository _wishlistRepository,
+    ICartRepository _cartRepository,
     IRecommendationRepository _recommendationRepository,
     CloudinaryRepository _cloudinaryRepository) : IProductRepository
 {
@@ -321,6 +322,7 @@ public class ProductRepository(ApplicationDbContext context,
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.RecommendationsTag}"], cancellationToken);
         await _wishlistRepository.RemoveCacheKeys(cancellationToken);
+        await _cartRepository.RemoveCacheKeysAsync(cancellationToken);
     }
     
 }
