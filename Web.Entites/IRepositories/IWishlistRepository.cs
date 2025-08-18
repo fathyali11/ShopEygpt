@@ -5,4 +5,5 @@ public interface IWishlistRepository
     Task<WishlistResponse> GetWishlistItems(string userId, CancellationToken cancellationToken = default);
     Task<int> GetWishlistItemCountAsync(string userId, CancellationToken cancellationToken = default);
     Task<int> DeleteWishlistItemAsync(string userId, DeleteWishlistItem deleteWishlistItem, CancellationToken cancellationToken = default);
+    Task RemoveCacheKeys(CancellationToken cancellationToken = default);
 }

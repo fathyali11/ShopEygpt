@@ -24,7 +24,7 @@ public class WishlistRepository(ApplicationDbContext _context,
             await _context.WishlistItems
                 .Where(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId)
                 .ExecuteDeleteAsync(cancellationToken);
-            await RemoveCacheKeys(userId, cancellationToken);
+            await RemoveCacheKeys(cancellationToken);
             BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
                     repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
@@ -42,7 +42,7 @@ public class WishlistRepository(ApplicationDbContext _context,
             }, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
-            await RemoveCacheKeys(userId, cancellationToken);
+            await RemoveCacheKeys(cancellationToken);
             BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
                     repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.AddToWishlist, CancellationToken.None));
             return true;
@@ -70,7 +70,9 @@ public class WishlistRepository(ApplicationDbContext _context,
                         Price = wl.Price
                     }).ToList()
                         
-                    )).FirstOrDefaultAsync(cancellationToken),cancellationToken:cancellationToken
+                    )).FirstOrDefaultAsync(cancellationToken),
+                    tags: [WishlistCacheKeys.WishlistsTag]
+                    , cancellationToken:cancellationToken
             );
 
 
@@ -85,6 +87,7 @@ public class WishlistRepository(ApplicationDbContext _context,
             async _ => await _context.WishlistItems
                 .Where(wi => wi.Wishlist.UserId == userId)
                 .CountAsync(cancellationToken),
+            tags: [WishlistCacheKeys.WishlistsTag],
             cancellationToken: cancellationToken);
     }
 
@@ -98,17 +101,16 @@ public class WishlistRepository(ApplicationDbContext _context,
         if (result == 0)
             return -1;
 
-        await RemoveCacheKeys(userId, cancellationToken);
+        await RemoveCacheKeys(cancellationToken);
         BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
         repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);
     }
 
-    private async Task RemoveCacheKeys(string userId,CancellationToken cancellationToken=default)
+    public async Task RemoveCacheKeys(CancellationToken cancellationToken=default)
     {
-        await _hybridCache.RemoveAsync($"{WishlistCacheKeys.WishlistItems}_{userId}");
-        await _hybridCache.RemoveAsync($"{WishlistCacheKeys.WishlistItemCount}_{userId}");
+        await _hybridCache.RemoveByTagAsync(WishlistCacheKeys.WishlistsTag,cancellationToken);
     }
 
 }
