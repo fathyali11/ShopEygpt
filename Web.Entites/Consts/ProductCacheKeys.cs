@@ -8,6 +8,7 @@ public static class ProductCacheKeys
     public const string AllProductsAdmin = nameof(AllProductsAdmin);
     public const string AllProductsSortedBy = nameof(AllProductsSortedBy);
     public const string RecommendationsFullProducts = nameof(RecommendationsFullProducts);
-    public const string Recommendations = nameof(Recommendations);
+    public const string RecommendationsTag = nameof(RecommendationsTag);
+    public const string AllProductsTag = nameof(AllProductsTag);
     public const string ProductIdsAndScore = nameof(ProductIdsAndScore);
 }

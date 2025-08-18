@@ -26,7 +26,7 @@ public class RecommendationRepository(IProductRatingRepository _productRatingRep
 
                 return await Task.FromResult(result);
             },
-            tags: [$"{ProductCacheKeys.Recommendations}"],
+            tags: [$"{ProductCacheKeys.RecommendationsTag}"],
             
             cancellationToken:cancellationToken
         );
