@@ -13,4 +13,5 @@ public class Product
     public int TotalStock { get; set; } = 0;
     public int SoldCount { get; set; } = 0;
     public ICollection<ProductRating> ProductRatings { get; set; } = [];
+    public ICollection<UserRecommendation> UserRecommendations { get; set; } = [];
 }
