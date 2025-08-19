@@ -7,4 +7,6 @@ public interface ICartRepository
     Task<(int, decimal)> IncreaseAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
     Task<(int, decimal)> DecreaseAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
     Task<decimal> DeleteCartItemAsync(string userId, Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default);
+
+    Task RemoveCacheKeysAsync(CancellationToken cancellationToken = default);
 }

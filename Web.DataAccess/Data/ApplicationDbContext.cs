@@ -12,6 +12,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems {  get; set; }
     public DbSet<Wishlist> Wishlist { get; set; }
     public DbSet<WishlistItem> WishlistItems { get; set; }
     public DbSet<ProductRating> ProductRatings { get; set; }

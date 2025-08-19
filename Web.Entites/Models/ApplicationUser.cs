@@ -4,4 +4,6 @@ public class ApplicationUser:IdentityUser
     public string FirstName { get; set; } = string.Empty;
     public string LastName {  get; set; }= string.Empty;
     public ICollection<ProductRating> ProductRatings { get; set; } = [];
+    public ICollection<UserRecommendation> UserRecommendations { get; set; } = [];
+    public ICollection<Order> Orders { get; set; } = [];
 }

@@ -21,6 +21,11 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnType("decimal(18,2)")
             .HasDefaultValue(0.0m);
 
+        builder.HasOne(x=>x.User)
+            .WithMany(x=>x.Orders)
+            .HasForeignKey(x=>x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(c => c.OrderItems)
             .WithOne(c => c.Order)
             .HasForeignKey(p => p.OrderId)

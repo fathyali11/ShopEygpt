@@ -6,6 +6,7 @@ public class ProductRepository(ApplicationDbContext context,
     IValidator<CreateProductVM> _createProductValidator,
     HybridCache _hybridCache,
     IWishlistRepository _wishlistRepository,
+    ICartRepository _cartRepository,
     IRecommendationRepository _recommendationRepository,
     CloudinaryRepository _cloudinaryRepository) : IProductRepository
 {
@@ -75,6 +76,7 @@ public class ProductRepository(ApplicationDbContext context,
             async _ => await _context.Products
             .ProjectToType<ProductReponseForAdmin>()
             .ToListAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken: cancellationToken);
 
         return PaginatedList<ProductReponseForAdmin>.Create(products, pageNumber, PaginationConstants.DefaultPageSize);
@@ -82,18 +84,27 @@ public class ProductRepository(ApplicationDbContext context,
     }
     public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var product = await _context.Products
+        var cacheKey = $"{ProductCacheKeys.AllProductsAdmin}_{id}";
+        var product = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.Products
             .Where(x => x.Id == id)
             .ProjectToType<EditProductVM>()
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken: cancellationToken
+            );
         return product is not null ? product : null;
     }
     public async Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var product = await _context.Products
+        var cacheKey = $"{ProductCacheKeys.AllProductsAdmin}_{id}";
+        var product = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.Products
             .Where(x => x.Id == id)
             .ProjectToType<ProductReponseForAdmin>()
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken:cancellationToken);
         return product is not null ? product : null;
     }
 
@@ -101,11 +112,15 @@ public class ProductRepository(ApplicationDbContext context,
 
     public async Task<DiscoverProductVM> GetDiscoverProductByIdAsync(string userId,int id, CancellationToken cancellationToken = default)
     {
-        var response=await _context.Products
+        var cacheKey = $"{ProductCacheKeys.DiscoverProducts}_{userId}_{id}";
+        var response=await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.Products
             .AsNoTracking()
-            .Where(x=>x.Id==id)
+            .Where(x => x.Id == id)
             .ProjectToType<DiscoverProductVM>()
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken:cancellationToken);
         if(!string.IsNullOrEmpty(userId))
         {
             BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
@@ -117,11 +132,16 @@ public class ProductRepository(ApplicationDbContext context,
     }
     public async Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var response = await _context.Products
+        var cacheKey = $"{ProductCacheKeys.DiscoverProducts}_{id}";
+        var response = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _=> await _context.Products
             .AsNoTracking()
             .Where(x => x.Id == id)
-            .ProjectToType <NewArrivalProductsVM>()
-            .FirstOrDefaultAsync(cancellationToken);
+            .ProjectToType<NewArrivalProductsVM>()
+            .FirstOrDefaultAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken:cancellationToken
+            );
         return response!;
     }
     public async Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(string userId, CancellationToken cancellationToken = default)
@@ -137,6 +157,7 @@ public class ProductRepository(ApplicationDbContext context,
                         .ProjectToType<NewArrivalProductsVM>()
                         .ToListAsync(cancellationToken);
             },
+            tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken:cancellationToken
             );
 
@@ -171,6 +192,7 @@ public class ProductRepository(ApplicationDbContext context,
             .Take(10)
             .ProjectToType<BestSellingProductVM>()
             .ToListAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken: cancellationToken);
 
         if (!string.IsNullOrEmpty(userId))
@@ -199,7 +221,9 @@ public class ProductRepository(ApplicationDbContext context,
             async _ => await _context.Products
             .AsNoTracking()
             .ProjectToType<DiscoverProductVM>()
-            .ToListAsync(cancellationToken), cancellationToken: cancellationToken);
+            .ToListAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken: cancellationToken);
         if (!string.IsNullOrEmpty(userId))
         {
             var wishlist = await _wishlistRepository.GetWishlistItems(userId, cancellationToken);
@@ -236,7 +260,9 @@ public class ProductRepository(ApplicationDbContext context,
             return await query
                 .ProjectToType<DiscoverProductVM>()
                 .ToListAsync(cancellationToken);
-        }, cancellationToken: cancellationToken);
+        },
+        tags: [ProductCacheKeys.AllProductsTag],
+        cancellationToken: cancellationToken);
 
 
         if(!string.IsNullOrEmpty(userId))
@@ -273,7 +299,7 @@ public class ProductRepository(ApplicationDbContext context,
             .Where(x => recommendationsProductIdsAndScores.Select(x => x.productId).Contains(x.Id))
             .ProjectToType<DiscoverProductVM>()
             .ToListAsync(cancellationToken)
-            , tags: [$"{ProductCacheKeys.Recommendations}"]
+            , tags: [$"{ProductCacheKeys.RecommendationsTag}"]
             ,cancellationToken:cancellationToken);
 
         return products;
@@ -287,18 +313,16 @@ public class ProductRepository(ApplicationDbContext context,
             .Where(x => x.CategoryId == categoryId)
             .ProjectToType<DiscoverProductVM>()
             .ToListAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken: cancellationToken);
     }
    
-    private async Task RemoveKeys(CancellationToken cancellationToken = default)
+    public async Task RemoveKeys(CancellationToken cancellationToken = default)
     {
-        await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsInCategory, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.NewArrivalProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.BestSellingProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.DiscoverProducts, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsAdmin, cancellationToken);
-        await _hybridCache.RemoveAsync(ProductCacheKeys.AllProductsSortedBy, cancellationToken);
-        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.Recommendations}"], cancellationToken);
+        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
+        await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.RecommendationsTag}"], cancellationToken);
+        await _wishlistRepository.RemoveCacheKeys(cancellationToken);
+        await _cartRepository.RemoveCacheKeysAsync(cancellationToken);
     }
     
 }
