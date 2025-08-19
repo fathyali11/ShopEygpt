@@ -6,14 +6,16 @@
     <div class="row">
         <div class="col-md-8 cart">
             <div class="title">
-                <div class="row">
+                <div class="row d-flex align-items-center justify-content-between">
                     <div class="col"><h4><b>Shopping Cart</b></h4></div>
-                    <div class="col align-self-center text-right text-muted">
-                        @if (Model.Items.Any())
-                        {
+                    @if (Model.Items.Any())
+                    {
+                        <div class="col d-flex justify-content-center">
                             <span>@Model.Items.Count() items</span>
-                        }
-                    </div>
+                        </div>
+                        <div class="col"><i data-cart-id="@Model.Id" class="bi bi-trash3-fill clear"></i></div>
+                    }
+
                 </div>
             </div>
             @if (Model.Items.Any())
@@ -83,5 +85,6 @@
         <script src="~/carts/js/addtocart.js" asp-append-version="true"></script>
         <script src="~/carts/js/decrease.js"  asp-append-version="true"></script>
         <script src="~/carts/js/increase.js"  asp-append-version="true"></script>
-        <script src="~/carts/js/delete.js"    asp-append-version="true"></script>
+        <script src="~/carts/js/delete.js" asp-append-version="true"></script>
+        <script src="~/carts/js/clear.js" asp-append-version="true"></script>
 }
