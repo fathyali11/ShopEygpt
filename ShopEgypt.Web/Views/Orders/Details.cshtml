@@ -1,4 +1,4 @@
-﻿@model Order
+﻿@model OrderDetailsReponseVM
 
 @{
     ViewData["Title"] = "Order Details";
@@ -58,7 +58,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.ImageName))
                                 {
-                                    <img src="~/Images/Products/@item.ImageName" width="60" height="60" class="rounded shadow-sm" />
+                                    <img src="@item.ImageName" width="60" height="60" class="rounded shadow-sm" />
                                 }
                                 else
                                 {

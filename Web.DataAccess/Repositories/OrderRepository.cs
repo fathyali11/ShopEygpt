@@ -18,7 +18,9 @@ public class OrderRepository(ApplicationDbContext _context,
                 x.User.UserName!,
                 x.Status
                 ))
-            .ToListAsync(cancellationToken),cancellationToken:cancellationToken);
+            .ToListAsync(cancellationToken),
+            tags: [OrderCacheKeys.OrdersTag]
+            , cancellationToken:cancellationToken);
 
         var response = PaginatedList<OrderResponseVM>.Create(orders, pageNumber, PaginationConstants.DefaultPageSize);
         return response;
@@ -47,13 +49,18 @@ public class OrderRepository(ApplicationDbContext _context,
         return order;
 
     }
-    public async Task<Order> GetOrderDetailsAsync(int id,CancellationToken cancellationToken=default)
+    public async Task<OrderDetailsReponseVM> GetOrderDetailsAsync(int id,CancellationToken cancellationToken=default)
     {
-        var order=await _context.Orders
-            .Include(x=>x.OrderItems)
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        string cacheKey = $"{OrderCacheKeys.OrderDetails}_{id}";
+        var orderDetails = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ => await _context.Orders
+            .AsNoTracking()
+            .ProjectToType<OrderDetailsReponseVM>()
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            , tags: [OrderCacheKeys.OrdersTag]
+            , cancellationToken: cancellationToken);
 
-        return order!;
+        return orderDetails!;
     }
 
     public async Task<bool> CancelOrderAsync(string userId, int id, CancellationToken cancellationToken=default)
@@ -107,7 +114,7 @@ public class OrderRepository(ApplicationDbContext _context,
     }
     private async Task RemoveCacheKeys(string userId,CancellationToken cancellationToken)
     {
-        await _hybridCache.RemoveAsync(OrderCacheKeys.AllOrders, cancellationToken);
+        await _hybridCache.RemoveByTagAsync(OrderCacheKeys.OrdersTag, cancellationToken);
         await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItemCount}_{userId}", cancellationToken);
         await _hybridCache.RemoveAsync($"{CartCacheKeys.CartItems}_{userId}", cancellationToken);
     }
