@@ -60,6 +60,16 @@ public class CartController(ICartRepository _cartRepository) : Controller
 
     }
 
-
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Clear(int cartId, CancellationToken cancellationToken = default)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        await _cartRepository.ClearCartAsync(userId!, cartId, cancellationToken);
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return Json(new { success = true, message = "The cart was cleared successfully!" });
+        else
+            return RedirectToAction("Index", "Home");
+    }
 
 }

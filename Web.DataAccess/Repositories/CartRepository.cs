@@ -164,6 +164,22 @@ public class CartRepository(ApplicationDbContext context,
         return 0.0m;
     }
 
+    public async Task ClearCartAsync(string userId, int cartId, CancellationToken cancellationToken = default)
+    {
+        var cart = await _context.Carts
+            .FirstOrDefaultAsync(c => c.Id == cartId && c.UserId == userId, cancellationToken);
+
+        if (cart is not null)
+        {
+            cart.TotalPrice = 0.0m;
+            await _context.CartItems
+                .Where(ci => ci.CartId == cartId && ci.Cart.UserId == userId)
+                .ExecuteDeleteAsync(cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+            await RemoveCacheKeysAsync(cancellationToken);
+        }
+    }
     public async Task RemoveCacheKeysAsync(CancellationToken cancellationToken = default)
     {
         await _hybridCache.RemoveByTagAsync(CartCacheKeys.CartsTag, cancellationToken);
