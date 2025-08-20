@@ -220,9 +220,11 @@
 
                     <!-- Search -->
                     <li class="nav-item mx-2">
-                        <a href="#search" class="nav-link" aria-label="Search">
-                            <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#search"></use></svg>
-                        </a>
+                        <form asp-controller="Product" asp-action="Search" method="get" class="d-flex">
+                            <input type="text" name="searchTerm" class="form-control me-2" placeholder="Search..." />
+                            <button type="submit" class="btn btn-outline-success">Search</button>
+                        </form>
+
                     </li>
                 </ul>
 

@@ -53,6 +53,14 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     }
 
     [HttpGet]
+    // create action for search products
+    public async Task<IActionResult> Search(string searchTerm, CancellationToken cancellationToken)
+    {
+        var products = await _productRepositoy.SearchInProductsAsync(searchTerm, cancellationToken);
+        return View("AllProductsBasedOnSort", products);
+    }
+
+    [HttpGet]
     public IActionResult Create()
     {
         return View();

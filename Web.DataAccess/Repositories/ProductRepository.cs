@@ -317,6 +317,20 @@ public class ProductRepository(ApplicationDbContext context,
             cancellationToken: cancellationToken);
     }
    
+    public async Task<PaginatedList<DiscoverProductVM>> SearchInProductsAsync(string query, CancellationToken cancellationToken = default)
+    {
+
+        var cacheKey = $"{ProductCacheKeys.SearchInProducts}_{query}";
+        var products = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ => await _context.Products
+            .AsNoTracking()
+            .Where(x => x.Name.Contains(query) || x.Description.Contains(query))
+            .ProjectToType<DiscoverProductVM>()
+            .ToListAsync(cancellationToken),
+            tags: [ProductCacheKeys.AllProductsTag],
+            cancellationToken: cancellationToken);
+        return PaginatedList<DiscoverProductVM>.Create(products, 1, PaginationConstants.DefaultPageSize);
+    }
     public async Task RemoveKeys(CancellationToken cancellationToken = default)
     {
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
