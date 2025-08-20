@@ -56,7 +56,7 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
     // create action for search products
     public async Task<IActionResult> Search(string searchTerm, CancellationToken cancellationToken)
     {
-        var products = await _productRepositoy.SearchInProductsAsync(searchTerm, cancellationToken);
+        var products = await _productRepositoy.SearchInProductsInHomeAsync(searchTerm, cancellationToken);
         return View("AllProductsBasedOnSort", products);
     }
 

@@ -317,7 +317,7 @@ public class ProductRepository(ApplicationDbContext context,
             cancellationToken: cancellationToken);
     }
    
-    public async Task<PaginatedList<DiscoverProductVM>> SearchInProductsAsync(string query, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<DiscoverProductVM>> SearchInProductsInHomeAsync(string query, CancellationToken cancellationToken = default)
     {
 
         var cacheKey = $"{ProductCacheKeys.SearchInProducts}_{query}";
