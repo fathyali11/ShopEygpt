@@ -107,7 +107,14 @@ public class WishlistRepository(ApplicationDbContext _context,
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);
     }
-
+    
+    public async Task ClearWishlistAsync(int wishlistId,string userId, CancellationToken cancellationToken = default)
+    {
+        await _context.WishlistItems
+            .Where(x =>x.Wishlist.UserId == userId&&x.WishlistId==wishlistId)
+            .ExecuteDeleteAsync(cancellationToken);
+        await RemoveCacheKeys(cancellationToken);
+    }
     public async Task RemoveCacheKeys(CancellationToken cancellationToken=default)
     {
         await _hybridCache.RemoveByTagAsync(WishlistCacheKeys.WishlistsTag,cancellationToken);

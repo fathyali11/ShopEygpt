@@ -45,5 +45,16 @@ public class WishlistsController(IWishlistRepository _wishlistRepository) : Cont
 
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Clear(int wishlistId,CancellationToken cancellationToken = default)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        await _wishlistRepository.ClearWishlistAsync(wishlistId,userId!, cancellationToken);
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return Json(new { success = true, message = "The wishlist was cleared successfully!" });
+        else
+            return RedirectToAction("Index", "Home");
+    }
 
 }
