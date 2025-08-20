@@ -13,9 +13,13 @@
                         <div class="col d-flex justify-content-center">
                             <span>@Model.Items.Count() items</span>
                         </div>
-                        <div class="col"><i data-cart-id="@Model.Id" class="bi bi-trash3-fill clear"></i></div>
+                        <div class="col d-flex justify-content-center"><i data-cart-id="@Model.Id" class="bi bi-trash3-fill clear"></i></div>
                     }
-
+                    <div class="col d-flex justify-content-center">
+                        <a asp-action="Index" asp-controller="Wishlists">
+                            <i class="bi bi-house-heart-fill fs-5"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
             @if (Model.Items.Any())
