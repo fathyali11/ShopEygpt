@@ -90,76 +90,17 @@
         </table>
 
         <!-- ✅ Pagination Section -->
-        @{
-            var totalPages = Model.TotalPages;
-            var currentPage = Model.PageIndex;
-            int maxVisiblePages = 5;
-            int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
-            int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
-            if (endPage - startPage + 1 < maxVisiblePages)
-            {
-                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
-            }
-        }
-
-        @if (Model.TotalPages > 1)
+        @await Html.PartialAsync("_PaginationPartial", new PaginationVM
         {
-            <nav aria-label="Pagination" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    @if (Model.HasPreviousPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-pageNumber="@(Model.PageIndex - 1)"
-                               asp-route-searchTerm="@ViewData["SearchTerm"]"
-                               asp-route-sortField="@ViewData["SortField"]"
-                               asp-route-sortOrder="@ViewData["SortOrder"]">Previous</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                    }
-
-                    @for (int i = startPage; i <= endPage; i++)
-                    {
-                        if (i == Model.PageIndex)
-                        {
-                            <li class="page-item active"><span class="page-link">@i</span></li>
-                        }
-                        else
-                        {
-                            <li class="page-item">
-                                <a class="page-link"
-                                   asp-action="Index"
-                                   asp-route-pageNumber="@i"
-                                   asp-route-searchTerm="@ViewData["SearchTerm"]"
-                                   asp-route-sortField="@ViewData["SortField"]"
-                                   asp-route-sortOrder="@ViewData["SortOrder"]">@i</a>
-                            </li>
-                        }
-                    }
-
-                    @if (Model.HasNextPage)
-                    {
-                        <li class="page-item">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-pageNumber="@(Model.PageIndex + 1)"
-                               asp-route-searchTerm="@ViewData["SearchTerm"]"
-                               asp-route-sortField="@ViewData["SortField"]"
-                               asp-route-sortOrder="@ViewData["SortOrder"]">Next</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="page-item disabled"><span class="page-link">Next</span></li>
-                    }
-                </ul>
-            </nav>
-        }
-
+            CurrentPage = Model.PageIndex,
+                TotalPages = Model.TotalPages,
+                HasPreviousPage = Model.HasPreviousPage,
+                HasNextPage = Model.HasNextPage,
+                SearchTerm = ViewData["SearchTerm"]?.ToString(),
+                SortField = ViewData["SortField"]?.ToString(),
+                SortOrder = ViewData["SortOrder"]?.ToString(),
+                Controller = "Orders"
+                })
     </section>
 </div>
 

@@ -1,0 +1,72 @@
+﻿@model PaginationVM
+
+@{
+    int maxVisiblePages = 5;
+    int startPage = Math.Max(1, Model.CurrentPage - maxVisiblePages / 2);
+    int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+    if (endPage - startPage + 1 < maxVisiblePages)
+    {
+        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+    }
+}
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="@Model.Action"
+                       asp-controller="@Model.Controller"
+                       asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-sortField="@Model.SortField"
+                       asp-route-sortOrder="@Model.SortOrder">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <li class="page-item active"><span class="page-link">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-action="@Model.Action"
+                           asp-controller="@Model.Controller"
+                           asp-route-pageNumber="@i"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-sortField="@Model.SortField"
+                           asp-route-sortOrder="@Model.SortOrder">@i</a>
+                    </li>
+                }
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="@Model.Action"
+                       asp-controller="@Model.Controller"
+                       asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-sortField="@Model.SortField"
+                       asp-route-sortOrder="@Model.SortOrder">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            }
+        </ul>
+    </nav>
+}
