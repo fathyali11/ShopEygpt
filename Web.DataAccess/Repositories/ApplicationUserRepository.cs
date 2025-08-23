@@ -60,6 +60,14 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return isUpdated>0?true:false;
     }
 
+    public async Task<bool> DeleteUserAsync(string id,CancellationToken cancellationToken=default)
+    {
+        var isDeleted= await _context.Users
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+        await RemoveCacheKey(cancellationToken);
+        return isDeleted>0?true:false;
+    }
 
     private async Task RemoveCacheKey(CancellationToken cancellationToken)
     {

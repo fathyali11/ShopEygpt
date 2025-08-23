@@ -27,6 +27,16 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(string id,CancellationToken cancellationToken)
+        {
+            var isDelete=await _applicaionUserRepository.DeleteUserAsync(id,cancellationToken);
+            return isDelete ?
+                Json(new { success = true, message = "user deleted successfully" }) :
+                Json(new { success = false, message = "user doesn't delete" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegisterVM model,CancellationToken cancellationToken)
         {
             var result=await _authRepository.RegisterAsync(model, cancellationToken);
