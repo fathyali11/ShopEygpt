@@ -18,7 +18,13 @@
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Toggle(string id,CancellationToken cancellationToken)
-    {
+        {
+            var isUpdate=await _applicaionUserRepository.ToggleUserAsync(id,cancellationToken);
+            return isUpdate ?
+                Json(new { success = true, message = "user toggled successfully" }) :
+                Json(new { success = false, message = "user doesn't toggle" });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegisterVM model,CancellationToken cancellationToken)

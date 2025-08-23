@@ -4,14 +4,14 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
 {
 
     public async Task<PaginatedList<UserResponseForAdmin>> GetAllUsersAsync(FilterRequest request, CancellationToken cancellationToken=default)
-	{
+    {
         var cacheKey = $"{UserCacheKeys.AllUsersForAdmin}" +
             $"_{request.SearchTerm}_{request.SortField}" +
             $"_{request.SortOrder}_{request.PageNumber}";
 
         var users=await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ =>
-    {
+            {
                 var query =_context.Users.AsNoTracking().
                 ProjectToType<UserResponseForAdmin>();
 
@@ -50,16 +50,14 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
 
         return PaginatedList<UserResponseForAdmin>.Create(users, request.PageNumber, PaginationConstants.DefaultPageSize);
     }
-    public void Update(ApplicationUser user)
+
+    public async Task<bool> ToggleUserAsync(string id,CancellationToken cancellationToken=default)
     {
-        var oldUser = _context.ApplicationUsers.FirstOrDefault(x => x.Id == user.Id);
-        if (oldUser != null)
-        {
-            //oldUser.Name = user.Name;
-            //oldUser.Email = user.Email;
-            //oldUser.Phone = user.Phone;
-            //oldUser.City = user.City;
-        }
+        var isUpdated= await _context.Users
+            .Where(x => x.Id == id)
+            .ExecuteUpdateAsync(setter => setter.SetProperty(x => x.IsActive, x => !x.IsActive));
+
+        return isUpdated>0?true:false;
     }
 
 }
