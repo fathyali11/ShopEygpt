@@ -11,4 +11,6 @@ public static class ProductCacheKeys
     public const string RecommendationsTag = nameof(RecommendationsTag);
     public const string AllProductsTag = nameof(AllProductsTag);
     public const string ProductIdsAndScore = nameof(ProductIdsAndScore);
+    public const string SearchInProducts = nameof(SearchInProducts);
+
 }

@@ -7,7 +7,7 @@ public interface ICategoryRepository
     Task<OneOf<List<ValidationError>, bool>> DeleteCategoryAsync(int id);
 
 
-    Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken = default);
+    Task<PaginatedList<Category>> GetAllCategoriesAsync(FilterRequest request, CancellationToken cancellationToken = default);
     Task<OneOf<PaginatedList<CategoryInHomeVM>, List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll, int pageNumber, CancellationToken cancellationToken = default);
     Task<IEnumerable<SelectListItem>> GetAllCategoriesSelectListAsync(CancellationToken cancellationToken=default);
     

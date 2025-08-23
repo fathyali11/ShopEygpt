@@ -2,9 +2,14 @@
 public class CategoryController(ICategoryRepository _categoryRepository) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(FilterRequest request, CancellationToken cancellationToken)
     {
-        var response = await _categoryRepository.GetAllCategoriesAsync(pageNumber,cancellationToken);
+        var response = await _categoryRepository.GetAllCategoriesAsync(request,cancellationToken);
+
+        ViewData["SearchTerm"] = request.SearchTerm;
+        ViewData["SortField"] = request.SortField;
+        ViewData["SortOrder"] = request.SortOrder;
+
         return View(response);
     }
     [HttpGet]

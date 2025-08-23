@@ -2,7 +2,7 @@
 public interface IProductRepository
 {
     Task<OneOf<List<ValidationError>, bool>> AddProductAsync(CreateProductVM model, CancellationToken cancellationToken = default);
-    Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(int pageNumber, CancellationToken cancellationToken = default);
+    Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(FilterRequest request, CancellationToken cancellationToken = default);
     Task<DiscoverProductVM> GetDiscoverProductByIdAsync(string userId, int id, CancellationToken cancellationToken = default);
     Task<NewArrivalProductsVM> GetNewArrivalProductByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<List<NewArrivalProductsVM>> GetNewArrivalProductsAsync(string userId, CancellationToken cancellationToken = default);
@@ -14,6 +14,8 @@ public interface IProductRepository
     Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);
     Task<bool> DeleteProductAsync(int id, CancellationToken cancellationToken = default);
+    Task<PaginatedList<DiscoverProductVM>> SearchInProductsInHomeAsync(string query, CancellationToken cancellationToken = default);
+
 
     Task RemoveKeys(CancellationToken cancellationToken = default);
 }

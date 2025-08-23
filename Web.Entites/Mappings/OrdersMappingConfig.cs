@@ -9,5 +9,8 @@ public class OrdersMappingConfig : IRegister
            .Map(dest => dest.OrderItems, src => src.OrderItems.Adapt<List<OrderItemDetailsVM>>());
 
         config.NewConfig<OrderItem, OrderItemDetailsVM>();
+
+        config.NewConfig<Order, OrderResponseVM>()
+           .Map(dest => dest.UserName, src => src.User.UserName);
     }
 }
