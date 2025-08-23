@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using MailKit.Search;
+
+namespace Web.DataAccess.Repositories;
 public class CategoryRepository(ApplicationDbContext context,
     GeneralRepository _generalRepository,
     IValidator<CreateCategoryVM> _createCategoryValidator,
@@ -87,17 +89,36 @@ public class CategoryRepository(ApplicationDbContext context,
         return true;
     }
 
-    public async Task<PaginatedList<Category>> GetAllCategoriesAsync(int pageNumber, CancellationToken cancellationToken=default)
+    public async Task<PaginatedList<Category>> GetAllCategoriesAsync(FilterRequest request, CancellationToken cancellationToken=default)
     {
-        var cacheKey = CategoryCacheKeys.AllCategories;
+        var cacheKey = $"{CategoryCacheKeys.AllCategories}" +
+            $"_{request.SearchTerm}_{request.SortField}" +
+            $"_{request.SortOrder}_{request.PageNumber}";
+
         var response = await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ =>
-            await _context.Categories
-            .ProjectToType<Category>()
-            .ToListAsync(cancellationToken),
+            {
+                var query = _context.Categories.AsNoTracking();
+
+                if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+                    query = query
+                    .Where(c => c.Name.Contains(request.SearchTerm));
+
+                query = request.SortField?.ToLower() switch
+                {
+                    "name" => request.SortOrder == "asc" ? query.OrderBy(c => c.Name) : query.OrderByDescending(c => c.Name),
+                    "createdat" => request.SortOrder == "asc" ? query.OrderBy(c => c.CreatedAt) : query.OrderByDescending(c => c.CreatedAt),
+                    "updatedat" => request.SortOrder == "asc" ? query.OrderBy(c => c.UpdatedAt) : query.OrderByDescending(c => c.UpdatedAt),
+                    _ => query.OrderBy(c => c.Id),
+                };
+
+                return await query.ToListAsync(cancellationToken);
+
+            }
+            ,
             tags: [CategoryCacheKeys.CategoriesTag]
             , cancellationToken:cancellationToken);
-        return  PaginatedList<Category>.Create(response,pageNumber,PaginationConstants.DefaultPageSize);
+        return  PaginatedList<Category>.Create(response,request.PageNumber,PaginationConstants.DefaultPageSize);
     }
     public async Task<OneOf<PaginatedList<CategoryInHomeVM>,List<CategoryInHomeVM>>> GetAllCategoriesInHomeAsync(bool isAll,int pageNumber,CancellationToken cancellationToken=default)
     {
@@ -144,10 +165,7 @@ public class CategoryRepository(ApplicationDbContext context,
 
     private async Task RemoveKeys(CancellationToken cancellationToken=default)
     {
-        await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategories, cancellationToken);
-        await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesInHome, cancellationToken);
-        await _hybridCache.RemoveAsync(CategoryCacheKeys.AllCategoriesSelectList, cancellationToken);
-        await _hybridCache.RemoveAsync(CategoryCacheKeys.LimitedCategoriesInHome, cancellationToken);
+        await _hybridCache.RemoveByTagAsync(CategoryCacheKeys.CategoriesTag, cancellationToken);
         await _productRepository.RemoveKeys(cancellationToken);
     }
 
