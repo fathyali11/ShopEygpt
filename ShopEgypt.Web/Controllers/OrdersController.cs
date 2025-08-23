@@ -3,9 +3,12 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
 {
     [Authorize(Roles =UserRoles.Admin)]
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(FilterRequest request, CancellationToken cancellationToken)
     {
-        var response=await _orderRepository.GetAllOrdersAsync(pageNumber,cancellationToken);
+        var response=await _orderRepository.GetAllOrdersAsync(request,cancellationToken);
+        ViewData["SearchTerm"] = request.SearchTerm;
+        ViewData["SortField"] = request.SortField;
+        ViewData["SortOrder"] = request.SortOrder;
         return View(response);
     }
     [Authorize(Roles = UserRoles.Admin)]

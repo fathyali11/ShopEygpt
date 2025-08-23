@@ -6,23 +6,34 @@ public class OrderRepository(ApplicationDbContext _context,
     HybridCache _hybridCache,
     ILogger<OrderRepository>_logger) : IOrderRepository
 {
-    public async Task<PaginatedList<OrderResponseVM>> GetAllOrdersAsync(int pageNumber,CancellationToken cancellationToken=default)
+    public async Task<PaginatedList<OrderResponseVM>> GetAllOrdersAsync(FilterRequest request, CancellationToken cancellationToken=default)
     {
-        var cacheKey = OrderCacheKeys.AllOrders;
-
+        var cacheKey = $"{OrderCacheKeys.AllOrders}" +
+            $"_{request.SearchTerm}_{request.SortField}" +
+            $"_{request.SortOrder}_{request.PageNumber}";
         var orders=await _hybridCache.GetOrCreateAsync(cacheKey,
-            async _=> await _context.Orders
-            .Select(x => new OrderResponseVM(
-                x.Id,
-                x.UserId,
-                x.User.UserName!,
-                x.Status
-                ))
-            .ToListAsync(cancellationToken),
+            async _=>
+            {
+                var query= _context.Orders.AsNoTracking()
+                .ProjectToType<OrderResponseVM>();
+
+                if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+                    query = query.Where(o => o.UserName.Contains(request.SearchTerm));
+
+                query = request.SortField?.ToLower() switch
+                {
+                    "username" => request.SortOrder == "asc" ? query.OrderBy(o => o.UserName) : query.OrderByDescending(o => o.UserName),
+                    "status" => request.SortOrder == "asc" ? query.OrderBy(o => o.Status) : query.OrderByDescending(o => o.Status),
+                    "createdat" => request.SortOrder == "asc" ? query.OrderBy(o => o.CreatedAt) : query.OrderByDescending(o => o.CreatedAt),
+                    _ => query.OrderBy(o => o.Id),
+                };
+
+                return await query.ToListAsync(cancellationToken);
+            },
             tags: [OrderCacheKeys.OrdersTag]
             , cancellationToken:cancellationToken);
 
-        var response = PaginatedList<OrderResponseVM>.Create(orders, pageNumber, PaginationConstants.DefaultPageSize);
+        var response = PaginatedList<OrderResponseVM>.Create(orders, request.PageNumber, PaginationConstants.DefaultPageSize);
         return response;
     }
     public async Task<Order?> CreateOrderAsync(string userId, string PaymentIntentId, string sessionId,CancellationToken cancellationToken=default)

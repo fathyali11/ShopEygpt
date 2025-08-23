@@ -10,7 +10,33 @@
 <div class="content mt-5 main-content">
     <section id="orders">
         <h3>Orders</h3>
+        <div class="row">
+            <form asp-action="Index" method="get" class="d-flex justify-content-between">
+                <div class="input-group">
 
+                    <!-- 🔎 Search -->
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search by user name"
+                           name="searchTerm"
+                           value="@(ViewData["SearchTerm"] ?? "")" />
+
+                    <!-- ↕️ Sort Field -->
+                    <select class="form-select" name="sortField">
+                        <option value="name" selected="@(ViewData["SortField"] as string == "name")">Name</option>
+                        <option value="createdAt" selected="@(ViewData["SortField"] as string == "createdAt")">CreatedAt</option>
+                        <option value="updatedAt" selected="@(ViewData["SortField"] as string == "updatedAt")">UpdatedAt</option>
+                    </select>
+
+                    <select class="form-select" name="sortOrder">
+                        <option value="asc" selected="@(ViewData["SortOrder"] as string == "asc")">↑ Asc</option>
+                        <option value="desc" selected="@(ViewData["SortOrder"] as string == "desc")">↓ Desc</option>
+                    </select>
+
+                    <button class="btn btn-outline-secondary" type="submit">Apply</button>
+                </div>
+            </form>
+        </div>
         <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
             <thead>
                 <tr>
@@ -85,7 +111,6 @@
             int maxVisiblePages = 5;
             int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
             int endPage = Math.Min(totalPages, startPage + maxVisiblePages - 1);
-
             if (endPage - startPage + 1 < maxVisiblePages)
             {
                 startPage = Math.Max(1, endPage - maxVisiblePages + 1);
@@ -99,7 +124,12 @@
                     @if (Model.HasPreviousPage)
                     {
                         <li class="page-item">
-                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)">Previous</a>
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pageNumber="@(Model.PageIndex - 1)"
+                               asp-route-searchTerm="@ViewData["SearchTerm"]"
+                               asp-route-sortField="@ViewData["SortField"]"
+                               asp-route-sortOrder="@ViewData["SortOrder"]">Previous</a>
                         </li>
                     }
                     else
@@ -116,7 +146,12 @@
                         else
                         {
                             <li class="page-item">
-                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pageNumber="@i"
+                                   asp-route-searchTerm="@ViewData["SearchTerm"]"
+                                   asp-route-sortField="@ViewData["SortField"]"
+                                   asp-route-sortOrder="@ViewData["SortOrder"]">@i</a>
                             </li>
                         }
                     }
@@ -124,7 +159,12 @@
                     @if (Model.HasNextPage)
                     {
                         <li class="page-item">
-                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)">Next</a>
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pageNumber="@(Model.PageIndex + 1)"
+                               asp-route-searchTerm="@ViewData["SearchTerm"]"
+                               asp-route-sortField="@ViewData["SortField"]"
+                               asp-route-sortOrder="@ViewData["SortOrder"]">Next</a>
                         </li>
                     }
                     else
@@ -134,7 +174,8 @@
                 </ul>
             </nav>
         }
-</section>
+
+    </section>
 </div>
 
 @section Scripts {
