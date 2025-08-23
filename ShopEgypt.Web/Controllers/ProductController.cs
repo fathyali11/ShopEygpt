@@ -1,11 +1,16 @@
-﻿namespace WearUp.Web.Controllers;
+﻿using MailKit.Search;
+
+namespace WearUp.Web.Controllers;
 
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber)
+    public async Task<IActionResult> Index(FilterRequest request)
     {
-        var response=await _productRepositoy.GetAllProductsAdminAsync(pageNumber);
+        var response=await _productRepositoy.GetAllProductsAdminAsync(request);
+        ViewData["SearchTerm"] = request.SearchTerm;
+        ViewData["SortField"] = request.SortField;
+        ViewData["SortOrder"] = request.SortOrder;
         return View(response);
     }
     [HttpGet]

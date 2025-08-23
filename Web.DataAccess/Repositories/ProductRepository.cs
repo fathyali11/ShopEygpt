@@ -69,17 +69,48 @@ public class ProductRepository(ApplicationDbContext context,
 
         return numberOfChanges>0?true:false;
     }
-    public async Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(int pageNumber,CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<ProductReponseForAdmin>> GetAllProductsAdminAsync(FilterRequest request, CancellationToken cancellationToken = default)
     {
-        var cacheKey = ProductCacheKeys.AllProductsAdmin;
+        var cacheKey = $"{ProductCacheKeys.AllProductsAdmin}" +
+            $"_{request.SearchTerm}_{request.SortField}" +
+            $"_{request.SortOrder}_{request.PageNumber}";
+
         var products= await _hybridCache.GetOrCreateAsync(cacheKey,
-            async _ => await _context.Products
-            .ProjectToType<ProductReponseForAdmin>()
-            .ToListAsync(cancellationToken),
+            async _ =>
+            {
+                var query = _context.Products
+                    .AsNoTracking()
+                    .ProjectToType<ProductReponseForAdmin>();
+
+                if (!string.IsNullOrEmpty(request.SearchTerm))
+                    query = query.Where(x => x.Name.Contains(request.SearchTerm) || x.CategoryName.Contains(request.SearchTerm));
+
+                if (!string.IsNullOrEmpty(request.SortField) && !string.IsNullOrEmpty(request.SortOrder))
+                    query = request.SortOrder.ToLower() switch
+                    {
+                        "asc" => request.SortField switch
+                        {
+                            "name" => query.OrderBy(x => x.Name),
+                            "price" => query.OrderBy(x => x.Price),
+                            "category" => query.OrderBy(x => x.CategoryName),
+                            _ => query.OrderBy(x => x.Id)
+                        },
+                        "desc" => request.SortField switch
+                        {
+                            "name" => query.OrderByDescending(x => x.Name),
+                            "price" => query.OrderByDescending(x => x.Price),
+                            "category" => query.OrderByDescending(x => x.CategoryName),
+                            _ => query.OrderByDescending(x => x.Id)
+                        },
+                        _ => query.OrderBy(x => x.Id)
+                    };
+
+                return await query.ToListAsync(cancellationToken);
+            },
             tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken: cancellationToken);
 
-        return PaginatedList<ProductReponseForAdmin>.Create(products, pageNumber, PaginationConstants.DefaultPageSize);
+        return PaginatedList<ProductReponseForAdmin>.Create(products, request.PageNumber, PaginationConstants.DefaultPageSize);
 
     }
     public async Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -331,6 +362,8 @@ public class ProductRepository(ApplicationDbContext context,
             cancellationToken: cancellationToken);
         return PaginatedList<DiscoverProductVM>.Create(products, 1, PaginationConstants.DefaultPageSize);
     }
+
+   
     public async Task RemoveKeys(CancellationToken cancellationToken = default)
     {
         await _hybridCache.RemoveByTagAsync([$"{ProductCacheKeys.AllProductsTag}"], cancellationToken);
