@@ -34,6 +34,8 @@
                             <option value="name" selected="@(ViewData["SortField"] as string == "name")">Name</option>
                             <option value="category" selected="@(ViewData["SortField"] as string == "category")">Category</option>
                             <option value="price" selected="@(ViewData["SortField"] as string == "price")">Price</option>
+                            <option value="createdAt" selected="@(ViewData["SortField"] as string == "createdAt")">CreatedAt</option>
+                            <option value="updatedAt" selected="@(ViewData["SortField"] as string == "updatedAt")">UpdatedAt</option>
                         </select>
 
                         <select class="form-select" name="sortOrder">
@@ -53,6 +55,8 @@
                 <tr>
                     <th class="text-center">Name</th>
                     <th class="text-center">Price</th>
+                    <th class="text-center">Created At</th>
+                    <th class="text-center">Updated At</th>
                     <th class="text-center">Category</th>
                     <th class="text-center">Image</th>
                     <th class="text-center">Actions</th>
@@ -64,6 +68,8 @@
                     <tr>
                         <td class="text-center">@product.Name</td>
                         <td class="text-center">@product.Price.ToString("C")</td>
+                        <td class="text-center">@product.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="text-center">@product.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                         <td class="text-center">@product.CategoryName</td>
                         <td class="text-center">
                             @if (!string.IsNullOrEmpty(product.ImageName))

@@ -93,6 +93,8 @@ public class ProductRepository(ApplicationDbContext context,
                             "name" => query.OrderBy(x => x.Name),
                             "price" => query.OrderBy(x => x.Price),
                             "category" => query.OrderBy(x => x.CategoryName),
+                            "createdAt" => query.OrderBy(x => x.CreatedAt),
+                            "updatedAt" => query.OrderBy(x => x.UpdatedAt),
                             _ => query.OrderBy(x => x.Id)
                         },
                         "desc" => request.SortField switch
@@ -100,6 +102,8 @@ public class ProductRepository(ApplicationDbContext context,
                             "name" => query.OrderByDescending(x => x.Name),
                             "price" => query.OrderByDescending(x => x.Price),
                             "category" => query.OrderByDescending(x => x.CategoryName),
+                            "createdAt" => query.OrderByDescending(x => x.CreatedAt),
+                            "updatedAt" => query.OrderByDescending(x => x.UpdatedAt),
                             _ => query.OrderByDescending(x => x.Id)
                         },
                         _ => query.OrderBy(x => x.Id)
