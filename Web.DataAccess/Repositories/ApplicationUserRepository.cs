@@ -56,8 +56,13 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         var isUpdated= await _context.Users
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(setter => setter.SetProperty(x => x.IsActive, x => !x.IsActive));
-
+        await RemoveCacheKey(cancellationToken);
         return isUpdated>0?true:false;
     }
 
+
+    private async Task RemoveCacheKey(CancellationToken cancellationToken)
+    {
+        await _hybridCache.RemoveByTagAsync(UserCacheKeys.UsersTag, cancellationToken);
+    }
 }
