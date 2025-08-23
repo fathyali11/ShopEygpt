@@ -1,1 +1,112 @@
-﻿
+﻿@model PaginatedList<UserResponseForAdmin>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["Head"] = "User Management";
+    ViewData["PageTitle"] = "Users";
+    Layout = "_AdminLayout";
+}
+
+<div class="content mt-5 main-content">
+    <section>
+        <h3>Users</h3>
+        <div class="row d-flex justify-content-between align-items-center mb-3">
+            <div class="col-auto">
+                <a asp-action="Create" asp-controller="Users"
+                   class="btn btn-primary text-dark bg-opacity-10 btn-sm"
+                   data-bs-toggle="tooltip" title="Add a new user">
+                    Add User
+                </a>
+            </div>
+
+            <div class="col">
+                <form asp-action="Index" method="get" class="d-flex justify-content-end">
+                    <div class="input-group">
+
+                        <!-- 🔎 Search -->
+                        <input type="text"
+                               class="form-control"
+                               placeholder="Search"
+                               name="searchTerm"
+                               value="@(ViewData["SearchTerm"] ?? "")" />
+
+                        <!-- ↕️ Sort Field -->
+                        <select class="form-select" name="sortField">
+                            <option value="username" selected="@(ViewData["SortField"] as string == "username")">User Name</option>
+                        </select>
+
+                        <select class="form-select" name="sortOrder">
+                            <option value="asc" selected="@(ViewData["SortOrder"] as string == "asc")">↑ Asc</option>
+                            <option value="desc" selected="@(ViewData["SortOrder"] as string == "desc")">↓ Desc</option>
+                        </select>
+
+                        <button class="btn btn-outline-secondary" type="submit">Apply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <table class="table table-dark table-bordered table-hover shadow-sm rounded table-dark-mode">
+            <thead>
+                <tr>
+                    <th class="text-center align-middle">User Name</th>
+                    <th class="text-center align-middle">First Name</th>
+                    <th class="text-center align-middle">Last Name</th>
+                    <th class="text-center align-middle">Email</th>
+                    <th class="text-center align-middle">Status</th>
+                    <th class="text-center align-middle">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Items)
+                {
+                    <tr>
+                        <td class="text-center align-middle">@user.UserName</td>
+                        <td class="text-center align-middle">@user.FirstName</td>
+                        <td class="text-center align-middle">@user.LastName</td>
+                        <td class="text-center align-middle">@user.Email</td>
+                        <td class="text-center align-middle">
+                            <a href="#" data-id="@user.Id" class="toggle">
+                                @if (user.IsActive)
+                                {
+                                    <i class="bi bi-unlock-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-lock-fill"></i>
+                                }
+                            </a>
+                        </td>
+                        
+                        
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a class="btn btn-success btn-sm" asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                                <a href="#" class="btn btn-danger btn-sm delete-btn" data-controller-name="Users" data-id="@user.Id">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- ✅ Pagination Section -->
+        @await Html.PartialAsync("_PaginationPartial", new PaginationVM
+        {
+            CurrentPage = Model.PageIndex,
+                TotalPages = Model.TotalPages,
+                HasPreviousPage = Model.HasPreviousPage,
+                HasNextPage = Model.HasNextPage,
+                SearchTerm = ViewData["SearchTerm"]?.ToString(),
+                SortField = ViewData["SortField"]?.ToString(),
+                SortOrder = ViewData["SortOrder"]?.ToString(),
+                Controller = "Users"
+                })
+    </section>
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/common/js/delete.js" asp-append-version="true"></script>
+    <script src="~/users/js/toggle.js" asp-append-version="true"></script>
+}

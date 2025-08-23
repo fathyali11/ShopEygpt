@@ -1,5 +1,5 @@
 ﻿namespace Web.Entites.IRepositories;
 public interface IApplicaionUserRepository
 {
-    void Update(ApplicationUser user);
+    Task<PaginatedList<UserResponseForAdmin>> GetAllUsersAsync(FilterRequest request, CancellationToken cancellationToken = default);
 }

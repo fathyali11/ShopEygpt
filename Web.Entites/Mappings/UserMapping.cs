@@ -4,5 +4,7 @@ public class UserMapping:IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.NewConfig<RegisterVM, ApplicationUser>();
+
+        config.NewConfig<ApplicationUser, UserResponseForAdmin>();
     }
 }

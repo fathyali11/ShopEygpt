@@ -1,7 +1,23 @@
 ﻿namespace WearUp.Web.Controllers
 {
     [Authorize(Roles =$"{UserRoles.Admin},{UserRoles.Customer}")]
-    public class UsersController(IAuthRepository _authRepository) : Controller
+    public class UsersController(IAuthRepository _authRepository,
+        IApplicaionUserRepository _applicaionUserRepository) : Controller
+    {
+
+        [HttpGet]
+        public async Task<IActionResult> Index(FilterRequest request,CancellationToken cancellationToken)
+        {
+            var users = await _applicaionUserRepository.GetAllUsersAsync(request,cancellationToken);
+            ViewData["SearchTerm"] = request.SearchTerm;
+            ViewData["SortField"] = request.SortField;
+            ViewData["SortOrder"] = request.SortOrder;
+            return View(users);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Toggle(string id,CancellationToken cancellationToken)
     {
         [HttpPost]
         [ValidateAntiForgeryToken]
