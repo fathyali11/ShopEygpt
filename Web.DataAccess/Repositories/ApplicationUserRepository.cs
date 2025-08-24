@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories;
+﻿using System.Threading;
+
+namespace Web.DataAccess.Repositories;
 public class ApplicationUserRepository(ApplicationDbContext _context,
     HybridCache _hybridCache) :  IApplicaionUserRepository
 {
@@ -60,6 +62,51 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return isUpdated>0?true:false;
     }
 
+    public async Task<EditUserVM> GetUserForEditAsync(string id,CancellationToken cancellationToken=default)
+    {
+        var user= await _context.Users
+            .AsNoTracking()
+            .ProjectToType<EditUserVM>()
+            .FirstAsync(x => x.Id == id, cancellationToken);
+
+        var roleName=await (from userRole in _context.UserRoles
+                          join role in _context.Roles
+                          on userRole.RoleId equals role.Id
+                          where userRole.UserId == id
+                          select role.Name).FirstOrDefaultAsync(cancellationToken);
+
+        user.Role = roleName!;
+        return user;
+    }
+
+    public async Task<bool> UpdateUserAsync(EditUserVM model,CancellationToken cancellationToken=default)
+    {
+        var user=_context.Users.FirstOrDefault(x=>x.Id==model.Id);
+        if(user is null) return false;
+
+        model.Adapt(user);
+
+        var userRoles = await _context.UserRoles
+                .Where(x => x.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+        if (userRoles.Any())
+            _context.UserRoles.RemoveRange(userRoles);
+
+        var role =await _context.Roles.FirstOrDefaultAsync(x => x.Name == model.Role,cancellationToken);
+        if (role is null)
+            return false;
+
+        await _context.UserRoles.AddAsync(new()
+        {
+            UserId = user.Id,
+            RoleId = role.Id
+        }, cancellationToken);
+
+       
+        await RemoveCacheKey(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
     public async Task<bool> DeleteUserAsync(string id,CancellationToken cancellationToken=default)
     {
         var isDeleted= await _context.Users

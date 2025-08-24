@@ -6,5 +6,7 @@ public class UserMapping:IRegister
         config.NewConfig<RegisterVM, ApplicationUser>();
 
         config.NewConfig<ApplicationUser, UserResponseForAdmin>();
+        config.NewConfig<EditUserVM, ApplicationUser>()
+            .Ignore(dest => dest.Id);
     }
 }
