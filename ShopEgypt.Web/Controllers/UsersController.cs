@@ -14,7 +14,25 @@
             ViewData["SortOrder"] = request.SortOrder;
             return View(users);
         }
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var user=await _applicaionUserRepository.GetUserForEditAsync(id);
+            return View(user);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditUserVM model,CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var isUpdate=await _applicaionUserRepository.UpdateUserAsync(model,cancellationToken);
+            if (isUpdate)
+                return RedirectToAction(nameof(Index));
+            ModelState.AddModelError(string.Empty, "Failed to update user");
+            return View(model);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Toggle(string id,CancellationToken cancellationToken)
