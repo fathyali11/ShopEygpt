@@ -55,19 +55,22 @@
                         <td class="text-center align-middle">@order.UserId</td>
                         <td class="text-center align-middle">@order.UserName</td>
                         <td class="text-center align-middle">
-                            @if (order.Status == OrderStatus.Paid)
+                            @if (order.Status == OrderStatus.Delivered)
                             {
-                                <span class="text-success fw-bold">@order.Status</span>
-                            }
-                            else if (order.Status == OrderStatus.Cancelled)
-                            {
-                                <span class="text-danger fw-bold">@order.Status</span>
+                                <button type="button" class="btn btn-sm @GetStatusClass(order.Status)" disabled>
+                                    <i class="@GetStatusIcon(order.Status)"></i> @order.Status
+                                </button>
                             }
                             else
                             {
-                                <span class="text-warning fw-bold">@order.Status</span>
+                                <a href="#" class="update-order-status btn btn-sm @GetStatusClass(order.Status)"
+                                   data-order-id="@order.Id"
+                                   data-status="@order.Status">
+                                    <i class="@GetStatusIcon(order.Status)"></i> @order.Status
+                                </a>
                             }
                         </td>
+
 
                         <td class="text-center align-middle">
                             <div class="d-flex justify-content-center gap-2">
@@ -124,4 +127,32 @@
     @Html.AntiForgeryToken()
     <script src="~/orders/js/cancelorder.js" asp-append-version="true"></script>
     <script src="~/orders/js/deleteorder.js" asp-append-version="true"></script>
+    <script src="~/orders/js/updatestatus.js" asp-append-version="true"></script>
+}
+
+@functions {
+    string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            OrderStatus.Paid => "text-success",
+            OrderStatus.Cancelled => "text-danger",
+            OrderStatus.Delivered => "text-success",
+            _ => "text-warning"
+        };
+    }
+
+    string GetStatusIcon(string status)
+    {
+        return status switch
+        {
+            OrderStatus.Paid => "bi bi-cash-coin",
+            OrderStatus.Delivered => "bi bi-check-circle",
+            OrderStatus.InProcess => "bi bi-hourglass-split",
+            OrderStatus.Shipped => "bi bi-truck",
+            _ => "bi bi-question-circle"
+        };
+    }
+}
+
 }

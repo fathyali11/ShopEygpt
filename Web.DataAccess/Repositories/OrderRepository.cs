@@ -124,7 +124,25 @@ public class OrderRepository(ApplicationDbContext _context,
         return true;
     }
 
+    public async Task UpdateOrderStatusAsync(int orderId, string status,CancellationToken cancellationToken=default)
+    {
+        await _context.Orders
+            .Where(x=>x.Id==orderId)
+            .ExecuteUpdateAsync(x=>x.SetProperty(o=>o.Status, GetNewOrderStatusAsync(status)),cancellationToken);
+        await _hybridCache.RemoveByTagAsync(OrderCacheKeys.OrdersTag, cancellationToken);
+    }
 
+    private static string GetNewOrderStatusAsync(string currentStatus)
+    {
+        if(string.Equals(currentStatus,OrderStatus.Paid,StringComparison.OrdinalIgnoreCase))
+            return OrderStatus.InProcess;
+        else if(string.Equals(currentStatus,OrderStatus.InProcess,StringComparison.OrdinalIgnoreCase))
+            return OrderStatus.Shipped;
+        else if(string.Equals(currentStatus,OrderStatus.Shipped,StringComparison.OrdinalIgnoreCase))
+            return OrderStatus.Delivered;
+        else
+            return currentStatus;
+    }
     public async Task<IEnumerable<OrderProfileVM>> GetCurrentOrdersForUserAsync(string userId,CancellationToken cancellationToken=default)
     {
         var cacheKey = $"{OrderCacheKeys.CurrentOrders}_{userId}";

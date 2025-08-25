@@ -7,4 +7,5 @@ public interface IOrderRepository
     Task<bool> CancelOrderAsync(string userId, int id, CancellationToken cancellationToken = default);
     Task<bool> DeleteOrderAsync(string userId, int id, CancellationToken cancellationToken = default);
     Task<IEnumerable<OrderProfileVM>> GetCurrentOrdersForUserAsync(string userId, CancellationToken cancellationToken = default);
+    Task UpdateOrderStatusAsync(int orderId, string status, CancellationToken cancellationToken = default);
 }
