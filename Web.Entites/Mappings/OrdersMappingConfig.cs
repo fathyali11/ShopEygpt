@@ -12,5 +12,10 @@ public class OrdersMappingConfig : IRegister
 
         config.NewConfig<Order, OrderResponseVM>()
            .Map(dest => dest.UserName, src => src.User.UserName);
+
+        config.NewConfig<OrderItem, OrderItemProfileVM>();
+
+        config.NewConfig<Order, OrderProfileVM>()
+           .Map(dest => dest.Items, src => src.OrderItems.Adapt<List<OrderItemProfileVM>>());
     }
 }

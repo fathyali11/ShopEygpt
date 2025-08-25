@@ -1,0 +1,61 @@
+﻿@model IEnumerable<OrderProfileVM>
+
+@{
+    ViewData["Title"] = "Current Orders";
+    Layout = "_ProfileLayout";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Current Orders</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have no current orders.</div>
+    }
+    else
+    {
+        <div class="accordion" id="ordersAccordion">
+            @foreach (var order in Model)
+            {
+                <div class="accordion-item mb-2 shadow-sm">
+                    <h2 class="accordion-header" id="heading-@order.Id">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@order.Id">
+                            <div class="w-100 d-flex justify-content-between">
+                                <span>Order - @order.CreatedAt.ToShortDateString()</span>
+                                <span>
+                                    <span class="badge bg-info">@order.Status</span>
+                                    <strong class="ms-3">$@order.TotalPrice</strong>
+                                </span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse-@order.Id" class="accordion-collapse collapse" data-bs-parent="#ordersAccordion">
+                        <div class="accordion-body">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Price</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.Items)
+                                    {
+                                        <tr>
+                                            <td>@item.ProductName</td>
+                                            <td>@item.Quantity</td>
+                                            <td>$@item.UnitPrice</td>
+                                            <td>$@(item.UnitPrice* item.Quantity)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
