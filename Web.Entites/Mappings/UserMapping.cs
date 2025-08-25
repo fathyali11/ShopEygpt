@@ -8,5 +8,7 @@ public class UserMapping:IRegister
         config.NewConfig<ApplicationUser, UserResponseForAdmin>();
         config.NewConfig<EditUserVM, ApplicationUser>()
             .Ignore(dest => dest.Id);
+
+        config.NewConfig<CreateUserVM, ApplicationUser>();
     }
 }

@@ -1,7 +1,6 @@
-﻿using System.Threading;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class ApplicationUserRepository(ApplicationDbContext _context,
+    UserManager<ApplicationUser> _userManager,
     HybridCache _hybridCache) :  IApplicaionUserRepository
 {
 
@@ -14,8 +13,21 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         var users=await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ =>
             {
-                var query =_context.Users.AsNoTracking().
-                ProjectToType<UserResponseForAdmin>();
+                var query =(from user in _context.Users
+                           join userRole in _context.UserRoles
+                           on user.Id equals userRole.UserId
+                           join role in _context.Roles
+                           on userRole.RoleId equals role.Id
+                           select new UserResponseForAdmin
+                           {
+                               Id = user.Id,
+                               UserName = user.UserName!,
+                               Email = user.Email!,
+                               FirstName = user.FirstName!,
+                               LastName = user.LastName!,
+                               IsActive = user.IsActive,
+                               Role = role.Name!
+                           });
 
                 if (!string.IsNullOrWhiteSpace(request.SearchTerm))
                     query = query.Where(u =>
@@ -29,18 +41,10 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
                     "username" => request.SortOrder?.ToLower() == "asc" ?
                         query.OrderBy(u => u.UserName) :
                         query.OrderByDescending(u => u.UserName),
-
-                    "email" => request.SortOrder?.ToLower() == "asc" ?
-                        query.OrderBy(u => u.Email) :
-                        query.OrderByDescending(u => u.Email),
-
-                    "firstname" => request.SortOrder?.ToLower() == "asc" ?
-                        query.OrderBy(u => u.FirstName) :
-                        query.OrderByDescending(u => u.FirstName),
-
-                    "lastname" => request.SortOrder?.ToLower() == "asc" ?
-                        query.OrderBy(u => u.LastName) :
-                        query.OrderByDescending(u => u.LastName),
+                    
+                    "role" => request.SortOrder?.ToLower() == "asc" ?
+                        query.OrderBy(u => u.Role) :
+                        query.OrderByDescending(u => u.Role),
 
                     _ => query.OrderBy(u => u.UserName)
                 };
@@ -53,13 +57,41 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return PaginatedList<UserResponseForAdmin>.Create(users, request.PageNumber, PaginationConstants.DefaultPageSize);
     }
 
+    public async Task<OneOf<bool,ValidationError>> CreateUserAsync(CreateUserVM model,CancellationToken cancellationToken=default)
+    {
+        var existingUser= await _context.Users
+            .AnyAsync(x => x.UserName == model.UserName || x.Email == model.Email, cancellationToken);
+        if (existingUser)
+            return new ValidationError("User Found","UserName or Email already exists.");
+
+        var user =model.Adapt<ApplicationUser>();
+        var result= await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded) 
+            return new ValidationError("Create User Failed",string.Join(",",result.Errors.Select(x=>x.Description)));
+        user.EmailConfirmed = true;
+        var roleResult= await _userManager.AddToRoleAsync(user, model.Role);
+        if (!roleResult.Succeeded) 
+            return new ValidationError("Assign Role Failed",string.Join(",",roleResult.Errors.Select(x=>x.Description)));
+        
+        var isAdded= await _context.SaveChangesAsync(cancellationToken);
+        if(isAdded>0)
+        {
+            await RemoveCacheKey(cancellationToken);
+            return true;
+        }
+        return new ValidationError("Create User Failed","Failed to create user.");
+    }
     public async Task<bool> ToggleUserAsync(string id,CancellationToken cancellationToken=default)
     {
         var isUpdated= await _context.Users
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(setter => setter.SetProperty(x => x.IsActive, x => !x.IsActive));
-        await RemoveCacheKey(cancellationToken);
-        return isUpdated>0?true:false;
+        if(isUpdated>0)
+        {
+            await RemoveCacheKey(cancellationToken);
+            return true;
+        }
+        return false;
     }
 
     public async Task<EditUserVM> GetUserForEditAsync(string id,CancellationToken cancellationToken=default)
@@ -112,8 +144,13 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         var isDeleted= await _context.Users
             .Where(x => x.Id == id)
             .ExecuteDeleteAsync(cancellationToken);
-        await RemoveCacheKey(cancellationToken);
-        return isDeleted>0?true:false;
+        
+        if(isDeleted>0)
+        {
+            await RemoveCacheKey(cancellationToken);
+            return true;
+        }
+        return false;
     }
 
     private async Task RemoveCacheKey(CancellationToken cancellationToken)

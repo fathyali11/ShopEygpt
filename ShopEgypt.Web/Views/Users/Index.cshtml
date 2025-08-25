@@ -33,6 +33,7 @@
                         <!-- ↕️ Sort Field -->
                         <select class="form-select" name="sortField">
                             <option value="username" selected="@(ViewData["SortField"] as string == "username")">User Name</option>
+                            <option value="role" selected="@(ViewData["SortField"] as string == "role")">Role</option>
                         </select>
 
                         <select class="form-select" name="sortOrder">
@@ -53,6 +54,7 @@
                     <th class="text-center align-middle">First Name</th>
                     <th class="text-center align-middle">Last Name</th>
                     <th class="text-center align-middle">Email</th>
+                    <th class="text-center align-middle">Role</th>
                     <th class="text-center align-middle">Status</th>
                     <th class="text-center align-middle">Actions</th>
                 </tr>
@@ -65,6 +67,7 @@
                         <td class="text-center align-middle">@user.FirstName</td>
                         <td class="text-center align-middle">@user.LastName</td>
                         <td class="text-center align-middle">@user.Email</td>
+                        <td class="text-center align-middle">@user.Role</td>
                         <td class="text-center align-middle">
                             <a href="#" data-id="@user.Id" class="toggle">
                                 @if (user.IsActive)
