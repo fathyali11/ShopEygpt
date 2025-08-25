@@ -76,4 +76,13 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
         var orders = await _orderRepository.GetCurrentOrdersForUserAsync(userId!, cancellationToken);
         return View(orders);
     }
+
+    [Authorize(Roles = UserRoles.Admin)]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateStatus(int orderId, string status, CancellationToken cancellationToken)
+    {
+        await _orderRepository.UpdateOrderStatusAsync(orderId, status, cancellationToken);
+        return Json(new { Success = true, message = "Order Status Updated Successfully" });
+    }
 }
