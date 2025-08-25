@@ -62,10 +62,6 @@
                              && ViewContext.RouteData.Values["action"]?.ToString() == "CurrentOrders" ? "active" : "")"
            asp-controller="Orders" asp-action="CurrentOrders">📦 Current Orders</a>
 
-        <a class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders"
-                             && ViewContext.RouteData.Values["action"]?.ToString() == "Last" ? "active" : "")"
-           asp-controller="Orders" asp-action="Last">🕒 Last Orders</a>
-
         <form asp-action="Logout" asp-controller="Auths" method="post">
             @Html.AntiForgeryToken()
             <button type="submit">🚪 Logout</button>
