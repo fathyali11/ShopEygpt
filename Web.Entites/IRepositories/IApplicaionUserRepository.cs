@@ -8,7 +8,7 @@ public interface IApplicaionUserRepository
     Task<bool> UpdateUserAsync(EditUserVM model, CancellationToken cancellationToken = default);
     Task<OneOf<bool, ValidationError>> CreateUserAsync(CreateUserVM model, CancellationToken cancellationToken = default);
 
-
+    Task<UserProfileVM> GetUserProfileAsync(string userId, CancellationToken cancellationToken = default);
 
 
 

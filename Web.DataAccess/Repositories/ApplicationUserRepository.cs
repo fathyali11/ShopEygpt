@@ -153,6 +153,15 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return false;
     }
 
+    public async Task<UserProfileVM> GetUserProfileAsync(string userId,CancellationToken cancellationToken=default)
+    {
+        var user= await _context.Users
+            .AsNoTracking()
+            .Where(u => u.Id == userId)
+            .ProjectToType<UserProfileVM>()
+            .FirstAsync(cancellationToken);
+        return user;
+    }
     private async Task RemoveCacheKey(CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveByTagAsync(UserCacheKeys.UsersTag, cancellationToken);

@@ -71,5 +71,14 @@ public class UsersController(IApplicaionUserRepository _applicaionUserRepository
         return View(model);
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Profile(CancellationToken cancellationToken)
+    {
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userProfile=await _applicaionUserRepository.GetUserProfileAsync(userId!,cancellationToken);
+        return View(userProfile);
+    }
+
 
 }

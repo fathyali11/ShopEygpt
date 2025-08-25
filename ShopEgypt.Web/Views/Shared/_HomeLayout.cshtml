@@ -252,7 +252,9 @@
                             </form>
                         </li>
                         <li class="nav-item mx-2">
-                            <span class="text-uppercase">@User.Identity.Name</span>
+                            <a asp-action="Profile" asp-controller="Users">
+                                <span class="text-uppercase">@User.Identity.Name</span>
+                            </a>
                         </li>
                     }
                     else
