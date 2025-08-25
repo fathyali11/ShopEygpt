@@ -66,4 +66,14 @@ public class OrdersController(IOrderRepository _orderRepository) : Controller
     {
         return View(); 
     }
+
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> CurrentOrders(CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var orders = await _orderRepository.GetCurrentOrdersForUserAsync(userId!, cancellationToken);
+        return View(orders);
+    }
 }

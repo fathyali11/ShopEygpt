@@ -234,6 +234,8 @@ public static class DependencyInjection
         builder.Services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
         builder.Services.AddScoped<IRecommendationRepository, RecommendationRepository>();
         builder.Services.AddScoped<IProductRecommenderRepository, ProductRecommenderRepository>();
+        builder.Services.AddScoped<IApplicaionUserRepository,ApplicationUserRepository>();
+        builder.Services.AddScoped<IRoleRepository,RoleRepository>();
         builder.Services.AddScoped<CloudinaryRepository>();
     }
 }

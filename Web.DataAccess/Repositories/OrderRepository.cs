@@ -123,6 +123,22 @@ public class OrderRepository(ApplicationDbContext _context,
 
         return true;
     }
+
+
+    public async Task<IEnumerable<OrderProfileVM>> GetCurrentOrdersForUserAsync(string userId,CancellationToken cancellationToken=default)
+    {
+        var cacheKey = $"{OrderCacheKeys.CurrentOrders}_{userId}";
+        var orders = await _hybridCache.GetOrCreateAsync(cacheKey,
+            async _ => await _context.Orders
+            .AsNoTracking()
+            .Where(o => o.UserId == userId && o.Status != OrderStatus.Cancelled && o.Status != OrderStatus.Deleted)
+            .ProjectToType<OrderProfileVM>()
+            .ToListAsync(cancellationToken),
+            tags: [OrderCacheKeys.OrdersTag],
+            cancellationToken: cancellationToken);
+        
+        return orders;
+    }
     private async Task RemoveCacheKeys(string userId,CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveByTagAsync(OrderCacheKeys.OrdersTag, cancellationToken);

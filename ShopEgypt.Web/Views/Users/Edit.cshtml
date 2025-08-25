@@ -1,9 +1,9 @@
-﻿@model CreateUserVM
+﻿@model EditUserVM
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
     ViewData["Head"] = "User Management";
-    ViewData["PageTitle"] = "Create";
+    ViewData["PageTitle"] = "Edit";
     Layout = "_AdminLayout";
 }
 
@@ -11,13 +11,14 @@
     <div class="col-md-6 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Create User</h4>
-                <form asp-action="Create" method="post">
+                <h4 class="card-title">Update User</h4>
+                <form asp-action="Edit" method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
+                    <input asp-for="Id" hidden />
 
                     <div class="form-group">
                         <label asp-for="UserName" class="control-label"></label>
-                        <input asp-for="UserName" class="form-control" />
+                        <input asp-for="UserName" class="form-control" readonly/>
                     </div>
                     <div class="form-group">
                         <label asp-for="FirstName" class="control-label"></label>
@@ -31,21 +32,17 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" />
+                        <input asp-for="Email" class="form-control" readonly/>
                     </div>
-
+                    
                     <div class="form-group">
                         <label asp-for="Role">Roles</label>
-                        <select id="role-select-list-item-container" asp-for="Role" class="form-control">
+                        <select id="role-select-list-item-container" asp-for="Role" class="form-control" data-current-role="@Model.Role">
+                            
                         </select>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Password" class="control-label"></label>
-                        <input asp-for="Password" type="password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <input type="submit" value="Save" class="btn btn-primary" />
                         <a asp-action="Index" class="btn btn-dark">Cancel</a>
                     </div>
                 </form>
