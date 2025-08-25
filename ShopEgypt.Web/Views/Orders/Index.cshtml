@@ -81,24 +81,26 @@
                                 </a>
 
                                 <!-- Cancel Button -->
-                                @if (order.Status == OrderStatus.Cancelled)
+                                @if(order.Status!=OrderStatus.Delivered)
                                 {
-                                    <span class="btn btn-secondary btn-sm disabled">
-                                        <i class="mdi mdi-cancel"></i> Cancelled
-                                    </span>
-                                }
-                                else
-                                {
-                                    <a href="#" id="cancel-order-btn" data-order-id="@order.Id" class="btn btn-warning btn-sm">
-                                        <i class="mdi mdi-close-circle-outline me-1"></i> Cancel
-                                    </a>
-                                }
+                                       @if (order.Status == OrderStatus.Cancelled)
+                                       {
+                                           <span class="btn btn-secondary btn-sm disabled">
+                                               <i class="mdi mdi-cancel"></i> Cancelled
+                                           </span>
+                                       }
+                                       else
+                                       {
+                                           <a href="#" id="cancel-order-btn" data-order-id="@order.Id" class="btn btn-warning btn-sm">
+                                               <i class="mdi mdi-close-circle-outline me-1"></i> Cancel
+                                           </a>
+                                       }
 
-                                <!-- Delete Button -->
-                                <a href="#" id="delete-order-btn" data-order-id="@order.Id" class="btn btn-danger btn-sm">
-                                    <i class="mdi mdi-delete-outline me-1"></i> Delete
-                                </a>
-
+                                       <!-- Delete Button -->
+                                       <a href="#" id="delete-order-btn" data-order-id="@order.Id" class="btn btn-danger btn-sm">
+                                           <i class="mdi mdi-delete-outline me-1"></i> Delete
+                                       </a>
+                                }
                             </div>
                         </td>
 
@@ -155,4 +157,4 @@
     }
 }
 
-}
+
