@@ -340,16 +340,18 @@ public class ProductRepository(ApplicationDbContext context,
         return products;
 
     }
-    public async Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId,CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<DiscoverProductVM>> GetAllProductsInCategoryAsync(int pageNumber,int categoryId,CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{ProductCacheKeys.AllProductsInCategory}{categoryId}";
-        return await _hybridCache.GetOrCreateAsync(cacheKey,
+        var products= await _hybridCache.GetOrCreateAsync(cacheKey,
             async _ => await _context.Products
             .Where(x => x.CategoryId == categoryId)
             .ProjectToType<DiscoverProductVM>()
             .ToListAsync(cancellationToken),
             tags: [ProductCacheKeys.AllProductsTag],
             cancellationToken: cancellationToken);
+
+        return PaginatedList<DiscoverProductVM>.Create(products, pageNumber, PaginationConstants.DefaultPageSize);
     }
    
     public async Task<PaginatedList<DiscoverProductVM>> SearchInProductsInHomeAsync(string query, CancellationToken cancellationToken = default)

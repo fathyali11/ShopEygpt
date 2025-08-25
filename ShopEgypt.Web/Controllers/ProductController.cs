@@ -50,9 +50,9 @@ public class ProductController(IProductRepository _productRepositoy) : Controlle
         return View(product);
     }
     [HttpGet]
-    public async Task<IActionResult> GetAllInCategory(int categoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllInCategory(int pageNumber,int categoryId, CancellationToken cancellationToken)
     {
-        var products = await _productRepositoy.GetAllProductsInCategoryAsync(categoryId, cancellationToken);
+        var products = await _productRepositoy.GetAllProductsInCategoryAsync(pageNumber,categoryId, cancellationToken);
 
         return View("AllProductsBasedOnSort", products);
     }
