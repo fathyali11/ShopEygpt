@@ -31,7 +31,7 @@ public class CartRepository(ApplicationDbContext context,
         if (cartItem is not null)
         {
             cartItem.Count += addCartItemVM.Count;
-            cart.TotalPrice += cartItem.TotalPrice;
+            cart.TotalPrice += cartItem.Price;
         }
         else
         {
