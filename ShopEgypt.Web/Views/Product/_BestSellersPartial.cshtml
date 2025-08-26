@@ -22,7 +22,9 @@
                 </a>
                 <div class="product-content">
                     <h5 class="text-uppercase fs-5 mt-3">
-                        <a href="index.html">@item.Name</a>
+                    <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id">
+                        @item.Name
+                    </a>
                     </h5>
                     @Html.AntiForgeryToken()
                     <a href="#" class="text-decoration-none add-to-cart" data-after="Add to cart"
