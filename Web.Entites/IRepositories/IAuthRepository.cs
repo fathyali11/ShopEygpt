@@ -11,6 +11,6 @@ public interface IAuthRepository
     Task<OneOf<List<ValidationError>, bool>> ResetPasswordAsync(ResetPasswordVM resetPasswordVM, CancellationToken cancellationToken = default);
 
     ChallengeResult ExternalLogin(string provider, string redirectUrl);
-    Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError);
+    Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError, CancellationToken cancellationToken = default);
 
 }

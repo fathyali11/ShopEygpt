@@ -9,7 +9,7 @@ public interface IApplicaionUserRepository
     Task<OneOf<bool, ValidationError>> CreateUserAsync(CreateUserVM model, CancellationToken cancellationToken = default);
 
     Task<UserProfileVM> GetUserProfileAsync(string userId, CancellationToken cancellationToken = default);
-
+    Task RemoveCacheKey(CancellationToken cancellationToken);
 
 
 }

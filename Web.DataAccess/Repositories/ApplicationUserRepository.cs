@@ -73,13 +73,9 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         if (!roleResult.Succeeded) 
             return new ValidationError("Assign Role Failed",string.Join(",",roleResult.Errors.Select(x=>x.Description)));
         
-        var isAdded= await _context.SaveChangesAsync(cancellationToken);
-        if(isAdded>0)
-        {
-            await RemoveCacheKey(cancellationToken);
-            return true;
-        }
-        return new ValidationError("Create User Failed","Failed to create user.");
+        await _context.SaveChangesAsync(cancellationToken);
+        await RemoveCacheKey(cancellationToken);
+        return true;
     }
     public async Task<bool> ToggleUserAsync(string id,CancellationToken cancellationToken=default)
     {
@@ -162,7 +158,7 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
             .FirstAsync(cancellationToken);
         return user;
     }
-    private async Task RemoveCacheKey(CancellationToken cancellationToken)
+    public async Task RemoveCacheKey(CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveByTagAsync(UserCacheKeys.UsersTag, cancellationToken);
     }
