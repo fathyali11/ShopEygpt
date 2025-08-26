@@ -9,6 +9,7 @@ public class AuthRepository(
     IValidator<ResetPasswordVM> _resetPasswordVMValidator,
     GeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
+    IApplicaionUserRepository _applicaionUserRepository,
     IHttpContextAccessor _httpContextAccessor) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
@@ -36,7 +37,7 @@ public class AuthRepository(
 
 
         _logger.LogInformation("User registration successful, email confirmation sent to: {Email}", request.Email);
-
+        await _applicaionUserRepository.RemoveCacheKey(cancellationToken);
         await SendEmailConfirmationAsync(user);
 
         return true;
@@ -199,7 +200,7 @@ public class AuthRepository(
         return new ChallengeResult(provider, properties);
     }
 
-    public async Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError)
+    public async Task<OneOf<ExternalLoginInfo?, bool>> ExternalLoginCallbackAsync(string? returnUrl, string? remoteError,CancellationToken cancellationToken=default)
     {
         returnUrl ??= "/";
 
@@ -236,12 +237,27 @@ public class AuthRepository(
                     EmailConfirmed = true
                 };
 
-                await _userManager.CreateAsync(user);
+                var createResult= await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    var error = createResult.Errors.First();
+                    _logger.LogError("User creation failed during external login for email: {Email}, Errors: {Errors}", email, createResult.Errors);
+                    return null as ExternalLoginInfo;
+                }
+
+                var roleResult= await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+                if (!roleResult.Succeeded)
+                {
+                    var error = roleResult.Errors.First();
+                    _logger.LogError("Adding user to role failed during external login for email: {Email}, Errors: {Errors}", email, roleResult.Errors);
+                    return null as ExternalLoginInfo;
+                }
             }
 
             await _userManager.AddLoginAsync(user, info);
             await _signInManager.SignInAsync(user, isPersistent: false);
-
+            await _applicaionUserRepository.RemoveCacheKey(cancellationToken);
+            
             return true;
         }
         return null as ExternalLoginInfo;

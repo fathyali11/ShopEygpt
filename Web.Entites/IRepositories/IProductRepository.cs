@@ -9,7 +9,7 @@ public interface IProductRepository
     Task<List<BestSellingProductVM>> GetBestSellingProductsAsync(string userId, CancellationToken cancellationToken = default);
     Task<List<DiscoverProductVM>> GetDiscoverProductsAsync(string userId, CancellationToken cancellationToken = default);
     Task<PaginatedList<DiscoverProductVM>> GetAllProductsSortedByAsync(string userId,string sortedBy, int pageNumber, CancellationToken cancellationToken = default);
-    Task<IEnumerable<DiscoverProductVM>> GetAllProductsInCategoryAsync(int categoryId, CancellationToken cancellationToken = default);
+    Task<PaginatedList<DiscoverProductVM>> GetAllProductsInCategoryAsync(int pageNumber, int categoryId, CancellationToken cancellationToken = default);
     Task<EditProductVM?> GetProductEditByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<ProductReponseForAdmin?> GetProductDetailsByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<OneOf<List<ValidationError>, bool>> UpdateProductAsync(EditProductVM model, CancellationToken cancellationToken = default);

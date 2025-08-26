@@ -24,7 +24,9 @@
             </div>
             <div class="banner-content py-4">
                 <h5 class="element-title text-uppercase">
-                    <a href="index.html" class="item-anchor">@item.Name</a>
+                <a asp-action="Discover" asp-controller="Product" asp-route-id="@item.Id" class="item-anchor">
+                    @item.Name
+                </a>
                 </h5>
                 <p>@item.Description</p>
                 <div class="btn-left">
