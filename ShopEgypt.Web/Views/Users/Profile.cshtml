@@ -4,29 +4,45 @@
     Layout = "_ProfileLayout";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
                     <h4 class="mb-0">Profile</h4>
                 </div>
                 <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-4">User Name</dt>
+                    <div class="text-center mb-4">
+                        <img src="/Images/default-user.jpg"
+                             class="rounded-circle border border-3 border-primary shadow-sm"
+                             alt="Profile Image" width="120" height="120" />
+                    </div>
+
+                    <dl class="row fs-5">
+                        <dt class="col-sm-4 text-muted fw-semibold">Username</dt>
                         <dd class="col-sm-8">@Model.UserName</dd>
 
-                        <dt class="col-sm-4">First Name</dt>
+                        <dt class="col-sm-4 text-muted fw-semibold">First Name</dt>
                         <dd class="col-sm-8">@Model.FirstName</dd>
 
-                        <dt class="col-sm-4">Last Name</dt>
+                        <dt class="col-sm-4 text-muted fw-semibold">Last Name</dt>
                         <dd class="col-sm-8">@Model.LastName</dd>
 
-                        <dt class="col-sm-4">Email</dt>
+                        <dt class="col-sm-4 text-muted fw-semibold">Email</dt>
                         <dd class="col-sm-8">@Model.Email</dd>
                     </dl>
+
+                    <div class="mt-4 text-end">
+                        <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-primary me-2">
+                            ✏️ Edit Profile
+                        </a>
+                        <a asp-action="ChangePassword" asp-controller="Users" class="btn btn-outline-secondary">
+                            🔒 Change Password
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
