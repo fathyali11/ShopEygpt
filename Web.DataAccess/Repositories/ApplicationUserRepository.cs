@@ -158,6 +158,27 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
             .FirstAsync(cancellationToken);
         return user;
     }
+
+    public async Task<bool> UpdateUserProfileAsync(string userId, EditUserProfileVM model,CancellationToken cancellationToken=default)
+    {
+        var isUpdated= await _context.Users
+            .Where(u => u.Id == userId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(u => u.FirstName, model.FirstName)
+                .SetProperty(u => u.LastName, model.LastName),
+                cancellationToken);
+        return isUpdated>0? true : false;
+    }
+
+    public async Task<bool> ChangeUserPasswordAsync(string userId, ChangePasswordVM model,CancellationToken cancellationToken=default)
+    {
+        var user= await _userManager.FindByIdAsync(userId);
+        if(user is null) return false;
+        var isCurrentPasswordValid= await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+        if(!isCurrentPasswordValid) return false;
+        var result= await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        return result.Succeeded;
+    }
     public async Task RemoveCacheKey(CancellationToken cancellationToken)
     {
         await _hybridCache.RemoveByTagAsync(UserCacheKeys.UsersTag, cancellationToken);

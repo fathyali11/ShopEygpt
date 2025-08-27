@@ -79,6 +79,49 @@ public class UsersController(IApplicaionUserRepository _applicaionUserRepository
         var userProfile=await _applicaionUserRepository.GetUserProfileAsync(userId!,cancellationToken);
         return View(userProfile);
     }
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> EditProfile(CancellationToken cancellationToken)
+    {
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userProfile=await _applicaionUserRepository.GetUserProfileAsync(userId!,cancellationToken);
+        var editUserProfile=userProfile.Adapt<EditUserProfileVM>();
+        return View(editUserProfile);
+    }
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditProfile(EditUserProfileVM model,CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isUpdate=await _applicaionUserRepository.UpdateUserProfileAsync(userId!,model,cancellationToken);
+        if (isUpdate)
+            return RedirectToAction(nameof(Profile));
+        ModelState.AddModelError(string.Empty, "Failed to update profile");
+        return View(model);
+    }
 
+    [Authorize]
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordVM model,CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var isChange=await _applicaionUserRepository.ChangeUserPasswordAsync(userId!,model,cancellationToken);
+        if (isChange)
+            return RedirectToAction(nameof(Profile));
+        ModelState.AddModelError(string.Empty, "Failed to change password");
+        return View(model);
+    }
 
 }

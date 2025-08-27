@@ -7,7 +7,8 @@ public interface IApplicaionUserRepository
     Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default);
     Task<bool> UpdateUserByAdminAsync(EditUserVM model, CancellationToken cancellationToken = default);
     Task<OneOf<bool, ValidationError>> CreateUserAsync(CreateUserVM model, CancellationToken cancellationToken = default);
-
+    Task<bool> ChangeUserPasswordAsync(string userId, ChangePasswordVM model, CancellationToken cancellationToken = default);
+    Task<bool> UpdateUserProfileAsync(string userId, EditUserProfileVM model, CancellationToken cancellationToken = default);
     Task<UserProfileVM> GetUserProfileAsync(string userId, CancellationToken cancellationToken = default);
     Task RemoveCacheKey(CancellationToken cancellationToken);
 
