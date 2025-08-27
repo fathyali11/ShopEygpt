@@ -15,7 +15,7 @@ public class UsersController(IApplicaionUserRepository _applicaionUserRepository
     [HttpGet]
     public async Task<IActionResult> Edit(string id)
     {
-        var user=await _applicaionUserRepository.GetUserForEditAsync(id);
+        var user=await _applicaionUserRepository.GetUserForEditByAdminAsync(id);
         return View(user);
     }
     [Authorize(Roles = UserRoles.Admin)]
@@ -25,7 +25,7 @@ public class UsersController(IApplicaionUserRepository _applicaionUserRepository
     {
         if (!ModelState.IsValid)
             return View(model);
-        var isUpdate=await _applicaionUserRepository.UpdateUserAsync(model,cancellationToken);
+        var isUpdate=await _applicaionUserRepository.UpdateUserByAdminAsync(model,cancellationToken);
         if (isUpdate)
             return RedirectToAction(nameof(Index));
         ModelState.AddModelError(string.Empty, "Failed to update user");

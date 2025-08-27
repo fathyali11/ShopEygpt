@@ -90,7 +90,7 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return false;
     }
 
-    public async Task<EditUserVM> GetUserForEditAsync(string id,CancellationToken cancellationToken=default)
+    public async Task<EditUserVM> GetUserForEditByAdminAsync(string id,CancellationToken cancellationToken=default)
     {
         var user= await _context.Users
             .AsNoTracking()
@@ -107,7 +107,7 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return user;
     }
 
-    public async Task<bool> UpdateUserAsync(EditUserVM model,CancellationToken cancellationToken=default)
+    public async Task<bool> UpdateUserByAdminAsync(EditUserVM model,CancellationToken cancellationToken=default)
     {
         var user=_context.Users.FirstOrDefault(x=>x.Id==model.Id);
         if(user is null) return false;
