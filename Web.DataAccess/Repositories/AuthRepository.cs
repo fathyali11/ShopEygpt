@@ -233,8 +233,7 @@ public class AuthRepository(
                     UserName = email,
                     Email = email,
                     FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName)!,
-                    LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)!,
-                    EmailConfirmed = true
+                    LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)!
                 };
 
                 var createResult= await _userManager.CreateAsync(user);

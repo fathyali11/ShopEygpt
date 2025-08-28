@@ -32,14 +32,17 @@
                         <dd class="col-sm-8">@Model.Email</dd>
                     </dl>
 
-                    <div class="mt-4 text-end">
-                        <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-primary me-2">
-                            ✏️ Edit Profile
-                        </a>
-                        <a asp-action="ChangePassword" asp-controller="Users" class="btn btn-outline-secondary">
-                            🔒 Change Password
-                        </a>
-                    </div>
+                    @if(Model.EmailConfirmed)
+                    {
+                        <div class="mt-4 text-end">
+                            <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-primary me-2">
+                                ✏️ Edit Profile
+                            </a>
+                            <a asp-action="ChangePassword" asp-controller="Users" class="btn btn-outline-secondary">
+                                🔒 Change Password
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
