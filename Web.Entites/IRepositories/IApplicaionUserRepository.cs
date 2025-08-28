@@ -3,11 +3,12 @@ public interface IApplicaionUserRepository
 {
     Task<PaginatedList<UserResponseForAdmin>> GetAllUsersAsync(FilterRequest request, CancellationToken cancellationToken = default);
     Task<bool> ToggleUserAsync(string id, CancellationToken cancellationToken = default);
-    Task<EditUserVM> GetUserForEditAsync(string id, CancellationToken cancellationToken = default);
+    Task<EditUserVM> GetUserForEditByAdminAsync(string id, CancellationToken cancellationToken = default);
     Task<bool> DeleteUserAsync(string id, CancellationToken cancellationToken = default);
-    Task<bool> UpdateUserAsync(EditUserVM model, CancellationToken cancellationToken = default);
+    Task<bool> UpdateUserByAdminAsync(EditUserVM model, CancellationToken cancellationToken = default);
     Task<OneOf<bool, ValidationError>> CreateUserAsync(CreateUserVM model, CancellationToken cancellationToken = default);
-
+    Task<bool> ChangeUserPasswordAsync(string userId, ChangePasswordVM model, CancellationToken cancellationToken = default);
+    Task<bool> UpdateUserProfileAsync(string userId, EditUserProfileVM model, CancellationToken cancellationToken = default);
     Task<UserProfileVM> GetUserProfileAsync(string userId, CancellationToken cancellationToken = default);
     Task RemoveCacheKey(CancellationToken cancellationToken);
 

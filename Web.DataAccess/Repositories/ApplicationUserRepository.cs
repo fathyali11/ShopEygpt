@@ -90,7 +90,7 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return false;
     }
 
-    public async Task<EditUserVM> GetUserForEditAsync(string id,CancellationToken cancellationToken=default)
+    public async Task<EditUserVM> GetUserForEditByAdminAsync(string id,CancellationToken cancellationToken=default)
     {
         var user= await _context.Users
             .AsNoTracking()
@@ -107,7 +107,7 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
         return user;
     }
 
-    public async Task<bool> UpdateUserAsync(EditUserVM model,CancellationToken cancellationToken=default)
+    public async Task<bool> UpdateUserByAdminAsync(EditUserVM model,CancellationToken cancellationToken=default)
     {
         var user=_context.Users.FirstOrDefault(x=>x.Id==model.Id);
         if(user is null) return false;
@@ -157,6 +157,27 @@ public class ApplicationUserRepository(ApplicationDbContext _context,
             .ProjectToType<UserProfileVM>()
             .FirstAsync(cancellationToken);
         return user;
+    }
+
+    public async Task<bool> UpdateUserProfileAsync(string userId, EditUserProfileVM model,CancellationToken cancellationToken=default)
+    {
+        var isUpdated= await _context.Users
+            .Where(u => u.Id == userId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(u => u.FirstName, model.FirstName)
+                .SetProperty(u => u.LastName, model.LastName),
+                cancellationToken);
+        return isUpdated>0? true : false;
+    }
+
+    public async Task<bool> ChangeUserPasswordAsync(string userId, ChangePasswordVM model,CancellationToken cancellationToken=default)
+    {
+        var user= await _userManager.FindByIdAsync(userId);
+        if(user is null) return false;
+        var isCurrentPasswordValid= await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+        if(!isCurrentPasswordValid) return false;
+        var result= await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        return result.Succeeded;
     }
     public async Task RemoveCacheKey(CancellationToken cancellationToken)
     {
