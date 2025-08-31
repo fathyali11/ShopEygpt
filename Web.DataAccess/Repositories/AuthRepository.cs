@@ -109,9 +109,9 @@ public class AuthRepository(
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         if (!result.Succeeded)
         {
-            var error = result.Errors.First();
+            var error = result.Errors.FirstOrDefault();
             _logger.LogError("Email confirmation failed for user ID: {UserId}, Errors: {Errors}", confirmEmailVM.UserId, result.Errors);
-            return new List<ValidationError> { new ValidationError(error.Code, error.Description) };
+            return new List<ValidationError> { new ValidationError(error?.Code ?? string.Empty, error?.Description ?? string.Empty) };
         }
 
         _logger.LogInformation("Email confirmed successfully for user ID: {UserId}", confirmEmailVM.UserId);
@@ -192,9 +192,9 @@ public class AuthRepository(
         var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordVM.NewPassword);
         if (!result.Succeeded)
         {
-            var error = result.Errors.First();
+            var error = result.Errors.FirstOrDefault();
             _logger.LogError("Password reset failed for user ID: {UserId}, Errors: {Errors}", resetPasswordVM.UserId, result.Errors);
-            return new List<ValidationError> { new ValidationError(error.Code,error.Description) };
+            return new List<ValidationError> { new ValidationError(error?.Code ?? string.Empty, error?.Description ?? string.Empty) };
         }
 
         _logger.LogInformation("Password reset successful for user ID: {UserId}", resetPasswordVM.UserId);
