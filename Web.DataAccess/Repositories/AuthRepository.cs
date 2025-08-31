@@ -10,12 +10,13 @@ public class AuthRepository(
     GeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
     IApplicaionUserRepository _applicaionUserRepository,
-    IHttpContextAccessor _httpContextAccessor) : IAuthRepository
+    IHttpContextAccessor _httpContextAccessor,
+    ApplicationDbContext _context) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Check if this email found");
-        var userIsExist=await _userManager
+        var userIsExist=await _context
             .Users.AnyAsync(u => u.Email == request.Email || u.UserName == request.UserName, cancellationToken);
         if (userIsExist)
         {
@@ -32,7 +33,12 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
-        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        var addToRoleResult=await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        if(!addToRoleResult.Succeeded)
+        {
+            _logger.LogError("Failed to assign user to role ");
+            return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
+        }
         _logger.LogInformation("set user to customer role");
 
 
