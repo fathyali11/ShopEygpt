@@ -158,10 +158,9 @@ public static class DependencyInjection
 
     private static void ConfigureIdentity(WebApplicationBuilder builder)
     {
+        // make password simple for testing only
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>(op =>
         {
-            op.Lockout.MaxFailedAccessAttempts = 3;
-            op.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(2);
             op.Password.RequiredUniqueChars = 0;
             op.Password.RequireNonAlphanumeric = false;
             op.Password.RequireUppercase = false;
@@ -236,6 +235,8 @@ public static class DependencyInjection
         builder.Services.AddScoped<IProductRecommenderRepository, ProductRecommenderRepository>();
         builder.Services.AddScoped<IApplicaionUserRepository,ApplicationUserRepository>();
         builder.Services.AddScoped<IRoleRepository,RoleRepository>();
+        builder.Services.AddScoped<IGeneralRepository, GeneralRepository>();
+
         builder.Services.AddScoped<CloudinaryRepository>();
     }
 }

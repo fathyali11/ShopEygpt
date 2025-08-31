@@ -7,7 +7,7 @@ public class AuthRepository(
     IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
     IValidator<ForgotPasswordVM> _forgetPasswordVMValidator,
     IValidator<ResetPasswordVM> _resetPasswordVMValidator,
-    GeneralRepository _generalRepository,
+    IGeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
     IApplicaionUserRepository _applicaionUserRepository,
     IHttpContextAccessor _httpContextAccessor,
@@ -61,11 +61,15 @@ public class AuthRepository(
             _logger.LogInformation("User with email {Email} not confirmed",user.Email);
             return new List<ValidationError> { new("NotConfirmed", "This email not confirmed") };
         }
+        if (!user.IsActive)
+        {
+            _logger.LogInformation("User with email {Email} not active", user.Email);
+            return new List<ValidationError> { new("NotActive", "This email not active") };
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isPasswordValid)
         {
             _logger.LogWarning("Invalid password for user: {Username}", request.UserName);
-            await _userManager.AccessFailedAsync(user);
             return new List<ValidationError> { new("InvalidPassword", "Invalid password") };
         }
 
