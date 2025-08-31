@@ -93,9 +93,9 @@ public class ApplicationUserRepositoryTests
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
 
-        var hybridCacheMock = new Mock<HybridCache>();
+        var hybridCacheFake = new FakeHybridCache();
 
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
 
         var model = new CreateUserVM
         {
@@ -130,8 +130,9 @@ public class ApplicationUserRepositoryTests
             null, null, null, null, null, null, null, null);
         userManagerMock.Setup(um => um.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
-        var hybridCacheMock = new Mock<HybridCache>();
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
+
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var model = new CreateUserVM
         {
             UserName = "testuser",
@@ -166,8 +167,9 @@ public class ApplicationUserRepositoryTests
 
         userManagerMock.Setup(um => um.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
-        var hybridCacheMock = new Mock<HybridCache>();
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
+
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var model = new CreateUserVM
         {
             UserName = "testuser",
@@ -214,10 +216,9 @@ public class ApplicationUserRepositoryTests
         userManagerMock.Setup(um => um.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        var hybridCacheMock = new Mock<HybridCache>();
+        var hybridCacheFake = new FakeHybridCache();
 
-
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var model = new CreateUserVM
         {
             UserName = "testuser",
@@ -249,10 +250,9 @@ public class ApplicationUserRepositoryTests
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
 
-        var hybridCacheMock = new Mock<HybridCache>();
+        var hybridCacheFake = new FakeHybridCache();
 
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
-
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var result = await repository.UpdateUserByAdminAsync(new EditUserVM());
 
         result.Should().BeFalse();
@@ -270,7 +270,7 @@ public class ApplicationUserRepositoryTests
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
 
-        var hybridCacheMock = new Mock<HybridCache>();
+        
 
         var user = new ApplicationUser
         {
@@ -279,9 +279,9 @@ public class ApplicationUserRepositoryTests
             Email = "test@email.com"
         };
 
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
 
-
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
 
 
         // act
@@ -301,7 +301,6 @@ public class ApplicationUserRepositoryTests
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
 
-        var hybridCacheMock = new Mock<HybridCache>();
         var user = new ApplicationUser
         {
             Id = "1",
@@ -334,8 +333,9 @@ public class ApplicationUserRepositoryTests
             Email = "test@email.com",
             Role = "User"
         };
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
 
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         // act
         var result = await repository.UpdateUserByAdminAsync(model);
 
@@ -364,7 +364,6 @@ public class ApplicationUserRepositoryTests
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
 
-        var hybridCacheMock = new Mock<HybridCache>();
         var user = new ApplicationUser
         {
             Id = "1",
@@ -373,8 +372,9 @@ public class ApplicationUserRepositoryTests
         };
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
 
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         // act
         var result = await repository.GetUserProfileAsync("1");
 
@@ -396,12 +396,12 @@ public class ApplicationUserRepositoryTests
         var userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
-        var hybridCacheMock = new Mock<HybridCache>();
 
         userManagerMock.Setup(x=>x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-        
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var hybridCacheFake = new FakeHybridCache();
+
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var model = new ChangePasswordVM
         {
             CurrentPassword = "OldPassword",
@@ -426,15 +426,15 @@ public class ApplicationUserRepositoryTests
         var userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
-        var hybridCacheMock = new Mock<HybridCache>();
 
         userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(It.IsAny<ApplicationUser>());
 
         userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(false);
+        var hybridCacheFake = new FakeHybridCache();
 
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
         var model = new ChangePasswordVM
         {
             CurrentPassword = "OldPassword",
@@ -460,7 +460,6 @@ public class ApplicationUserRepositoryTests
         var userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
-        var hybridCacheMock = new Mock<HybridCache>();
 
         var fakeUser = new ApplicationUser
         {
@@ -478,8 +477,10 @@ public class ApplicationUserRepositoryTests
 
         userManagerMock.Setup(x => x.ChangePasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
+        var hybridCacheFake = new FakeHybridCache();
 
-        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheMock.Object);
+        var repository = new ApplicationUserRepository(context, userManagerMock.Object, hybridCacheFake);
+
         var model = new ChangePasswordVM
         {
             CurrentPassword = "OldPassword",
