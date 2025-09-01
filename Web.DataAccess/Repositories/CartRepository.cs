@@ -85,83 +85,83 @@ public class CartRepository(ApplicationDbContext context,
         return response is not null ? response :
             new CartResponse { UserId = userId, Items = [] };
     }
-    public async Task<(int,decimal)> IncreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<Delete_Increase_DecreaseCartItemResponse> IncreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var cartItem = await _context.CartItems
-            .Where(ci => ci.Id == cartItemVM.cartItemId)
+        var result = await _context.CartItems
             .Select(ci => new { Item = ci, Cart = ci.Cart })
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(x => x.Item.ProductId == cartItemVM.cartItemId && x.Cart.Id == cartItemVM.cartId);
 
-        if (cartItem is not null)
+        if (result is not null)
         {
-            cartItem.Item.Count++;
-            cartItem.Cart!.TotalPrice += cartItem.Item.Price;
-            _logger.LogInformation("Cart item count increased to {Count}", cartItem.Item.Count);
-            _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
+            result.Item.Count++;
+            result.Cart!.TotalPrice += result.Item.Price;
+            _logger.LogInformation("Cart item count increased to {Count}", result.Item.Count);
+            _logger.LogInformation("Cart total price updated to {TotalPrice}", result.Cart.TotalPrice);
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeysAsync(cancellationToken);
-            return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
+            return new Delete_Increase_DecreaseCartItemResponse(result.Item.Count, result.Cart!.TotalPrice);
         }
         await RemoveCacheKeysAsync(cancellationToken);
-        return (0,0.0m);
+        return new Delete_Increase_DecreaseCartItemResponse(0, 0.0m);
     }
-    public async Task<(int, decimal)> DecreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<Delete_Increase_DecreaseCartItemResponse> DecreaseAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var cartItem = await _context.CartItems
+        var result = await _context.CartItems
             .Select(x => new
             {
                 Item = x,
                 Cart = x.Cart,
-            }).FirstOrDefaultAsync(x=>x.Item.Id==cartItemVM.cartItemId);
-        if (cartItem is not null)
+            }).FirstOrDefaultAsync(x=>x.Item.ProductId==cartItemVM.cartItemId && x.Cart.Id == cartItemVM.cartId);
+        if (result is not null)
         {
-            if (cartItem.Item.Count > 1)
+            if (result.Item.Count > 1)
             {
-                cartItem.Item.Count--;
-                cartItem.Cart!.TotalPrice -= cartItem.Item.Price;
-                _logger.LogInformation("Cart item count decreased to {Count}", cartItem.Item.Count);
-                _logger.LogInformation("Cart total price updated to {TotalPrice}", cartItem.Cart.TotalPrice);
+                result.Item.Count--;
+                result.Cart!.TotalPrice -= result.Item.Price;
+                _logger.LogInformation("Cart item count decreased to {Count}", result.Item.Count);
+                _logger.LogInformation("Cart total price updated to {TotalPrice}", result.Cart.TotalPrice);
                 await _context.SaveChangesAsync(cancellationToken);
                 await RemoveCacheKeysAsync( cancellationToken);
-                return (cartItem.Item.Count,cartItem.Cart!.TotalPrice);
+                return new Delete_Increase_DecreaseCartItemResponse(result.Item.Count,result.Cart!.TotalPrice);
             }
             else
             {
-                _context.CartItems.Remove(cartItem.Item);
+                _context.CartItems.Remove(result.Item);
+                result.Cart!.TotalPrice -= result.Item.TotalPrice;
                 await _context.SaveChangesAsync(cancellationToken);
                 await RemoveCacheKeysAsync( cancellationToken);
                 _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
-                repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+                repo.AddOrUpdateRatingAsync(userId, result.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
-                return (0, 0.0m); 
+                return new Delete_Increase_DecreaseCartItemResponse(0, result.Cart.TotalPrice); 
             }
         }
         await RemoveCacheKeysAsync( cancellationToken);
-        return (0, 0.0m);
+        // default value as window will be refreshed and cart total price will be fetched again
+        return new Delete_Increase_DecreaseCartItemResponse(0, 0.0m);
     }
 
-    public async Task<decimal> DeleteCartItemAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
+    public async Task<decimal> DeleteCartItemAndReturnCartTotalPriceAsync(string userId,Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
-        var cartItem = await _context.CartItems
-            .Where(ci => ci.Id == cartItemVM.cartItemId)
+        var result = await _context.CartItems
             .Select(ci => new { Item = ci, Cart = ci.Cart })
-            .FirstOrDefaultAsync(cancellationToken);
-        if (cartItem is not null)
+            .FirstOrDefaultAsync(x => x.Item.ProductId == cartItemVM.cartItemId && x.Cart.Id == cartItemVM.cartId); ;
+        if (result is not null)
         {
-            _context.CartItems.Remove(cartItem.Item);
-            cartItem.Cart!.TotalPrice -= cartItem.Item.TotalPrice;
+            _context.CartItems.Remove(result.Item);
+            result.Cart!.TotalPrice -= result.Item.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeysAsync(cancellationToken);
             _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
-              repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+              repo.AddOrUpdateRatingAsync(userId, result.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
 
-            return cartItem.Cart.TotalPrice;
+            return result.Cart.TotalPrice;
         }
         await RemoveCacheKeysAsync(cancellationToken);
         _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
-              repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
-
+              repo.AddOrUpdateRatingAsync(userId, result!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
+        // default value as window will be refreshed and cart total price will be fetched again
         return 0.0m;
     }
 

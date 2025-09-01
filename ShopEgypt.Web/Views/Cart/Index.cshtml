@@ -34,13 +34,13 @@
                                 <div class="row">Cotton T-shirt</div>
                             </div>
                             <div class="col">
-                                <a href="#" class="decrease-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.Id">-</a>
+                                <a href="#" class="decrease-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.ProductId">-</a>
                                 <a href="#" class="border item-count text-decoration-none">@item.Count</a>
-                                <a href="#" class="increase-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.Id">+</a>
+                                <a href="#" class="increase-item text-decoration-none" data-cart-id="@Model.Id" data-item-id="@item.ProductId">+</a>
                             </div>
 
                             <div class="col">&euro; @item.Price <span class="close">&#10005;</span></div>
-                            <div class="col"><i data-item-id="@item.Id" data-cart-id="@Model.Id" class="bi bi-trash3-fill delete"></i></div>
+                            <div class="col"><i data-item-id="@item.ProductId" data-cart-id="@Model.Id" class="bi bi-trash3-fill delete"></i></div>
                         </div>
                     </div>
 
