@@ -3,7 +3,7 @@ internal class CartItemConfiguration : IEntityTypeConfiguration<CartItem>
 {
     public void Configure(EntityTypeBuilder<CartItem> builder)
     {
-        builder.HasKey(ci => ci.Id);
+        builder.HasKey(ci => new {ci.CartId,ci.ProductId});
 
         builder.Property(ci => ci.ProductName)
             .IsRequired()

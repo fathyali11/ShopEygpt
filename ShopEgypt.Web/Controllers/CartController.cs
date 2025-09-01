@@ -52,7 +52,7 @@ public class CartController(ICartRepository _cartRepository) : Controller
     public async Task<IActionResult> Delete(Delete_Increase_DecreaseCartItemVM cartItemVM, CancellationToken cancellationToken = default)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var totalPrice=await _cartRepository.DeleteCartItemAsync(userId!,cartItemVM, cancellationToken);
+        var totalPrice=await _cartRepository.DeleteCartItemAndReturnCartTotalPriceAsync(userId!,cartItemVM, cancellationToken);
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return Json(new { success = true, message = "The product was deleted successfully!",totalPrice });
         else
