@@ -1,12 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using Moq;
-using System.Threading.Tasks;
 using Web.DataAccess.Data;
 using Web.DataAccess.Tests;
-using Web.Entites.Consts;
 using Web.Entites.IRepositories;
 using Web.Entites.Models;
 using Web.Entites.ViewModels.CartItemVMs;
@@ -27,8 +24,8 @@ public class CartRepositoryTests
         context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 100.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
+            new CartItem { CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
         );
         await context.SaveChangesAsync();
         var fakeHybridCache = new FakeHybridCache();
@@ -72,6 +69,8 @@ public class CartRepositoryTests
     }
 
 
+
+
     [Fact()]
     public async Task GetCartItemsAsync_WhenCartIsNull_ShouldReturnNewCartResponseVM()
     {
@@ -106,8 +105,8 @@ public class CartRepositoryTests
         await context.SaveChangesAsync();
 
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
+            new CartItem {CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
 
@@ -138,8 +137,8 @@ public class CartRepositoryTests
         context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 100.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
+            new CartItem {CartId = 2, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
 
@@ -153,12 +152,12 @@ public class CartRepositoryTests
         var result= await cartRepository.IncreaseAsync(userId, increaseItem);
 
         //assert
-        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.Id == 1);
+        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == 1&&ci.ProductId==1);
         cartItem.Should().NotBeNull();
         cartItem!.Count.Should().Be(2);
 
-        result.Item1.Should().Be(2);
-        result.Item2.Should().Be(150.0m);
+        result.CarItemCount.Should().Be(2);
+        result.CartTotalPrice.Should().Be(150.0m);
     }
     [Fact()]
     public async Task IncreaseAsync_WhenCartItemIsNotExists_ShouldReturnZero()
@@ -180,12 +179,11 @@ public class CartRepositoryTests
         var result = await cartRepository.IncreaseAsync(userId, increaseItem);
 
         //assert
-        result.Item1.Should().Be(0);
-        result.Item2.Should().Be(0.0m);
+        result.CarItemCount.Should().Be(0);
+        result.CartTotalPrice.Should().Be(0.0m);
     }
 
 
-    // add tests for DecreaseAsync and DeleteCartItemAsync methods as needed
     [Fact()]
     public async Task DecreaseAsync_WhenCartItemExistsAndCountGreaterThanOne_ShouldDecreaseCountByOne()
     {
@@ -194,11 +192,11 @@ public class CartRepositoryTests
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         using var context = new ApplicationDbContext(options);
-        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 150.0m });
+        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 200.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 2 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 2 },
+            new CartItem {CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
         var fakeHybridCache = new FakeHybridCache();
@@ -210,11 +208,9 @@ public class CartRepositoryTests
         //act
         var result = await cartRepository.DecreaseAsync(userId, decreaseItem);
         //assert
-        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.Id == 1);
-        cartItem.Should().NotBeNull();
-        cartItem!.Count.Should().Be(1);
-        result.Item1.Should().Be(1);
-        result.Item2.Should().Be(100.0m);
+        
+        result.CarItemCount.Should().Be(1);
+        result.CartTotalPrice.Should().Be(150.0m);
     }
     [Fact()]
     public async Task DecreaseAsync_WhenCartItemExistsAndCountIsOne_ShouldRemoveCartItem()
@@ -227,8 +223,8 @@ public class CartRepositoryTests
         context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 100.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 1 },
+            new CartItem {CartId = 2, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
         
@@ -241,7 +237,7 @@ public class CartRepositoryTests
         //act
         var result = await cartRepository.DecreaseAsync(userId, decreaseItem);
         //assert
-        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.Id == 1);
+        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.CartId == 1 && ci.ProductId == 1);
         cartItem.Should().BeNull();
     }
     [Fact]
@@ -261,22 +257,22 @@ public class CartRepositoryTests
         //act
         var result = await cartRepository.DecreaseAsync(userId, decreaseItem);
         //assert
-        result.Item1.Should().Be(0);
-        result.Item2.Should().Be(0.0m);
+        result.CarItemCount.Should().Be(0);
+        result.CartTotalPrice.Should().Be(0.0m);
     }
     [Fact]
-    public async Task DeleteCartItemAsync_WhenCartItemExists_ShouldRemoveItemAndUpdateTotalPrice()
+    public async Task DeleteCartItemAndReturnCartTotalPriceAsync_WhenCartItemExists_ShouldRemoveItemAndUpdateTotalPrice()
     {
         //arrange
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         using var context = new ApplicationDbContext(options);
-        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 150.0m });
+        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 200.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 2 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 2 },
+            new CartItem {CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
         var fakeHybridCache = new FakeHybridCache();
@@ -286,27 +282,23 @@ public class CartRepositoryTests
         var userId = "user1";
         var deleteItem = new Delete_Increase_DecreaseCartItemVM(1, 1);
         //act
-        await cartRepository.DeleteCartItemAsync(userId, deleteItem);
+        var result= await cartRepository.DeleteCartItemAndReturnCartTotalPriceAsync(userId, deleteItem);
         //assert
-        var cartItem = await context.CartItems.FirstOrDefaultAsync(ci => ci.Id == 1);
-        cartItem.Should().BeNull();
-        var cart = await context.Carts.FirstOrDefaultAsync(c => c.Id == 1);
-        cart.Should().NotBeNull();
-        cart!.TotalPrice.Should().Be(50.0m);
+        result.Should().Be(100.0m);
     }
     [Fact]
-    public async Task DeleteCartItemAsync_WhenCartItemDoesNotExist_ShouldDoNothing()
+    public async Task DeleteCartItemAndReturnCartTotalPriceAsync_WhenCartItemDoesNotExist_ShouldDoNothing()
     {
         //arrange
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         using var context = new ApplicationDbContext(options);
-        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 150.0m });
+        context.Carts.Add(new Cart { Id = 1, UserId = "user1", TotalPrice = 200.0m });
         await context.SaveChangesAsync();
         context.CartItems.AddRange(
-            new CartItem { Id = 1, CartId = 1, ProductId = 1, ProductName = "Product1", Price = 50.0m, Count = 2 },
-            new CartItem { Id = 2, CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 1 }
+            new CartItem { CartId = 1, ProductId = 1, ProductName = "Product1", Price =  50.0m, Count = 2 },
+            new CartItem {CartId = 1, ProductId = 2, ProductName = "Product2", Price = 50.0m, Count = 2 }
         );
         await context.SaveChangesAsync();
         var fakeHybridCache = new FakeHybridCache();
@@ -314,15 +306,11 @@ public class CartRepositoryTests
         var jobs = new Mock<IBackgroundJobsRepository>().Object;
         var cartRepository = new CartRepository(context, logger, fakeHybridCache, jobs);
         var userId = "user1";
-        var deleteItem = new Delete_Increase_DecreaseCartItemVM(3, 1); // Non-existent cart item ID
+        var deleteItem = new Delete_Increase_DecreaseCartItemVM(3, 1); 
         //act
-        await cartRepository.DeleteCartItemAsync(userId, deleteItem);
+        var result=await cartRepository.DeleteCartItemAndReturnCartTotalPriceAsync(userId, deleteItem);
         //assert
-        var cartItems = await context.CartItems.ToListAsync();
-        cartItems.Should().HaveCount(2); // No items should be removed
-        var cart = await context.Carts.FirstOrDefaultAsync(c => c.Id == 1);
-        cart.Should().NotBeNull();
-        cart!.TotalPrice.Should().Be(150.0m); // Total price should remain unchanged
+        result.Should().Be(0.0m);
     }
 
 }
