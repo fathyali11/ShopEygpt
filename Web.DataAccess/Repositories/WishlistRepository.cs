@@ -2,12 +2,13 @@
 
 namespace Web.DataAccess.Repositories;
 public class WishlistRepository(ApplicationDbContext _context,
-    HybridCache _hybridCache) : IWishlistRepository
+    HybridCache _hybridCache,
+    IBackgroundJobsRepository _backgroundJobsRepository) : IWishlistRepository
 {
     public async Task<bool> ToggelWishlistItemAsync(string userId, AddWishlistItem addWishlistItem, CancellationToken cancellationToken = default)
     {
         var wishlist = await _context.Wishlist
-    .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+         .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
 
         if (wishlist == null)
         {
@@ -16,16 +17,15 @@ public class WishlistRepository(ApplicationDbContext _context,
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        var exists = await _context.WishlistItems
-            .AnyAsync(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId, cancellationToken);
+        var wishlistItem = await _context.WishlistItems
+            .FirstOrDefaultAsync(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId, cancellationToken);
 
-        if (exists)
+        if (wishlistItem is not null)
         {
-            await _context.WishlistItems
-                .Where(x => x.WishlistId == wishlist.Id && x.ProductId == addWishlistItem.ProductId)
-                .ExecuteDeleteAsync(cancellationToken);
+            _context.WishlistItems.Remove(wishlistItem);
+            await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeys(cancellationToken);
-            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+            _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
                     repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
             return false;
@@ -43,13 +43,12 @@ public class WishlistRepository(ApplicationDbContext _context,
 
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeys(cancellationToken);
-            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+            _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
                     repo.AddOrUpdateRatingAsync(userId, addWishlistItem.ProductId, RatingNumbers.AddToWishlist, CancellationToken.None));
             return true;
         }
 
     }
-
     public async Task<WishlistResponse> GetWishlistItems(string userId,CancellationToken cancellationToken=default)
     {
         var cacheKey=$"{WishlistCacheKeys.WishlistItems}_{userId}";
@@ -62,7 +61,6 @@ public class WishlistRepository(ApplicationDbContext _context,
                     x.Id,
                     x.WishlistItems.Select(wl=>new WishlistItem
                     {
-                        Id= wl.Id,
                         ProductId= wl.ProductId,
                         ProductName = wl.ProductName,
                         ImageName = wl.ImageName,
@@ -75,11 +73,9 @@ public class WishlistRepository(ApplicationDbContext _context,
                     , cancellationToken:cancellationToken
             );
 
-
         return wishlist is not null ? wishlist : new WishlistResponse(0, []);
 
     }
-
     public async Task<int> GetWishlistItemCountAsync(string userId, CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{WishlistCacheKeys.WishlistItemCount}_{userId}";
@@ -90,19 +86,21 @@ public class WishlistRepository(ApplicationDbContext _context,
             tags: [WishlistCacheKeys.WishlistsTag],
             cancellationToken: cancellationToken);
     }
-
-
     public async Task<int> DeleteWishlistItemAsync(string userId,DeleteWishlistItem deleteWishlistItem, CancellationToken cancellationToken = default)
     {
-        var result= await _context.WishlistItems
-            .Where(x => x.ProductId == deleteWishlistItem.ProductId)
-            .ExecuteDeleteAsync(cancellationToken);
+        var wishlistItemFromDb = await _context.WishlistItems
+            .FirstOrDefaultAsync(x => x.ProductId == deleteWishlistItem.ProductId && x.WishlistId == deleteWishlistItem.WishlistId, cancellationToken);
+        if (wishlistItemFromDb == null)
+            return -1;
+        _context.WishlistItems.Remove(wishlistItemFromDb);
+        var result = await _context.SaveChangesAsync(cancellationToken);
+            
 
         if (result == 0)
             return -1;
 
         await RemoveCacheKeys(cancellationToken);
-        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
         repo.AddOrUpdateRatingAsync(userId, deleteWishlistItem.ProductId, RatingNumbers.RemoveFromWishlist, CancellationToken.None));
 
         return await GetWishlistItemCountAsync (userId, cancellationToken);

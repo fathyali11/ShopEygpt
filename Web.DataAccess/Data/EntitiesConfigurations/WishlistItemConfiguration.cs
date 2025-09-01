@@ -3,7 +3,7 @@ internal class WishlistItemConfiguration : IEntityTypeConfiguration<WishlistItem
 {
     public void Configure(EntityTypeBuilder<WishlistItem> builder)
     {
-        builder.HasKey(ci => ci.Id);
+        builder.HasKey(ci =>new {ci.ProductId,ci.WishlistId});
 
         builder.Property(ci => ci.ProductName)
             .IsRequired()

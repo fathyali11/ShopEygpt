@@ -206,7 +206,7 @@ public class ProductRepository(ApplicationDbContext context,
                 x.Name,
                 x.ImageName,
                 x.Price,
-                wishlist.Items.Any(w => w.Id == x.Id)))
+                wishlist.Items.Any(w => w.ProductId == x.Id)))
                 .ToList();
             }
 
