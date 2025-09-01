@@ -11,7 +11,7 @@ using Web.Entites.IRepositories;
 using Web.Entites.Models;
 using Web.Entites.ViewModels;
 using Xunit;
-
+namespace Web.DataAccess.Repositories.Tests;
 public class CategoryRepositoryTests
 {
     [Fact]
