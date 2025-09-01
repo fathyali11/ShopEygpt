@@ -236,6 +236,7 @@ public static class DependencyInjection
         builder.Services.AddScoped<IApplicaionUserRepository,ApplicationUserRepository>();
         builder.Services.AddScoped<IRoleRepository,RoleRepository>();
         builder.Services.AddScoped<IGeneralRepository, GeneralRepository>();
+        builder.Services.AddScoped<IBackgroundJobsRepository, BackgroundJobsRepository>();
 
         builder.Services.AddScoped<CloudinaryRepository>();
     }
