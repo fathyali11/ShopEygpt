@@ -2,7 +2,7 @@
 using CloudinaryDotNet.Actions;
 using Account = CloudinaryDotNet.Account;
 namespace Web.DataAccess.Repositories;
-public class CloudinaryRepository
+public class CloudinaryRepository: ICloudinaryRepository
 {
     private readonly Cloudinary _cloudinary;
 
@@ -62,7 +62,7 @@ public class CloudinaryRepository
         return null;
     }
 
-    public static string? GetPublicIdFromUrl(string imageUrl)
+    public string? GetPublicIdFromUrl(string imageUrl)
     {
         try
         {

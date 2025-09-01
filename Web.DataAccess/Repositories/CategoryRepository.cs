@@ -1,12 +1,10 @@
-﻿using MailKit.Search;
-
-namespace Web.DataAccess.Repositories;
+﻿namespace Web.DataAccess.Repositories;
 public class CategoryRepository(ApplicationDbContext context,
-    GeneralRepository _generalRepository,
+    IGeneralRepository _generalRepository,
     IValidator<CreateCategoryVM> _createCategoryValidator,
     IValidator<EditCategoryVM> _editCategoryValidator,
     HybridCache _hybridCache,
-    CloudinaryRepository _cloudinaryRepository,
+    ICloudinaryRepository _cloudinaryRepository,
     IProductRepository _productRepository) :ICategoryRepository
 {
     private readonly ApplicationDbContext _context= context;
@@ -81,7 +79,7 @@ public class CategoryRepository(ApplicationDbContext context,
 
         var isDeleted = await _cloudinaryRepository.DeleteImageAsync(categoryFromDb.ImageName);
         if(!isDeleted)
-            return new List<ValidationError> { new("Server Error", "Internal server error in saving image") };
+            return new List<ValidationError> { new("Server Error", "Internal server error in deleting image") };
 
         _context.Categories.Remove(categoryFromDb);
         await _context.SaveChangesAsync();
