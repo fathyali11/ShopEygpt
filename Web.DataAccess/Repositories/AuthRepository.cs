@@ -7,15 +7,16 @@ public class AuthRepository(
     IValidator<ResendEmailConfirmationVM> _resendEmailConfirmationVMValidator,
     IValidator<ForgotPasswordVM> _forgetPasswordVMValidator,
     IValidator<ResetPasswordVM> _resetPasswordVMValidator,
-    GeneralRepository _generalRepository,
+    IGeneralRepository _generalRepository,
     IEmailRepository _emailRepository,
     IApplicaionUserRepository _applicaionUserRepository,
-    IHttpContextAccessor _httpContextAccessor) : IAuthRepository
+    IHttpContextAccessor _httpContextAccessor,
+    ApplicationDbContext _context) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Check if this email found");
-        var userIsExist=await _userManager
+        var userIsExist=await _context
             .Users.AnyAsync(u => u.Email == request.Email || u.UserName == request.UserName, cancellationToken);
         if (userIsExist)
         {
@@ -32,7 +33,12 @@ public class AuthRepository(
             _logger.LogError("User registration failed: {Errors}", result.Errors);
             return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
         }
-        await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        var addToRoleResult=await _userManager.AddToRoleAsync(user, UserRoles.Customer);
+        if(!addToRoleResult.Succeeded)
+        {
+            _logger.LogError("Failed to assign user to role ");
+            return new List<ValidationError> { new(PropertyName: "ServerError", "Internal server error") };
+        }
         _logger.LogInformation("set user to customer role");
 
 
@@ -55,11 +61,15 @@ public class AuthRepository(
             _logger.LogInformation("User with email {Email} not confirmed",user.Email);
             return new List<ValidationError> { new("NotConfirmed", "This email not confirmed") };
         }
+        if (!user.IsActive)
+        {
+            _logger.LogInformation("User with email {Email} not active", user.Email);
+            return new List<ValidationError> { new("NotActive", "This email not active") };
+        }
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!isPasswordValid)
         {
             _logger.LogWarning("Invalid password for user: {Username}", request.UserName);
-            await _userManager.AccessFailedAsync(user);
             return new List<ValidationError> { new("InvalidPassword", "Invalid password") };
         }
 
@@ -99,9 +109,9 @@ public class AuthRepository(
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         if (!result.Succeeded)
         {
-            var error = result.Errors.First();
+            var error = result.Errors.FirstOrDefault();
             _logger.LogError("Email confirmation failed for user ID: {UserId}, Errors: {Errors}", confirmEmailVM.UserId, result.Errors);
-            return new List<ValidationError> { new ValidationError(error.Code, error.Description) };
+            return new List<ValidationError> { new ValidationError(error?.Code ?? string.Empty, error?.Description ?? string.Empty) };
         }
 
         _logger.LogInformation("Email confirmed successfully for user ID: {UserId}", confirmEmailVM.UserId);
@@ -182,9 +192,9 @@ public class AuthRepository(
         var result = await _userManager.ResetPasswordAsync(user, decodedToken, resetPasswordVM.NewPassword);
         if (!result.Succeeded)
         {
-            var error = result.Errors.First();
+            var error = result.Errors.FirstOrDefault();
             _logger.LogError("Password reset failed for user ID: {UserId}, Errors: {Errors}", resetPasswordVM.UserId, result.Errors);
-            return new List<ValidationError> { new ValidationError(error.Code,error.Description) };
+            return new List<ValidationError> { new ValidationError(error?.Code ?? string.Empty, error?.Description ?? string.Empty) };
         }
 
         _logger.LogInformation("Password reset successful for user ID: {UserId}", resetPasswordVM.UserId);

@@ -3,7 +3,8 @@
 namespace Web.DataAccess.Repositories;
 public class CartRepository(ApplicationDbContext context,
     ILogger<CartRepository> _logger,
-    HybridCache _hybridCache) : ICartRepository
+    HybridCache _hybridCache,
+    IBackgroundJobsRepository _backgroundJobsRepository) : ICartRepository
 {
     private readonly ApplicationDbContext _context = context;
     public async Task AddToCartAsync(string userId, AddCartItemVM addCartItemVM, CancellationToken cancellationToken = default)
@@ -129,7 +130,7 @@ public class CartRepository(ApplicationDbContext context,
                 _context.CartItems.Remove(cartItem.Item);
                 await _context.SaveChangesAsync(cancellationToken);
                 await RemoveCacheKeysAsync( cancellationToken);
-                BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+                _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
                 repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
                 return (0, 0.0m); 
@@ -151,14 +152,14 @@ public class CartRepository(ApplicationDbContext context,
             cartItem.Cart!.TotalPrice -= cartItem.Item.TotalPrice;
             await _context.SaveChangesAsync(cancellationToken);
             await RemoveCacheKeysAsync(cancellationToken);
-            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+            _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
               repo.AddOrUpdateRatingAsync(userId, cartItem.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
 
             return cartItem.Cart.TotalPrice;
         }
         await RemoveCacheKeysAsync(cancellationToken);
-        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
               repo.AddOrUpdateRatingAsync(userId, cartItem!.Item.ProductId, RatingNumbers.RemoveFromCart, cancellationToken));
 
         return 0.0m;

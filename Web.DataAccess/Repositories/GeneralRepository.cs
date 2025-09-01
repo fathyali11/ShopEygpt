@@ -1,5 +1,5 @@
 ﻿namespace Web.DataAccess.Repositories;
-public class GeneralRepository(ILogger<GeneralRepository> _logger)
+public class GeneralRepository(ILogger<GeneralRepository> _logger): IGeneralRepository
 {
     public async Task<List<ValidationError>?> ValidateRequest<TSource, TRequest>(TSource source, TRequest request)
         where TSource : IValidator<TRequest>
