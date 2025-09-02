@@ -2,13 +2,14 @@
 
 namespace Web.DataAccess.Repositories;
 public class ProductRepository(ApplicationDbContext context,
-    GeneralRepository _generalRepository,
+    IGeneralRepository _generalRepository,
     IValidator<CreateProductVM> _createProductValidator,
     HybridCache _hybridCache,
     IWishlistRepository _wishlistRepository,
     ICartRepository _cartRepository,
     IRecommendationRepository _recommendationRepository,
-    CloudinaryRepository _cloudinaryRepository) : IProductRepository
+    ICloudinaryRepository _cloudinaryRepository,
+    IBackgroundJobsRepository _backgroundJobsRepository) : IProductRepository
 {
     private readonly ApplicationDbContext _context = context;
 
@@ -158,7 +159,7 @@ public class ProductRepository(ApplicationDbContext context,
             cancellationToken:cancellationToken);
         if(!string.IsNullOrEmpty(userId))
         {
-            BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+            _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
             repo.AddOrUpdateRatingAsync(userId, id, RatingNumbers.ViewItem, cancellationToken));
         }
         
