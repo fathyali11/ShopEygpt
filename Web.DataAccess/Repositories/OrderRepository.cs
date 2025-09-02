@@ -4,7 +4,8 @@ namespace Web.DataAccess.Repositories;
 public class OrderRepository(ApplicationDbContext _context,
     IPaymentRepository _paymentRepository,
     HybridCache _hybridCache,
-    ILogger<OrderRepository>_logger) : IOrderRepository
+    ILogger<OrderRepository>_logger,
+    IBackgroundJobsRepository _backgroundJobsRepository) : IOrderRepository
 {
     public async Task<PaginatedList<OrderResponseVM>> GetAllOrdersAsync(FilterRequest request, CancellationToken cancellationToken=default)
     {
@@ -54,7 +55,7 @@ public class OrderRepository(ApplicationDbContext _context,
         await _context.SaveChangesAsync(cancellationToken);
         await RemoveCacheKeys(userId, cancellationToken);
 
-        BackgroundJob.Enqueue<IProductRatingRepository>(repo =>
+        _backgroundJobsRepository.Enqueue<IProductRatingRepository>(repo =>
         repo.UpdateRatingsForPurchaseAsync(userId, productIds, cancellationToken));
 
         return order;
