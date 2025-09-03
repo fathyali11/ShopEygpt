@@ -113,7 +113,7 @@ public class EditCategoryVMValidatorTests
     }
 
     [Fact]
-    public void EditCategoryVMValidator_WhenImageIsNull_ShouldPass()
+    public void EditCategoryVMValidator_WhenImageIsNullAndNameIsValid_ShouldPass()
     {
         // arrange
         var validator = new EditCategoryVMValidator();
