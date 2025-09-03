@@ -2,9 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using System.Text;
-using Web.Entites.ModelsValidation;
 using Xunit;
-
+namespace Web.Entites.ModelsValidation.Tests
 public class ImageSignatureValidatorTests
 {
     private IFormFile CreateFormFile(byte[] fileBytes, string fileName = "test.jpg")
