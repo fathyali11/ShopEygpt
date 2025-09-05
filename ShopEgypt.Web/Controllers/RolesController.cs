@@ -1,4 +1,5 @@
 ﻿namespace WearUp.Web.Controllers;
+[Authorize(Roles =UserRoles.Admin)]
 public class RolesController(IRoleRepository _roleRepository) : Controller
 {
     [HttpGet]
