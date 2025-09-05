@@ -1,14 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using System.Security.Claims;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.ViewModels.OrderVMs;
-using Xunit;
-namespace WearUp.Web.Controllers.Tests;
-
+﻿namespace WearUp.Web.Controllers.Tests;
 public class OrdersControllerTests
 {
     private readonly Mock<IOrderRepository> _orderRepositoryMock;

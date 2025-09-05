@@ -1,14 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels;
-using Web.Entites.ViewModels.UsersVMs;
-using Xunit;
-namespace WearUp.Web.Controllers.Tests;
+﻿namespace WearUp.Web.Controllers.Tests;
 public class AuthsControllerTests
 {
     private readonly Mock<IAuthRepository> _authRepositoryMock;

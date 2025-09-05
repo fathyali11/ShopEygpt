@@ -1,14 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using System.Security.Claims;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.CartItemVMs;
-using Web.Entites.ViewModels.CartVMs;
-using Xunit;
-namespace WearUp.Web.Controllers.Tests;
+﻿namespace WearUp.Web.Controllers.Tests;
 public class CartControllerTests
 {
     private readonly Mock<ICartRepository> _cartRepositoryMock;

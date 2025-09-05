@@ -1,14 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels;
-using Xunit;
-namespace WearUp.Web.Controllers.Tests;
+﻿namespace WearUp.Web.Controllers.Tests;
 public class CategoryControllerTests
 {
     private readonly Mock<ICategoryRepository> _categoryRepositoryMock;

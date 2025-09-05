@@ -1,17 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using System.Security.Claims;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.ViewModels;
-using Web.Entites.ViewModels.UsersVMs;
-using Xunit;
-
-namespace WearUp.Web.Controllers.Tests;
-
+﻿namespace WearUp.Web.Controllers.Tests;
 public class UsersControllerTests
 {
     private readonly UsersController _usersController;
