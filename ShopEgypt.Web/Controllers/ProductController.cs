@@ -1,6 +1,4 @@
-﻿using MailKit.Search;
-
-namespace WearUp.Web.Controllers;
+﻿namespace WearUp.Web.Controllers;
 
 public class ProductController(IProductRepository _productRepositoy) : Controller
 {
