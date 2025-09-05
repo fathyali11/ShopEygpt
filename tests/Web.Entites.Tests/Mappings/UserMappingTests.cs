@@ -1,10 +1,4 @@
-﻿using FluentAssertions;
-using Mapster;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.UsersVMs;
-using Xunit;
-
-namespace Web.Entites.Mappings.Tests;
+﻿namespace Web.Entites.Mappings.Tests;
 
 public class UserMappingTests
 {

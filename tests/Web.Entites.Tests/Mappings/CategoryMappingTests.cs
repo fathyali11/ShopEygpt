@@ -1,12 +1,4 @@
-﻿using FluentAssertions;
-using Mapster;
-using Microsoft.AspNetCore.Http;
-using Moq;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.CategoryVMs;
-using Xunit;
-
-namespace Web.Entites.Mappings.Tests;
+﻿namespace Web.Entites.Mappings.Tests;
 
 public class CategoryMappingTests
 {
