@@ -25,7 +25,7 @@ public class CategoryControllerTests
     }
 
     [Fact]
-    public async Task Index_ShouldReturnViewWithCategories()
+    public async Task Index_WhenCallIt_ShouldReturnViewWithCategories()
     {
         // Arrange
         var categories = new List<Category>
