@@ -1,22 +1,4 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
-using Moq;
-using System.Security.Claims;
-using System.Text;
-using Web.DataAccess.Data;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels;
-using Web.Entites.ViewModels.UsersVMs;
-using Xunit;
-namespace Web.DataAccess.Repositories.Tests;
-
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class AuthRepositoryTests
 {
     [Fact()]

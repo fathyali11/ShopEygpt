@@ -1,17 +1,4 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Web.DataAccess.Data;
-using Web.DataAccess.Repositories;
-using Web.DataAccess.Tests;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels;
-using Xunit;
-namespace Web.DataAccess.Repositories.Tests;
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class CategoryRepositoryTests
 {
     [Fact]

@@ -1,20 +1,4 @@
-﻿using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
-using Moq;
-using Web.DataAccess.Data;
-using Web.DataAccess.Tests;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels;
-using Web.Entites.ViewModels.ProductVMs;
-using Xunit;
-
-namespace Web.DataAccess.Repositories.Tests;
-
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class ProductRepositoryTests
 {
     private ApplicationDbContext CreateContext()

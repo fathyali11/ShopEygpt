@@ -1,16 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using System.Linq.Expressions;
-using Web.DataAccess.Data;
-using Web.DataAccess.Tests;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.WishlistVMs;
-using Xunit;
-
-namespace Web.DataAccess.Repositories.Tests;
-
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class WishlistRepositoryTests
 {
     [Fact]

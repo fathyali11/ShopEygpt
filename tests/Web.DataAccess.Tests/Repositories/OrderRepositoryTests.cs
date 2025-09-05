@@ -1,16 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Web.DataAccess.Data;
-using Web.DataAccess.Tests;
-using Web.Entites.Consts;
-using Web.Entites.IRepositories;
-using Web.Entites.Models;
-using Xunit;
-
-namespace Web.DataAccess.Repositories.Tests;
-
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class OrderRepositoryTests
 {
     private ApplicationDbContext CreateContext()

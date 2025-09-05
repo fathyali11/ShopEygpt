@@ -1,18 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Caching.Memory;
-using Moq;
-using Web.DataAccess.Data;
-using Web.DataAccess.Tests;
-using Web.Entites.Consts;
-using Web.Entites.Models;
-using Web.Entites.ViewModels.UsersVMs;
-using Xunit;
-
-namespace Web.DataAccess.Repositories.Tests;
-
+﻿namespace Web.DataAccess.Repositories.Tests;
 public class ApplicationUserRepositoryTests
 {
     [Fact]
