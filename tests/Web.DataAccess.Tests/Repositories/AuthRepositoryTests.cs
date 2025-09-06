@@ -1,4 +1,6 @@
-﻿namespace Web.DataAccess.Repositories.Tests;
+﻿using Hangfire;
+
+namespace Web.DataAccess.Repositories.Tests;
 public class AuthRepositoryTests
 {
     [Fact()]
@@ -20,7 +22,7 @@ public class AuthRepositoryTests
         await context.SaveChangesAsync();
 
         var logger=new Mock<ILogger<AuthRepository>>().Object;
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var userManagerMock = new Mock<UserManager<ApplicationUser>>(
             Mock.Of<IUserStore<ApplicationUser>>(),
             null, null, null, null, null, null, null, null);
@@ -30,7 +32,7 @@ public class AuthRepositoryTests
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!,context);
+            null!, null!, null!,context, backgroundJobs);
         var model = new RegisterVM
         {
             UserName = "t",
@@ -70,12 +72,12 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(um => um.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
 
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, context);
+            null!, null!, null!, context, backgroundJobs);
         var model = new RegisterVM
         {
             UserName = "t1",
@@ -119,11 +121,11 @@ public class AuthRepositoryTests
         userManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, context);
+            null!, null!, null!, context, backgroundJobs);
         var model = new RegisterVM
         {
             UserName = "t1",
@@ -172,11 +174,11 @@ public class AuthRepositoryTests
            .ReturnsAsync(IdentityResult.Success);
         userManagerMock.Setup(um => um.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()))
            .ReturnsAsync(string.Empty);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            emailRepository.Object, applicationUser.Object, httpcontext.Object, context);
+            emailRepository.Object, applicationUser.Object, httpcontext.Object, context, backgroundJobs);
         var model = new RegisterVM
         {
             UserName = "t1",
@@ -202,13 +204,13 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var logger = new Mock<ILogger<AuthRepository>>().Object;
 
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.LoginAsync(new LoginVM(null!,null!));
@@ -236,11 +238,11 @@ public class AuthRepositoryTests
             });
 
         var logger = new Mock<ILogger<AuthRepository>>().Object;
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.LoginAsync(new LoginVM(null!, null!));
@@ -264,11 +266,11 @@ public class AuthRepositoryTests
             .ReturnsAsync(user);
 
         var logger = new Mock<ILogger<AuthRepository>>().Object;
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.LoginAsync(new LoginVM(null!, null!));
@@ -293,13 +295,13 @@ public class AuthRepositoryTests
         userManagerMock.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(),It.IsAny<string>()))
            .ReturnsAsync(false);
 
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var logger = new Mock<ILogger<AuthRepository>>().Object;
 
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.LoginAsync(new LoginVM(null!, null!));
@@ -331,11 +333,11 @@ public class AuthRepositoryTests
 
 
         var logger = new Mock<ILogger<AuthRepository>>().Object;
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             signInManagerMock.Object, null!,
             null!, null!, null!, null!,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.LoginAsync(new LoginVM(null!, null!));
@@ -357,11 +359,11 @@ public class AuthRepositoryTests
         var generalRepository = new Mock<IGeneralRepository>();
         generalRepository.Setup(x => x.ValidateRequest<IValidator<ConfirmEmailVM>, ConfirmEmailVM>(It.IsAny<IValidator<ConfirmEmailVM>>(), It.IsAny<ConfirmEmailVM>()))
             .ReturnsAsync(new List<ValidationError>());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, null!,
            null!, confirmEmailValidator,
            null!, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ConfirmEmailAsync(new ConfirmEmailVM(null!, null!));
@@ -386,11 +388,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            null!, confirmEmailValidator,
            null!, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ConfirmEmailAsync(new ConfirmEmailVM(null!, null!));
@@ -423,11 +425,11 @@ public class AuthRepositoryTests
         };
         userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync(user);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            null!, confirmEmailValidator,
            null!, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ConfirmEmailAsync(new ConfirmEmailVM(null!, null!));
@@ -461,11 +463,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
            .ReturnsAsync(IdentityResult.Failed());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            null!, confirmEmailValidator,
            null!, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
         var token = Convert.ToBase64String(Encoding.UTF8.GetBytes("any-token"));
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes("any-token"));
 
@@ -507,11 +509,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.ConfirmEmailAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
            .ReturnsAsync(IdentityResult.Success);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            signInManagerMock.Object, confirmEmailValidator,
            null!, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
         var token = Convert.ToBase64String(Encoding.UTF8.GetBytes("any-token"));
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes("any-token"));
 
@@ -535,11 +537,11 @@ public class AuthRepositoryTests
         var generalRepository = new Mock<IGeneralRepository>();
         generalRepository.Setup(x => x.ValidateRequest<IValidator<ResendEmailConfirmationVM>, ResendEmailConfirmationVM>(It.IsAny<IValidator<ResendEmailConfirmationVM>>(), It.IsAny<ResendEmailConfirmationVM>()))
             .ReturnsAsync(new List<ValidationError>());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, null!,
            null!, null!,
            resendEmailConfirmation, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
 
 
         // act
@@ -564,11 +566,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            null!, null!,
            resendEmailConfirmation, null!, null!, generalRepository.Object,
-           null!, null!, null!, null!);
+           null!, null!, null!, null!, backgroundJobs);
 
 
         // act
@@ -602,11 +604,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync(string.Empty);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
            null!, null!,
            resendEmailConfirmation, null!, null!, generalRepository.Object,
-           emailRepository, null!, httpContextAccessor, null!);
+           emailRepository, null!, httpContextAccessor, null!, backgroundJobs);
 
 
         // act
@@ -630,11 +632,11 @@ public class AuthRepositoryTests
         generalRepository.Setup(x => x.ValidateRequest<IValidator<ForgotPasswordVM>, ForgotPasswordVM>(
             It.IsAny<IValidator<ForgotPasswordVM>>(), It.IsAny<ForgotPasswordVM>()))
             .ReturnsAsync(new List<ValidationError>());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, null!,
             null!, null!,
             null!, forgetPasswordValidator, null!, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ForgetPasswordAsync(new ForgotPasswordVM(null!));
@@ -659,11 +661,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, forgetPasswordValidator, null!, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ForgetPasswordAsync(new ForgotPasswordVM("test@email.com"));
@@ -697,11 +699,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<ApplicationUser>()))
             .ReturnsAsync("reset-token");
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, forgetPasswordValidator, null!, generalRepository.Object,
-            emailRepository, null!, httpContextAccessor, null!);
+            emailRepository, null!, httpContextAccessor, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ForgetPasswordAsync(new ForgotPasswordVM("test@email.com"));
@@ -722,11 +724,11 @@ public class AuthRepositoryTests
         generalRepository.Setup(x => x.ValidateRequest<IValidator<ResetPasswordVM>, ResetPasswordVM>(
             It.IsAny<IValidator<ResetPasswordVM>>(), It.IsAny<ResetPasswordVM>()))
             .ReturnsAsync(new List<ValidationError>());
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, null!,
             null!, null!,
             null!, null!, resetPasswordValidator, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ResetPasswordAsync(new ResetPasswordVM("userId", "token", "newPassword"));
@@ -751,11 +753,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>()))
             .ReturnsAsync((ApplicationUser?)null);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, resetPasswordValidator, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
 
         // act
         var result = await authRepository.ResetPasswordAsync(new ResetPasswordVM("userId", "token", "newPassword"));
@@ -787,11 +789,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Code = "InvalidToken", Description = "Invalid token" }));
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, resetPasswordValidator, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
         var token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes("any-token"));
         // act
         var result = await authRepository.ResetPasswordAsync(new ResetPasswordVM("", "id", token));
@@ -820,11 +822,11 @@ public class AuthRepositoryTests
 
         userManagerMock.Setup(x => x.ResetPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-
+        var backgroundJobs = new Mock<IBackgroundJobsRepository>().Object;
         var authRepository = new AuthRepository(logger, userManagerMock.Object,
             null!, null!,
             null!, null!, resetPasswordValidator, generalRepository.Object,
-            null!, null!, null!, null!);
+            null!, null!, null!, null!, backgroundJobs);
         var token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes("any-token"));
         // act
         var result = await authRepository.ResetPasswordAsync(new ResetPasswordVM("", "id", token));
