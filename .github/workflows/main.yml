@@ -1,0 +1,35 @@
+name: WearUp - CI
+
+on:
+  push:
+    branches: [ "master" ]   
+  pull_request:
+    branches: [ "master" ]  
+  workflow_dispatch:        
+
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v5.0.0
+
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.0.0
+      with:
+        dotnet-version: '9.0.x'
+
+    
+    - name: Restore dependencies
+      run: dotnet restore
+
+    
+    - name: Build
+      run: dotnet build --no-restore
+
+    # 5. Run Tests
+    - name: Run tests
+      run: dotnet test --no-build 

@@ -1,4 +1,4 @@
-# ShopEgypt / WearUp
+# WearUp
 
 This repository hosts the e-commerce web application (codenamed "WearUp"), built with ASP.NET MVC and N-tier architecture. Check out the live demo at: https://wearup.runasp.net/
 
@@ -36,5 +36,4 @@ https://wearup.runasp.net/
 To run the project locally:
 
 ```bash
-https://github.com/fathyali11/ShopEygpt.git
-cd ShopEgypt
+https://github.com/fathyali11/WearUp.git
