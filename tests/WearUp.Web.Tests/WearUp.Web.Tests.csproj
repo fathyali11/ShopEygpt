@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ShopEgypt.Web\WearUp.Web.csproj" />
+    <ProjectReference Include="..\..\src\WearUp.Web\WearUp.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
