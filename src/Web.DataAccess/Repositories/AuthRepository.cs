@@ -11,7 +11,8 @@ public class AuthRepository(
     IEmailRepository _emailRepository,
     IApplicaionUserRepository _applicaionUserRepository,
     IHttpContextAccessor _httpContextAccessor,
-    ApplicationDbContext _context) : IAuthRepository
+    ApplicationDbContext _context,
+    IBackgroundJobsRepository _backgroundJobsRepository) : IAuthRepository
 {
     public async Task<OneOf<List<ValidationError>,bool>> RegisterAsync(RegisterVM request, CancellationToken cancellationToken = default)
     {
@@ -283,7 +284,8 @@ public class AuthRepository(
         var baseUrl = $"{request?.Scheme}://{request?.Host}";
 
         var confirmationLink = $"{baseUrl}/Auths/ConfirmEmail?userId={user.Id}&token={encodedToken}";
-        await _emailRepository.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailConfirmationBody(user.UserName!, confirmationLink!));
+        _backgroundJobsRepository.Enqueue<IEmailRepository>(x=>x.SendEmailAsync(user.Email!, "Email Confirmation", GetEmailConfirmationBody(user.UserName!, confirmationLink!)));
+        
     }
     private static string GetEmailConfirmationBody(string userName,string confirmationLink)=>
         $@"
@@ -311,7 +313,7 @@ public class AuthRepository(
         var baseUrl = $"{request?.Scheme}://{request?.Host}";
 
         var resetLink = $"{baseUrl}/Auths/ResetPassword?userId={user.Id}&token={encodedToken}";
-        await _emailRepository.SendEmailAsync(user.Email!, "Reset Your Password", GetResetPasswordEmailBody(user.UserName!, resetLink!));
+        _backgroundJobsRepository.Enqueue<IEmailRepository>(x => x.SendEmailAsync(user.Email!, "Reset Your Password", GetResetPasswordEmailBody(user.UserName!, resetLink!)));
     }
     private static string GetResetPasswordEmailBody(string userName, string resetLink) =>
                 $@"
