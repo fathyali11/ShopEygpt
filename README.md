@@ -37,4 +37,4 @@ To run the project locally:
 
 ```bash
 https://github.com/fathyali11/ShopEygpt.git
-cd ShopEgypt
+cd ShopEgypt 
